@@ -7,7 +7,7 @@ import org.gradle.api.plugins.JavaPlugin;
 
 class Launch4jPluginExtension {
     
-    File outputDir
+    String outputDir = "launch4j"
     
     String mainClassName
     
