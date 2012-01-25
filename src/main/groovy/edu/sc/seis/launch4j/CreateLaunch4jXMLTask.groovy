@@ -17,7 +17,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
     static final Logger LOGGER = LoggerFactory.getLogger(CreateLaunch4jXMLTask)
 
-    
+
 
     @OutputFile
     File getXmlOutFile() {
@@ -52,11 +52,11 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 classpath.each() { val -> cp(val ) }
             }
             versionInfo() {
-                fileVersion(configuration.version )
+                fileVersion(parseDotVersion(configuration.version) )
                 txtFileVersion(configuration.version )
                 fileDescription() { }
                 copyright() { }
-                productVersion(configuration.version )
+                productVersion(parseDotVersion(configuration.version) )
                 txtProductVersion(configuration.version )
                 productName(project.name )
                 internalName(project.name )
@@ -68,6 +68,21 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             }
         }
         writer.close()
+    }
+
+    /**
+     * launch4j fileVersion and productVersion are required to be x.y.z.w format, no text like beta or 
+     * SNAPSHOT. I think this is a windows thing. So we check the version, and if it is only dots and 
+     * numbers, we use it. If not we use 0.0.0.1
+     * @param version
+     * @return
+     */
+    String parseDotVersion(version) {
+        if (version ==~ /\d+(\.\d+){0,3}/) {
+            return version
+        } else {
+            return '0.0.0.1'
+        }
     }
 
 }
