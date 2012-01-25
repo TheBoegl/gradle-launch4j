@@ -47,6 +47,8 @@ class Launch4jPluginExtension {
     
     String version = ""
     
+    String copyright = "unknown"
+    
     public File getXmlOutFileForProject(Project project) {
         return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
     }
