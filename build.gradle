@@ -1,9 +1,28 @@
 
+group "edu.sc.seis"
+
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
 
 dependencies {
     compile gradleApi()
     groovy localGroovy()
+    compile "org.slf4j:slf4j-log4j12:1.6.1"
+//    classpath files("lib/launch4j-3.0.2.jar")
+}
+
+    repositories {
+        mavenRepo url: "http://www.seis.sc.edu/software/maven2"
+        mavenCentral()
+    }
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:build/maven/myRepo/")
+        }
+    }
 }
 

@@ -1,5 +1,7 @@
 package edu.sc.seis.launch4j
 
+import java.io.File;
+
 import org.gradle.api.internal.ConventionTask
 
 import groovy.xml.MarkupBuilder
@@ -15,10 +17,11 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
     static final Logger LOGGER = LoggerFactory.getLogger(CreateLaunch4jXMLTask)
 
+    
 
     @OutputFile
     File getXmlOutFile() {
-        return project.file("$project.buildDir/launch4j/launch4j.xml")
+        return project.launch4j.getXmlOutFileForProject(project)
     }
 
     @TaskAction
@@ -29,37 +32,39 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         file.parentFile.mkdirs()
         def writer = new BufferedWriter(new FileWriter(file))
         def xml = new MarkupBuilder(writer)
-        xml.root {
-            launch4jConfig() {
-            dontWrapJar() {mkp.yield configuration.dontWrapJar}
-            headerType() {mkp.yield configuration.headerType}
-            jar() {mkp.yield configuration.jar}
-            outfile() {mkp.yield configuration.outfile}
-            errTitle() {mkp.yield configuration.errTitle}
-            cmdLine() {mkp.yield configuration.cmdLine}
-            chdir() {mkp.yield configuration.chdir}
-            priority() {mkp.yield configuration.priority}
-            downloadUrl() {mkp.yield configuration.downloadUrl}
-            supportUrl() {mkp.yield configuration.supportUrl}
-            customProcName() {mkp.yield configuration.customProcName}
-            stayAlive() {mkp.yield configuration.stayAlive}
-            manifest() {mkp.yield configuration.manifest}
-            icon() {mkp.yield configuration.icon}
+        xml.launch4jConfig() {
+            dontWrapJar(configuration.dontWrapJar)
+            headerType(configuration.headerType)
+            jar(configuration.jar)
+            outfile(configuration.outfile)
+            errTitle(configuration.errTitle)
+            cmdLine(configuration.cmdLine)
+            chdir(configuration.chdir)
+            priority(configuration.priority)
+            downloadUrl(configuration.downloadUrl)
+            supportUrl(configuration.supportUrl)
+            customProcName(configuration.customProcName)
+            stayAlive(configuration.stayAlive)
+            manifest(configuration.manifest)
+            icon(configuration.icon)
             classPath() {
-                mainClass() {mkp.yield configuration.mainClassName}
-                classpath.each() { val -> cp() { mkp.yield val } }
+                mainClass(configuration.mainClassName)
+                classpath.each() { val -> cp(val ) }
             }
             versionInfo() {
-                fileVersion() { mkp.yield configuration.version }
-                txtFileVersion() { mkp.yield configuration.version }
+                fileVersion(configuration.version )
+                txtFileVersion(configuration.version )
                 fileDescription() { }
                 copyright() { }
-                productVersion() { mkp.yield configuration.version }
-                txtProductVersion() { mkp.yield configuration.version }
-                productName() { mkp.yield project.name }
-                internalName() { mkp.yield project.name }
-                originalFilename() { mkp.yield configuration.outfile }
+                productVersion(configuration.version )
+                txtProductVersion(configuration.version )
+                productName(project.name )
+                internalName(project.name )
+                originalFilename(configuration.outfile )
             }
+            jre() {
+                path() {}
+                minVersion('1.5.0' )
             }
         }
         writer.close()
