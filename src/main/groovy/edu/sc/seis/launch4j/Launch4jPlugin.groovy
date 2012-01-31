@@ -1,15 +1,12 @@
 package edu.sc.seis.launch4j;
 
-import org.gradle.api.Project
+
 import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.CopySpec
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.JavaExec;
-import org.gradle.api.tasks.Sync;
-
-import groovy.xml.MarkupBuilder
-import org.custommonkey.xmlunit.*
+import org.gradle.api.tasks.Sync
 
 class Launch4jPlugin implements Plugin<Project> {
 
