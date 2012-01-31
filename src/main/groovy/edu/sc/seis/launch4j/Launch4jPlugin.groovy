@@ -71,7 +71,7 @@ class Launch4jPlugin implements Plugin<Project> {
             from(project.configurations.runtime)
         }
 
-        distSpec
+        return distSpec
     }
 }
 
