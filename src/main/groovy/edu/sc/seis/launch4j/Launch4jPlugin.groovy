@@ -34,9 +34,6 @@ class Launch4jPlugin implements Plugin<Project> {
         Task runTask = addRunLauch4jTask(project)
         runTask.dependsOn(copyTask)
         runTask.dependsOn(xmlTask)
-        project.task('hello') << {
-            println "Hello from the Launch4jPlugin"
-        }
     }
 
     private Task addCreateLaunch4jXMLTask(Project project) {
