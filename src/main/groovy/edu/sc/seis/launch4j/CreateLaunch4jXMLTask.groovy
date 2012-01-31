@@ -63,8 +63,8 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 originalFilename(configuration.outfile )
             }
             jre() {
-                path() {}
                 minVersion('1.5.0' )
+                if (configuration.opt.length() != 0) opt(configuration.opt)
             }
         }
         writer.close()
