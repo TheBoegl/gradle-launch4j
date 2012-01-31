@@ -49,13 +49,15 @@ class Launch4jPluginExtension {
     
     String copyright = "unknown"
     
+    String opt = ""
+    
     public File getXmlOutFileForProject(Project project) {
         return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
     }
     
     void initExtensionDefaults(Project project) {
         outfile = new File(project.name+'.exe')
-        jar = project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile()
+        jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
         version = project.version
     }
 }
