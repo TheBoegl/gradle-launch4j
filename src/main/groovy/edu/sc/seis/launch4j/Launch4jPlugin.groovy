@@ -15,8 +15,9 @@ class Launch4jPlugin implements Plugin<Project> {
 
     static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
     static final String TASK_XML_GENERATE_NAME = "generateXmlConfig"
-    static final String TASK_LIB_COPY_NAME = "l4jLib"
+    static final String TASK_LIB_COPY_NAME = "copyL4jLib"
     static final String TASK_RUN_NAME = "createExe"
+    static final String TASK_LAUNCH4J_NAME = "launch4j"
     Launch4jPluginExtension pluginConvention;
 
     def void apply(Project project) {
@@ -31,6 +32,8 @@ class Launch4jPlugin implements Plugin<Project> {
         Task runTask = addRunLauch4jTask(project)
         runTask.dependsOn(copyTask)
         runTask.dependsOn(xmlTask)
+        Task l4jTask = addLaunch4jTask(project)
+        l4jTask.dependsOn(runTask)
     }
 
     private Task addCreateLaunch4jXMLTask(Project project) {
@@ -52,6 +55,13 @@ class Launch4jPlugin implements Plugin<Project> {
     private Task addRunLauch4jTask(Project project) {
         def run = project.tasks.add(TASK_RUN_NAME, ExecLaunch4JTask)
         run.description = "Runs launch4j to generate an .exe file"
+        run.group = LAUNCH4J_GROUP
+        return run
+    }
+    
+    private Task addLaunch4jTask(Project project) {
+        def run = project.tasks.add(TASK_LAUNCH4J_NAME)
+        run.description = "Placeholder task for tasks relating to creating .exe applications with launch4j"
         run.group = LAUNCH4J_GROUP
         return run
     }
