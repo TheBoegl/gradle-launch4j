@@ -22,7 +22,7 @@ dependencies {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file:build/maven/myRepo/")
+            repository(url: "file:../mavenRepo/")
         }
     }
 }
