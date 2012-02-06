@@ -7,7 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin;
 
 
-class Launch4jPluginExtension {
+class Launch4jPluginExtension implements Serializable {
     
     String launch4jCmd = "launch4j"
 
