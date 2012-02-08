@@ -27,7 +27,7 @@ class Launch4jPluginExtension implements Serializable {
 
     String errTitle = ""
 
-    boolean cmdLine = false
+    String cmdLine = ""
 
     String chdir = '.'
 
