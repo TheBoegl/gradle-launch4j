@@ -9,7 +9,6 @@ apply plugin: 'maven'
 dependencies {
     compile gradleApi()
     groovy localGroovy()
-//    classpath files("lib/launch4j-3.0.2.jar")
 }
 
     repositories {
