@@ -11,10 +11,6 @@ dependencies {
     groovy localGroovy()
 }
 
-    repositories {
-        mavenRepo url: "http://www.seis.sc.edu/software/maven2"
-        mavenCentral()
-    }
 
 
 uploadArchives {
