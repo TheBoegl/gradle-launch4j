@@ -7,6 +7,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.CopySpec
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.Exec
 
 class Launch4jPlugin implements Plugin<Project> {
 
@@ -56,10 +57,12 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addRunLauch4jTask(Project project) {
-        def run = project.tasks.add(TASK_RUN_NAME, ExecLaunch4JTask)
-        run.description = "Runs launch4j to generate an .exe file"
-        run.group = LAUNCH4J_GROUP
-        return run
+        def task = project.tasks.add(TASK_RUN_NAME, Exec)
+        task.description = "Runs launch4j to generate an .exe file"
+        task.group = LAUNCH4J_GROUP
+        task.commandLine "$project.launch4j.launch4jCmd", "${project.buildDir}/${project.launch4j.outputDir}/${$project.launch4j.xmlFileName}"
+        task.workingDir "${project.buildDir}/${project.launch4j.outputDir}"
+        return task
     }
     
     private Task addLaunch4jTask(Project project) {
