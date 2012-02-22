@@ -60,7 +60,7 @@ class Launch4jPlugin implements Plugin<Project> {
         def task = project.tasks.add(TASK_RUN_NAME, Exec)
         task.description = "Runs launch4j to generate an .exe file"
         task.group = LAUNCH4J_GROUP
-        task.commandLine "$project.launch4j.launch4jCmd", "${project.buildDir}/${project.launch4j.outputDir}/${$project.launch4j.xmlFileName}"
+        task.commandLine "$project.launch4j.launch4jCmd", "${project.buildDir}/${project.launch4j.outputDir}/${project.launch4j.xmlFileName}"
         task.workingDir "${project.buildDir}/${project.launch4j.outputDir}"
         return task
     }
