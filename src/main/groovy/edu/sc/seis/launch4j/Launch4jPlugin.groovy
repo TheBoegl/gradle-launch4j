@@ -41,9 +41,11 @@ class Launch4jPlugin implements Plugin<Project> {
         Task task = project.tasks.add(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
         task.description = "Creates XML configuration file used by launch4j to create an windows exe."
         task.group = LAUNCH4J_GROUP
-        task.inputs.property("project version", { project.version })
-        task.inputs.property("Launch4j extension", {project.launch4j})
-        task.outputs.file(project.file(project.launch4j.xmlFileName))
+        task.doFirst {
+            inputs.property("project version", { project.version })
+            inputs.property("Launch4j extension", {project.launch4j})
+            outputs.file(project.file(project.launch4j.xmlFileName))
+        }
         return task
     }
 
@@ -51,17 +53,21 @@ class Launch4jPlugin implements Plugin<Project> {
         Sync task = project.tasks.add(TASK_LIB_COPY_NAME, Sync)
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
-        task.with configureDistSpec(project)
-        task.into { project.file("${project.buildDir}/${project.launch4j.outputDir}/lib") }
+        task.doFirst {
+            with configureDistSpec(project)
+            into { project.file("${project.buildDir}/${project.launch4j.outputDir}/lib") }
+        }
         return task
     }
 
     private Task addRunLauch4jTask(Project project) {
         def task = project.tasks.add(TASK_RUN_NAME, Exec)
-        task.description = "Runs launch4j to generate an .exe file"
-        task.group = LAUNCH4J_GROUP
-        task.commandLine "$project.launch4j.launch4jCmd", "${project.buildDir}/${project.launch4j.outputDir}/${project.launch4j.xmlFileName}"
-        task.workingDir "${project.buildDir}/${project.launch4j.outputDir}"
+        task.doFirst {
+            description = "Runs launch4j to generate an .exe file"
+            group = LAUNCH4J_GROUP
+            commandLine "$project.launch4j.launch4jCmd", "${project.buildDir}/${project.launch4j.outputDir}/${project.launch4j.xmlFileName}" 
+            workingDir "${project.buildDir}/${project.launch4j.outputDir}" 
+        }
         return task
     }
     
