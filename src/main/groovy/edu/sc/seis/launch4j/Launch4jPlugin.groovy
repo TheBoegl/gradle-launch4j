@@ -41,7 +41,7 @@ class Launch4jPlugin implements Plugin<Project> {
         Task task = project.tasks.add(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
         task.description = "Creates XML configuration file used by launch4j to create an windows exe."
         task.group = LAUNCH4J_GROUP
-        task.inputs.property("project version", ${->project.version })
+        task.inputs.property("project version", project.version)
         task.inputs.property("Launch4j extension", {project.launch4j})
         task.outputs.file(project.file(project.launch4j.xmlFileName))
         
