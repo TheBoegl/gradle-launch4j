@@ -1,6 +1,6 @@
 
 group "edu.sc.seis"
-version "1.0.2"
+version "1.0.3"
 
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
