@@ -52,10 +52,8 @@ class Launch4jPlugin implements Plugin<Project> {
         Sync task = project.tasks.add(TASK_LIB_COPY_NAME, Sync)
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
-        task.doFirst {
-            with configureDistSpec(project)
-            into { project.file("${project.buildDir}/${project.launch4j.outputDir}/lib") }
-        }
+        task.with configureDistSpec(project)
+        task.into { project.file("${project.buildDir}/${project.launch4j.outputDir}/lib") }
         return task
     }
 
