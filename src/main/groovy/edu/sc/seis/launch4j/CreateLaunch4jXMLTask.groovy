@@ -78,8 +78,14 @@ class CreateLaunch4jXMLTask extends DefaultTask {
      * @return
      */
     String parseDotVersion(version) {
-        if (version ==~ /\d+(\.\d+){0,3}/) {
+        if (version ==~ /\d+(\.\d+){3}/) {
             return version
+        } else if (version ==~ /\d+(\.\d+){0,2}/) {
+            def s = version+'.0'
+            while (s ==~ /\d+(\.\d+){0,2}/) {
+                s = s+'.0'
+            }
+            return s
         } else {
             return '0.0.0.1'
         }
