@@ -56,6 +56,10 @@ class Launch4jPluginExtension implements Serializable {
         outfile = new File(project.name+'.exe')
         jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
         version = project.version
+        jreMinVersion = project.targetCompatibility
+        while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
+                jreMinVersion = jreMinVersion+'.0'
+            }
     }
 
     @Override
