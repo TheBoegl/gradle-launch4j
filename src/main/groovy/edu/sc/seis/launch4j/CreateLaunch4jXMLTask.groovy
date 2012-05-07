@@ -99,12 +99,14 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                         launcherErr(configuration.messagesLauncherError)
                 }
             }
-            singleInstance(){
-                if (configuration.mutexName != null)
-                    mutexName(configuration.mutexName)
+            if (configuration.mutexName != null || configuration.windowTitle != null) {
+                singleInstance(){
+                    if (configuration.mutexName != null)
+                        mutexName(configuration.mutexName)
 
-                if (configuration.windowTitle != null)
-                    windowTitle(configuration.windowTitle)
+                    if (configuration.windowTitle != null)
+                        windowTitle(configuration.windowTitle)
+                }
             }
         }
         writer.close()
