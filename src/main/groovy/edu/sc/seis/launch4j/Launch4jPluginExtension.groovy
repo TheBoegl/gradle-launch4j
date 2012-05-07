@@ -3,6 +3,7 @@ package edu.sc.seis.launch4j
 
 import java.io.File;
 
+import org.codehaus.groovy.util.HashCodeHelper;
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin;
 
@@ -10,51 +11,47 @@ import org.gradle.api.plugins.JavaPlugin;
 class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
-
     String outputDir = "launch4j"
-
     String xmlFileName = "launch4j.xml"
-
     String mainClassName
-
     boolean dontWrapJar = false
-
     String headerType = "gui"
-
     String jar
-
     String outfile
-
     String errTitle = ""
-
     String cmdLine = ""
-
     String chdir = '.'
-
     String priority = 'normal'
-
     String downloadUrl = ""
-
     String supportUrl = ""
-
     boolean customProcName = false
-
     boolean stayAlive = false
-
     String manifest = ""
-
     String icon = ""
-
     String version = ""
-
     String copyright = "unknown"
-
     String opt = ""
-
+	
+	String jreMinVersion
+	String jreMaxVersion
+	
+	String mutexName
+	String windowTitle
+	
+	String messagesStartupError
+	String messagesBundledJreError
+	String messagesJreVersionError
+    String messagesLauncherError
+	
+	Integer initialHeapSize
+	Integer initialHeapPercent
+	Integer maxHeapSize
+	Integer maxHeapPercent
+	
     public File getXmlOutFileForProject(Project project) {
         return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
     }
-
+ 
     void initExtensionDefaults(Project project) {
         outfile = new File(project.name+'.exe')
         jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
@@ -86,30 +83,49 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((supportUrl == null) ? 0 : supportUrl.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         result = prime * result + ((xmlFileName == null) ? 0 : xmlFileName.hashCode());
-        return result;
+		
+		result = HashCodeHelper.updateHash(result, jreMinVersion);
+		result = HashCodeHelper.updateHash(result, jreMaxVersion);
+		
+		result = HashCodeHelper.updateHash(result, mutexName);
+		result = HashCodeHelper.updateHash(result, windowTitle);
+		
+		result = HashCodeHelper.updateHash(result, messagesStartupError);
+		result = HashCodeHelper.updateHash(result, messagesBundledJreError);
+		result = HashCodeHelper.updateHash(result, messagesJreVersionError);
+		result = HashCodeHelper.updateHash(result, messagesLauncherError);
+		
+		result = HashCodeHelper.updateHash(result, initialHeapSize);
+		result = HashCodeHelper.updateHash(result, initialHeapPercent);
+		result = HashCodeHelper.updateHash(result, maxHeapSize);
+		result = HashCodeHelper.updateHash(result, maxHeapPercent);
+		
+		return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this.is(obj))
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+		if (this.is(obj)) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		
         Launch4jPluginExtension other = (Launch4jPluginExtension)obj;
-        if (chdir == null) {
-            if (other.chdir != null)
-                return false;
-        } else if (!chdir.equals(other.chdir))
-            return false;
+        
+		if ((chdir == null && other.chdir != null) || !chdir.equals(other.chdir)) {
+			return false;
+        } 
+			
         if (cmdLine != other.cmdLine)
             return false;
+			
         if (copyright == null) {
             if (other.copyright != null)
                 return false;
-        } else if (!copyright.equals(other.copyright))
+				
+        } 
+		else if (!copyright.equals(other.copyright))
             return false;
+			
         if (customProcName != other.customProcName)
             return false;
         if (dontWrapJar != other.dontWrapJar)
@@ -186,12 +202,54 @@ class Launch4jPluginExtension implements Serializable {
                 return false;
         } else if (!version.equals(other.version))
             return false;
+			
         if (xmlFileName == null) {
             if (other.xmlFileName != null)
                 return false;
         } else if (!xmlFileName.equals(other.xmlFileName))
             return false;
-        return true;
+			
+		if ((jreMinVersion == null && other.jreMinVersion != null) || !jreMinVersion.equals(other.jreMinVersion)) {
+			return false;
+		}
+		if ((jreMaxVersion == null && other.jreMaxVersion != null) || !jreMaxVersion.equals(other.jreMaxVersion)) {
+			return false;
+		}
+		
+		if ((mutexName == null && other.mutexName != null) || !mutexName.equals(other.mutexName)) {
+			return false;
+		} 
+		if ((windowTitle == null && other.windowTitle != null) || !windowTitle.equals(other.windowTitle)) {
+			return false;
+		}
+		
+		if ((messagesStartupError == null && other.messagesStartupError != null) || !messagesStartupError.equals(other.messagesStartupError)) {
+			return false;
+		}
+		if ((messagesBundledJreError == null && other.messagesBundledJreError != null) || !messagesBundledJreError.equals(other.messagesBundledJreError)) {
+			return false;
+		}
+		if ((messagesJreVersionError == null && other.messagesJreVersionError != null) || !messagesJreVersionError.equals(other.messagesJreVersionError)) {
+			return false;
+		}
+		if ((messagesLauncherError == null && other.messagesLauncherError != null) || !messagesLauncherError.equals(other.messagesLauncherError)) {
+			return false;
+		}
+		
+		if ((initialHeapSize == null && other.initialHeapSize != null) || !initialHeapSize.equals(other.initialHeapSize)) {
+			return false;
+		}
+		if ((initialHeapPercent == null && other.initialHeapPercent != null) || !initialHeapPercent.equals(other.initialHeapPercent)) {
+			return false;
+		}
+		if ((maxHeapSize == null && other.maxHeapSize != null) || !maxHeapSize.equals(other.maxHeapSize)) {
+			return false;
+		}
+		if ((maxHeapPercent == null && other.maxHeapPercent != null) || !maxHeapPercent.equals(other.maxHeapPercent)) {
+			return false;
+		}
+			
+		return true;
     }
 
 

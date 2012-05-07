@@ -18,7 +18,6 @@ class CreateLaunch4jXMLTask extends DefaultTask {
     static final Logger LOGGER = LoggerFactory.getLogger(CreateLaunch4jXMLTask)
 
 
-
     @OutputFile
     File getXmlOutFile() {
         return project.launch4j.getXmlOutFileForProject(project)
@@ -62,10 +61,43 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 internalName(project.name )
                 originalFilename(configuration.outfile )
             }
+			
             jre() {
-                minVersion('1.5.0' )
+				if (configuration.jreMinVersion != null)
+                	minVersion(configuration.jreMinVersion)
+				
+				if (configuration.jreMaxVersion != null)
+					maxVersion(configuration.jreMaxVersion)
+					
                 if (configuration.opt.length() != 0) opt(configuration.opt)
+				
+				if (configuration.initialHeapSize != null)
+					initialHeapSize(configuration.initialHeapSize)
+					
+				if (configuration.initialHeapPercent != null)
+					initialHeapPercent(configuration.initialHeapPercent)
+					
+				if (configuration.maxHeapSize != null)
+					maxHeapSize(configuration.maxHeapSize)
+					
+				if (configuration.maxHeapPercent != null)
+					maxHeapPercent(configuration.maxHeapPercent)
             }
+			
+			messages(){
+				startupErr(configuration.messagesStartupError)
+				bundledJreErr(configuration.messagesBundledJreError)
+				jreVersionErr(configuration.messagesJreVersionError)
+				launcherErr(configuration.messagesLauncherError)
+			}
+			
+			singleInstance(){
+				if (configuration.mutexName != null)
+					mutexName(configuration.mutexName)
+					
+				if (configuration.windowTitle != null)
+					windowTitle(configuration.windowTitle)
+			}
         }
         writer.close()
     }
