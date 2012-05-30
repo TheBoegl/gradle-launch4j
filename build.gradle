@@ -16,7 +16,7 @@ dependencies {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file://localhost/tmp/myRepo/")
+            repository(url: "file:../mavenRepo/")
         }
         ivy {
             url "file:../ivyRepo"
