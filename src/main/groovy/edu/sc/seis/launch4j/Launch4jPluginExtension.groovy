@@ -32,6 +32,7 @@ class Launch4jPluginExtension implements Serializable {
     String copyright = "unknown"
     String opt = ""
 	
+	String bundledJrePath
 	String jreMinVersion
 	String jreMaxVersion
 	
@@ -88,6 +89,7 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         result = prime * result + ((xmlFileName == null) ? 0 : xmlFileName.hashCode());
 		
+		result = HashCodeHelper.updateHash(result, bundledJrePath);
 		result = HashCodeHelper.updateHash(result, jreMinVersion);
 		result = HashCodeHelper.updateHash(result, jreMaxVersion);
 		
@@ -213,6 +215,9 @@ class Launch4jPluginExtension implements Serializable {
         } else if (!xmlFileName.equals(other.xmlFileName))
             return false;
 			
+	    if ((bundledJrePath == null && other.bundledJrePath != null) || !bundledJrePath.equals(other.bundledJrePath)) {
+	        return false;
+        }    
 		if ((jreMinVersion == null && other.jreMinVersion != null) || !jreMinVersion.equals(other.jreMinVersion)) {
 			return false;
 		}
