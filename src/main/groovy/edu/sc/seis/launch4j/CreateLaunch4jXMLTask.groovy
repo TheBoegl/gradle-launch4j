@@ -17,6 +17,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
     static final Logger LOGGER = LoggerFactory.getLogger(CreateLaunch4jXMLTask)
 
+    def Launch4jPluginExtension configuration
 
     @OutputFile
     File getXmlOutFile() {
@@ -25,7 +26,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
     @TaskAction
     def void writeXmlConfig() {
-        Launch4jPluginExtension configuration = project.launch4j
+        if (configuration == null) configuration = project.launch4j
         def classpath = project.configurations.runtime.collect { "lib/${it.name}" }
         def file = getXmlOutFile()
         file.parentFile.mkdirs()

@@ -28,45 +28,45 @@ class Launch4jPlugin implements Plugin<Project> {
         Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension()
         pluginExtension.initExtensionDefaults(project)
         project.extensions.launch4j = pluginExtension
-        Task xmlTask = addCreateLaunch4jXMLTask(project)
-        Task copyTask = addCopyToLibTask(project)
-        Task runTask = addRunLauch4jTask(project)
+        Task xmlTask = addCreateLaunch4jXMLTask(project, pluginExtension)
+        Task copyTask = addCopyToLibTask(project, pluginExtension)
+        Task runTask = addRunLauch4jTask(project, pluginExtension)
         runTask.dependsOn(copyTask)
         runTask.dependsOn(xmlTask)
-        Task l4jTask = addLaunch4jTask(project)
+        Task l4jTask = addLaunch4jTask(project, pluginExtension)
         l4jTask.dependsOn(runTask)
     }
 
-    private Task addCreateLaunch4jXMLTask(Project project) {
+    private Task addCreateLaunch4jXMLTask(Project project, Launch4jPluginExtension configuration) {
         Task task = project.tasks.add(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
         task.description = "Creates XML configuration file used by launch4j to create an windows exe."
         task.group = LAUNCH4J_GROUP
         task.inputs.property("project version", project.version)
-        task.inputs.property("Launch4j extension", {project.launch4j})
-        task.outputs.file(project.file(project.launch4j.xmlFileName))
-        
+        task.inputs.property("Launch4j extension", configuration)
+        task.outputs.file(project.file(configuration.xmlFileName))
+        task.configuration = configuration
         return task
     }
 
-    private Task addCopyToLibTask(Project project) {
+    private Task addCopyToLibTask(Project project, Launch4jPluginExtension configuration) {
         Sync task = project.tasks.add(TASK_LIB_COPY_NAME, Sync)
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
         task.with configureDistSpec(project)
-        task.into { project.file("${project.buildDir}/${project.launch4j.outputDir}/lib") }
+        task.into { project.file("${project.buildDir}/${configuration.outputDir}/lib") }
         return task
     }
 
-    private Task addRunLauch4jTask(Project project) {
+    private Task addRunLauch4jTask(Project project, Launch4jPluginExtension configuration) {
         def task = project.tasks.add(TASK_RUN_NAME, Exec)
         task.description = "Runs launch4j to generate an .exe file"
         task.group = LAUNCH4J_GROUP
-        task.commandLine "${->project.launch4j.launch4jCmd}", "${->project.buildDir}/${->project.launch4j.outputDir}/${->project.launch4j.xmlFileName}" 
-        task.workingDir "${->project.buildDir}/${->project.launch4j.outputDir}" 
+        task.commandLine "${->configuration.launch4jCmd}", "${->project.buildDir}/${->configuration.outputDir}/${->configuration.xmlFileName}" 
+        task.workingDir "${->project.buildDir}/${->configuration.outputDir}" 
         return task
     }
     
-    private Task addLaunch4jTask(Project project) {
+    private Task addLaunch4jTask(Project project, Launch4jPluginExtension configuration) {
         def task = project.tasks.add(TASK_LAUNCH4J_NAME)
         task.description = "Placeholder task for tasks relating to creating .exe applications with launch4j"
         task.group = LAUNCH4J_GROUP
