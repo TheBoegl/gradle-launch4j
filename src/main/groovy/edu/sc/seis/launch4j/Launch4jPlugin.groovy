@@ -23,7 +23,7 @@ class Launch4jPlugin implements Plugin<Project> {
 
     def void apply(Project project) {
         project.plugins.apply(JavaPlugin)
-        project.configurations.add(LAUNCH4J_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
+        project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
                 .setDescription('The launch4j configuration for this project.')
         Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension()
         pluginExtension.initExtensionDefaults(project)
@@ -38,7 +38,7 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addCreateLaunch4jXMLTask(Project project, Launch4jPluginExtension configuration) {
-        Task task = project.tasks.add(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
+        Task task = project.tasks.create(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
         task.description = "Creates XML configuration file used by launch4j to create an windows exe."
         task.group = LAUNCH4J_GROUP
         task.inputs.property("project version", project.version)
@@ -49,7 +49,7 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addCopyToLibTask(Project project, Launch4jPluginExtension configuration) {
-        Sync task = project.tasks.add(TASK_LIB_COPY_NAME, Sync)
+        Sync task = project.tasks.create(TASK_LIB_COPY_NAME, Sync)
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
         task.with configureDistSpec(project)
@@ -58,7 +58,7 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addRunLauch4jTask(Project project, Launch4jPluginExtension configuration) {
-        def task = project.tasks.add(TASK_RUN_NAME, Exec)
+        def task = project.tasks.create(TASK_RUN_NAME, Exec)
         task.description = "Runs launch4j to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         task.commandLine "${->configuration.launch4jCmd}", "${->project.buildDir}/${->configuration.outputDir}/${->configuration.xmlFileName}" 
@@ -67,7 +67,7 @@ class Launch4jPlugin implements Plugin<Project> {
     }
     
     private Task addLaunch4jTask(Project project, Launch4jPluginExtension configuration) {
-        def task = project.tasks.add(TASK_LAUNCH4J_NAME)
+        def task = project.tasks.create(TASK_LAUNCH4J_NAME)
         task.description = "Placeholder task for tasks relating to creating .exe applications with launch4j"
         task.group = LAUNCH4J_GROUP
         return task
