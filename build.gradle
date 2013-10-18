@@ -1,10 +1,11 @@
 
-group "edu.sc.seis"
+group "edu.sc.seis.gradle"
 version "1.0.6-SNAPSHOT"
 
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
-apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
 
 dependencies {
     compile gradleApi()
@@ -12,15 +13,91 @@ dependencies {
 }
 
 
+repositories {
+    mavenCentral()
+}
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "file:../mavenRepo/")
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+task groovydocJar (type: Jar, dependsOn: groovydoc) {
+    classifier = 'javadoc'
+    from groovydoc.destinationDir
+}
+groovydocJar.dependsOn 'groovydoc'
+
+artifacts {
+    archives jar
+    archives groovydocJar
+    archives sourceJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name "${project.name}"
+                    description 'A plugin for Gradle that uses launch4j to create windows .exe file for java applications. '
+                    url "http://code.google.com/p/gradle-launch4j/"
+                    scm {
+                        url 'http://code.google.com/p/gradle-launch4j/source/browse/'
+                        connection 'scm:hg:https://code.google.com/p/gradle-launch4j'
+                        developerConnection 'scm:hg:https://code.google.com/p/gradle-launch4j'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'crotwell'
+                            name 'Philip Crotwell'
+                            email 'crotwell@seis.sc.edu'
+                        }
+                    }
+                }
+            }
+
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+            artifact groovydocJar {
+                classifier "javadoc"
+            }
         }
-        ivy {
-            url "file:../ivyRepo"
+    }
+    repositories {
+        maven {
+            url "file:../mavenRepo/"
         }
     }
 }
 
+signing {
+    sign configurations.archives
+}
+
+import org.gradle.plugins.signing.Sign
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { it instanceof Sign }) {
+        // Use Java 6's console to read from the console (no good for a CI environment)
+        Console console = System.console()
+        console.printf "\n\nWe have to sign some things in this build.\n\nPlease enter your signing details.\n\n"
+
+        def password = console.readPassword("PGP Private Key Password: ")
+
+        allprojects { ext."signing.password" = password }
+
+        console.printf "\nThanks.\n\n"
+    }
+}
+
+//createReleaseTag.dependsOn publish
