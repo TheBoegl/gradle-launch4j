@@ -1,6 +1,6 @@
 
 group "edu.sc.seis.gradle"
-version "1.0.6-SNAPSHOT"
+version "1.0.6"
 
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
