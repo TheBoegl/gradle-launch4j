@@ -88,6 +88,10 @@ The values configurable within the launch4j extension along with their defaults 
  *    Integer initialHeapPercent
  *    Integer maxHeapSize
  *    Integer maxHeapPercent
+ *    String splashFileName
+ *    boolean splashWaitForWindows = true
+ *    Integer splashTimeout = 60
+ *    boolean splashTimeoutError = true
 
 Mac OSX Lion and Later
 ======================

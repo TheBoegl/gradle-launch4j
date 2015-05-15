@@ -55,6 +55,11 @@ class Launch4jPluginExtension implements Serializable {
 	Integer maxHeapSize
 	Integer maxHeapPercent
 
+    String splashFileName
+    boolean splashWaitForWindows = true
+    Integer splashTimeout = 60
+    boolean splashTimeoutError = true
+
     public File getXmlOutFileForProject(Project project) {
         return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
     }
@@ -105,6 +110,10 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((internalName == null) ? 0 : internalName.hashCode());
         result = prime * result + (bundledJre64Bit ? 1231 : 1237);
         result = prime * result + (bundledJreAsFallback ? 1231 : 1237);
+        result = prime * result + ((splashFileName == null) ? 0 : splashFileName.hashCode());
+        result = prime * result + (splashWaitForWindows ? 1231 : 1237);
+        result = prime * result + ((splashTimeout == null) ? 0 : splashTimeout.hashCode());
+        result = prime * result + (splashTimeoutError ? 1231 : 1237);
 
 		result = HashCodeHelper.updateHash(result, bundledJrePath);
 		result = HashCodeHelper.updateHash(result, jreMinVersion);
@@ -269,6 +278,18 @@ class Launch4jPluginExtension implements Serializable {
 		if ((jreRuntimeBits == null && other.jreRuntimeBits != null) || !jreRuntimeBits.equals(other.jreRuntimeBits)) {
 			return false;
 		}
+		if ((splashFileName == null && other.splashFileName != null) || !splashFileName.equals(other.splashFileName)) {
+			return false;
+		}
+        if (splashWaitForWindows != other.splashWaitForWindows) {
+            return false;
+        }
+        if ((splashTimeout == null && other.splashTimeout != null) || !splashTimeout.equals(other.splashTimeout)) {
+            return false;
+        }
+        if (splashTimeoutError != other.splashTimeoutError) {
+            return false;
+        }
 		
 		if ((mutexName == null && other.mutexName != null) || !mutexName.equals(other.mutexName)) {
 			return false;

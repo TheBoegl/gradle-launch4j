@@ -71,6 +71,14 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 if (configuration.maxHeapPercent != null)
                     maxHeapPercent(configuration.maxHeapPercent)
             }
+            if (configuration.splashFileName != null && configuration.splashTimeout != null) {
+                splash() {
+                    xml.file(configuration.splashFileName)
+                    waitForWindow(configuration.splashWaitForWindows)
+                    timeout(configuration.splashTimeout)
+                    timeoutErr(configuration.splashTimeoutError)
+                }
+            }
             versionInfo() {
                 fileVersion(parseDotVersion(configuration.version) )
                 txtFileVersion(configuration.textVersion)
