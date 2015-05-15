@@ -64,7 +64,8 @@ The values configurable within the launch4j extension along with their defaults 
  *    String manifest = ""
  *    String icon = ""
  *    String version = project.version
- *    String copyright = "unknown" 
+ *    String copyright = "unknown"
+ *    String companyName = ""
  *    String opt = ""
  *    String bundledJrePath
  *    String jreMinVersion = project.targetCompatibility
@@ -102,3 +103,4 @@ Download the latest binutils (2.22 as of 7 Feb 2012) from [http://www.gnu.org/so
 
 
 The new ld and windres should now work with Launch4J on Lion. Note that ld seems to be compiled to *ld-new* by default in binutils, so you need to make sure you rename as well as copying to the correct location.
+

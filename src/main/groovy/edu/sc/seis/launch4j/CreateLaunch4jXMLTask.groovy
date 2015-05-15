@@ -59,8 +59,9 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 productVersion(parseDotVersion(configuration.version) )
                 txtProductVersion(configuration.version )
                 productName(project.name )
+                companyName(configuration.companyName )
                 internalName(project.name )
-                originalFilename(configuration.outfile )
+                originalFilename(configuration.outfile)
             }
 
             jre() {
