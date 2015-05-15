@@ -10,7 +10,7 @@ apply plugin: 'maven-publish'
 
 dependencies {
     compile gradleApi()
-    groovy localGroovy()
+    compile localGroovy()
 }
 
 
