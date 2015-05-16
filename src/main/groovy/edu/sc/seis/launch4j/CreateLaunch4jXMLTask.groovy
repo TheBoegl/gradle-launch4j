@@ -48,19 +48,6 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                     classpath.each() { val -> cp(val) }
                 }
             }
-            versionInfo() {
-                fileVersion(parseDotVersion(configuration.version) )
-                txtFileVersion(configuration.textVersion)
-                fileDescription(configuration.description)
-                copyright(configuration.copyright)
-                productVersion(parseDotVersion(configuration.version) )
-                txtProductVersion(configuration.textVersion)
-                productName(configuration.productName)
-                companyName(configuration.companyName )
-                internalName(configuration.internalName)
-                originalFilename(configuration.outfile)
-            }
-
             jre() {
                 if(configuration.bundledJrePath != null)
                     xml.path(configuration.bundledJrePath)
@@ -83,6 +70,18 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
                 if (configuration.maxHeapPercent != null)
                     maxHeapPercent(configuration.maxHeapPercent)
+            }
+            versionInfo() {
+                fileVersion(parseDotVersion(configuration.version) )
+                txtFileVersion(configuration.textVersion)
+                fileDescription(configuration.description)
+                copyright(configuration.copyright)
+                productVersion(parseDotVersion(configuration.version) )
+                txtProductVersion(configuration.textVersion)
+                productName(configuration.productName)
+                companyName(configuration.companyName )
+                internalName(configuration.internalName)
+                originalFilename(configuration.outfile)
             }
 
             if (configuration.messagesStartupError != null ||
