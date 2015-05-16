@@ -54,7 +54,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
  *    String outfile = project.name+'.exe'
  *    String errTitle = ""
- *    boolean cmdLine = false
+ *    String cmdLine = ""
  *    String chdir = '.'
  *    String priority = 'normal'
  *    String downloadUrl = ""
