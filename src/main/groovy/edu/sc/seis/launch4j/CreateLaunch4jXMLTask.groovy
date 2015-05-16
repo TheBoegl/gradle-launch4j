@@ -30,8 +30,9 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         def classpath = project.configurations.runtime.collect { "lib/${it.name}" }
         def file = getXmlOutFile()
         file.parentFile.mkdirs()
-        def writer = new BufferedWriter(new FileWriter(file))
+        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
         def xml = new MarkupBuilder(writer)
+        xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
         xml.launch4jConfig() {
             dontWrapJar(configuration.dontWrapJar)
             headerType(configuration.headerType)
