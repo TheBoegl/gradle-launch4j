@@ -49,15 +49,11 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 }
             }
             jre() {
-                if(configuration.bundledJrePath != null)
-                    xml.path(configuration.bundledJrePath)
+                xml.path(configuration.bundledJrePath != null ? configuration.bundledJrePath : "")
                 bundledJre64Bit(configuration.bundledJre64Bit)
                 bundledJreAsFallback(configuration.bundledJreAsFallback)
-                if (configuration.jreMinVersion != null)
-                    minVersion(configuration.jreMinVersion)
-
-                if (configuration.jreMaxVersion != null)
-                    maxVersion(configuration.jreMaxVersion)
+                minVersion(configuration.jreMinVersion != null ? configuration.jreMinVersion : "")
+                maxVersion(configuration.jreMaxVersion != null ? configuration.jreMaxVersion : "")
                 jdkPreference(configuration.jdkPreference)
                 runtimeBits(configuration.jreRuntimeBits)
 
