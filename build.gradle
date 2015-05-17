@@ -4,6 +4,7 @@ version "1.0.6"
 
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
