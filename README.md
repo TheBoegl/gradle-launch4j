@@ -59,7 +59,6 @@ The values configurable within the launch4j extension along with their defaults 
  *    String priority = 'normal'
  *    String downloadUrl = "http://java.com/download"
  *    String supportUrl = ""
- *    boolean customProcName = false
  *    boolean stayAlive = false
  *    String manifest = ""
  *    String icon = ""

@@ -38,7 +38,6 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             priority(configuration.priority)
             downloadUrl(configuration.downloadUrl)
             supportUrl(configuration.supportUrl)
-            customProcName(configuration.customProcName)
             stayAlive(configuration.stayAlive)
             manifest(configuration.manifest)
             icon(configuration.icon)
