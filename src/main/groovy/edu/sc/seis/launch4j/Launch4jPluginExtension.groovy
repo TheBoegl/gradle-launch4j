@@ -39,6 +39,8 @@ class Launch4jPluginExtension implements Serializable {
     boolean bundledJreAsFallback = false
 	String jreMinVersion
 	String jreMaxVersion
+    String jdkPreference = "preferJre"
+    String jreRuntimeBits = "64/32"
 	
 	String mutexName
 	String windowTitle
@@ -107,7 +109,9 @@ class Launch4jPluginExtension implements Serializable {
 		result = HashCodeHelper.updateHash(result, bundledJrePath);
 		result = HashCodeHelper.updateHash(result, jreMinVersion);
 		result = HashCodeHelper.updateHash(result, jreMaxVersion);
-		
+		result = HashCodeHelper.updateHash(result, jdkPreference);
+		result = HashCodeHelper.updateHash(result, jreRuntimeBits);
+
 		result = HashCodeHelper.updateHash(result, mutexName);
 		result = HashCodeHelper.updateHash(result, windowTitle);
 		
@@ -257,6 +261,12 @@ class Launch4jPluginExtension implements Serializable {
 			return false;
 		}
 		if ((jreMaxVersion == null && other.jreMaxVersion != null) || !jreMaxVersion.equals(other.jreMaxVersion)) {
+			return false;
+		}
+		if ((jdkPreference == null && other.jdkPreference != null) || !jdkPreference.equals(other.jdkPreference)) {
+			return false;
+		}
+		if ((jreRuntimeBits == null && other.jreRuntimeBits != null) || !jreRuntimeBits.equals(other.jreRuntimeBits)) {
 			return false;
 		}
 		

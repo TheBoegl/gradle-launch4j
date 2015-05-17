@@ -76,6 +76,8 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean bundledJreAsFallback = false
  *    String jreMinVersion = project.targetCompatibility
  *    String jreMaxVersion
+ *    String jdkPreference = "preferJre"
+ *    String jreRuntimeBits = "64/32"
  *    String mutexName
  *    String windowTitle
  *    String messagesStartupError

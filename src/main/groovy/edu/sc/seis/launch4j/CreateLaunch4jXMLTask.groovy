@@ -58,6 +58,8 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
                 if (configuration.jreMaxVersion != null)
                     maxVersion(configuration.jreMaxVersion)
+                jdkPreference(configuration.jdkPreference)
+                runtimeBits(configuration.jreRuntimeBits)
 
                 if (configuration.opt.length() != 0) opt(configuration.opt)
 
