@@ -1,15 +1,9 @@
 package edu.sc.seis.launch4j
 
-import java.io.File;
-
-import org.gradle.api.internal.ConventionTask
-
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Project;
-import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -48,9 +42,11 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             stayAlive(configuration.stayAlive)
             manifest(configuration.manifest)
             icon(configuration.icon)
-            classPath() {
-                mainClass(configuration.mainClassName)
-                classpath.each() { val -> cp(val ) }
+            if (!configuration.dontWrapJar) {
+                classPath() {
+                    mainClass(configuration.mainClassName)
+                    classpath.each() { val -> cp(val) }
+                }
             }
             versionInfo() {
                 fileVersion(parseDotVersion(configuration.version) )
