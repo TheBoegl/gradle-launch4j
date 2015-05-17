@@ -33,6 +33,9 @@ class Launch4jPluginExtension implements Serializable {
     String copyright = "unknown"
     String opt = ""
     String companyName = ""
+    String description
+    String productName
+    String internalName
 
 	String bundledJrePath
 	String jreMinVersion
@@ -60,6 +63,9 @@ class Launch4jPluginExtension implements Serializable {
         jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
         version = project.version
         textVersion = project.version
+        description = project.name
+        productName = project.name
+        internalName = project.name
         jreMinVersion = project.targetCompatibility
         while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
                 jreMinVersion = jreMinVersion+'.0'
@@ -93,7 +99,10 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((textVersion == null) ? 0 : textVersion.hashCode());
         result = prime * result + ((xmlFileName == null) ? 0 : xmlFileName.hashCode());
         result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
-		
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((productName == null) ? 0 : productName.hashCode());
+        result = prime * result + ((internalName == null) ? 0 : internalName.hashCode());
+
 		result = HashCodeHelper.updateHash(result, bundledJrePath);
 		result = HashCodeHelper.updateHash(result, jreMinVersion);
 		result = HashCodeHelper.updateHash(result, jreMaxVersion);
@@ -226,7 +235,15 @@ class Launch4jPluginExtension implements Serializable {
         if ((companyName == null && other.companyName != null) || !companyName.equals(other.companyName)) {
             return false;
         }
-			
+        if ((description == null && other.description != null) || !description.equals(other.description)) {
+            return false;
+        }
+        if ((productName == null && other.productName != null) || !productName.equals(other.productName)) {
+            return false;
+        }
+        if ((internalName == null && other.internalName != null) || !internalName.equals(other.internalName)) {
+            return false;
+        }
 	    if ((bundledJrePath == null && other.bundledJrePath != null) || !bundledJrePath.equals(other.bundledJrePath)) {
 	        return false;
         }    
