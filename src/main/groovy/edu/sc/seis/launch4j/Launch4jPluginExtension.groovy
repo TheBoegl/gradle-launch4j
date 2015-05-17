@@ -1,12 +1,9 @@
 
 package edu.sc.seis.launch4j
 
-import java.io.File;
-
-import org.codehaus.groovy.util.HashCodeHelper;
+import org.codehaus.groovy.util.HashCodeHelper
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPlugin;
-
+import org.gradle.api.plugins.JavaPlugin
 
 class Launch4jPluginExtension implements Serializable {
 
@@ -53,14 +50,14 @@ class Launch4jPluginExtension implements Serializable {
 	Integer initialHeapPercent
 	Integer maxHeapSize
 	Integer maxHeapPercent
-	
+
     public File getXmlOutFileForProject(Project project) {
         return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
     }
  
     void initExtensionDefaults(Project project) {
         outfile = new File(project.name+'.exe')
-        jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
+        jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName
         version = project.version
         textVersion = project.version
         description = project.name

@@ -51,7 +51,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String mainClassName
  *    boolean dontWrapJar = false
  *    String headerType = "gui"
- *    String jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
+ *    String jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName
  *    String outfile = project.name+'.exe'
  *    String errTitle = ""
  *    String cmdLine = ""
