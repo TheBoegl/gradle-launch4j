@@ -29,6 +29,7 @@ class Launch4jPluginExtension implements Serializable {
     String manifest = ""
     String icon = ""
     String version = ""
+    String textVersion = ""
     String copyright = "unknown"
     String opt = ""
     String companyName = ""
@@ -58,6 +59,7 @@ class Launch4jPluginExtension implements Serializable {
         outfile = new File(project.name+'.exe')
         jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files.getSingleFile().name
         version = project.version
+        textVersion = project.version
         jreMinVersion = project.targetCompatibility
         while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
                 jreMinVersion = jreMinVersion+'.0'
@@ -88,6 +90,7 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + (stayAlive ? 1231 : 1237);
         result = prime * result + ((supportUrl == null) ? 0 : supportUrl.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
+        result = prime * result + ((textVersion == null) ? 0 : textVersion.hashCode());
         result = prime * result + ((xmlFileName == null) ? 0 : xmlFileName.hashCode());
         result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
 		
@@ -210,7 +213,10 @@ class Launch4jPluginExtension implements Serializable {
                 return false;
         } else if (!version.equals(other.version))
             return false;
-			
+        if ((textVersion == null && other.textVersion != null) || !textVersion.equals(other.textVersion)) {
+            return false;
+        }
+
         if (xmlFileName == null) {
             if (other.xmlFileName != null)
                 return false;

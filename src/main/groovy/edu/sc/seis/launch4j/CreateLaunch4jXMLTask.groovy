@@ -54,11 +54,11 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             }
             versionInfo() {
                 fileVersion(parseDotVersion(configuration.version) )
-                txtFileVersion(configuration.version )
+                txtFileVersion(configuration.textVersion)
                 fileDescription(project.name)
                 copyright(configuration.copyright)
                 productVersion(parseDotVersion(configuration.version) )
-                txtProductVersion(configuration.version )
+                txtProductVersion(configuration.textVersion)
                 productName(project.name )
                 companyName(configuration.companyName )
                 internalName(project.name )
