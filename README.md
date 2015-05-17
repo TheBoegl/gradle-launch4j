@@ -60,6 +60,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String downloadUrl = "http://java.com/download"
  *    String supportUrl = ""
  *    boolean stayAlive = false
+ *    boolean restartOnCrash = false
  *    String manifest = ""
  *    String icon = ""
  *    String version = project.version

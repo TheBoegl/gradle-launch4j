@@ -39,6 +39,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             downloadUrl(configuration.downloadUrl)
             supportUrl(configuration.supportUrl)
             stayAlive(configuration.stayAlive)
+            restartOnCrash(configuration.restartOnCrash)
             manifest(configuration.manifest)
             icon(configuration.icon)
             if (!configuration.dontWrapJar) {

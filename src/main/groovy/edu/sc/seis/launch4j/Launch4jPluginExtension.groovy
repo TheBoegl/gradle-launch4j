@@ -22,6 +22,7 @@ class Launch4jPluginExtension implements Serializable {
     String downloadUrl = "http://java.com/download"
     String supportUrl = ""
     boolean stayAlive = false
+    boolean restartOnCrash = false
     String manifest = ""
     String icon = ""
     String version = ""
@@ -75,6 +76,7 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((chdir == null) ? 0 : chdir.hashCode());
         result = prime * result + (cmdLine ? 1231 : 1237);
         result = prime * result + ((copyright == null) ? 0 : copyright.hashCode());
+        result = prime * result + (restartOnCrash ? 1231 : 1237);
         result = prime * result + (dontWrapJar ? 1231 : 1237);
         result = prime * result + ((downloadUrl == null) ? 0 : downloadUrl.hashCode());
         result = prime * result + ((errTitle == null) ? 0 : errTitle.hashCode());
@@ -140,7 +142,8 @@ class Launch4jPluginExtension implements Serializable {
         } 
 		else if (!copyright.equals(other.copyright))
             return false;
-			
+        if (restartOnCrash != other.restartOnCrash)
+            return false;
         if (dontWrapJar != other.dontWrapJar)
             return false;
         if (downloadUrl == null) {
