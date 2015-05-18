@@ -51,6 +51,8 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             jre() {
                 if(configuration.bundledJrePath != null)
                     xml.path(configuration.bundledJrePath)
+                bundledJre64Bit(configuration.bundledJre64Bit)
+                bundledJreAsFallback(configuration.bundledJreAsFallback)
                 if (configuration.jreMinVersion != null)
                     minVersion(configuration.jreMinVersion)
 

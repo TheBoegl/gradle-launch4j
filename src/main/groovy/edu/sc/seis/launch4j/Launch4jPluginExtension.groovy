@@ -35,6 +35,8 @@ class Launch4jPluginExtension implements Serializable {
     String internalName
 
 	String bundledJrePath
+    boolean bundledJre64Bit = false
+    boolean bundledJreAsFallback = false
 	String jreMinVersion
 	String jreMaxVersion
 	
@@ -99,6 +101,8 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((productName == null) ? 0 : productName.hashCode());
         result = prime * result + ((internalName == null) ? 0 : internalName.hashCode());
+        result = prime * result + (bundledJre64Bit ? 1231 : 1237);
+        result = prime * result + (bundledJreAsFallback ? 1231 : 1237);
 
 		result = HashCodeHelper.updateHash(result, bundledJrePath);
 		result = HashCodeHelper.updateHash(result, jreMinVersion);
@@ -242,7 +246,13 @@ class Launch4jPluginExtension implements Serializable {
         }
 	    if ((bundledJrePath == null && other.bundledJrePath != null) || !bundledJrePath.equals(other.bundledJrePath)) {
 	        return false;
-        }    
+        }
+        if (bundledJre64Bit != other.bundledJre64Bit) {
+            return false;
+        }
+        if (bundledJreAsFallback != other.bundledJre64Bit) {
+            return false;
+        }
 		if ((jreMinVersion == null && other.jreMinVersion != null) || !jreMinVersion.equals(other.jreMinVersion)) {
 			return false;
 		}

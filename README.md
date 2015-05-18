@@ -72,6 +72,8 @@ The values configurable within the launch4j extension along with their defaults 
  *    String internalName = project.name
  *    String opt = ""
  *    String bundledJrePath
+ *    boolean bundledJre64Bit = false
+ *    boolean bundledJreAsFallback = false
  *    String jreMinVersion = project.targetCompatibility
  *    String jreMaxVersion
  *    String mutexName
