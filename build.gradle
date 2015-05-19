@@ -1,7 +1,15 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
+    }
+}
 
-group "edu.sc.seis.gradle"
-version "1.0.7"
-
+apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -18,6 +26,9 @@ repositories {
     mavenCentral()
 }
 
+group "edu.sc.seis.gradle"
+version "1.0.7"
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
 }
@@ -33,6 +44,19 @@ artifacts {
     archives sourceJar
 }
 
+pluginBundle {
+    website = 'https://github.com/TheBoegl/gradle-launch4j'
+    vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
+    description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
+    plugins {
+        launch4j {
+            id = 'edu.sc.seis.launch4j'
+            displayName = 'launch4j gradle plugin'
+            tags = ['launch4j', 'executable', ]
+        }
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -42,11 +66,11 @@ publishing {
                     resolveStrategy = Closure.DELEGATE_FIRST
                     name "${project.name}"
                     description 'A plugin for Gradle that uses launch4j to create windows .exe file for java applications. '
-                    url "http://code.google.com/p/gradle-launch4j/"
+                    url "https://github.com/TheBoegl/gradle-launch4j/"
                     scm {
-                        url 'http://code.google.com/p/gradle-launch4j/source/browse/'
-                        connection 'scm:hg:https://code.google.com/p/gradle-launch4j'
-                        developerConnection 'scm:hg:https://code.google.com/p/gradle-launch4j'
+                        url 'https://github.com/TheBoegl/gradle-launch4j/'
+                        connection 'scm:git:git://github.com/TheBoegl/gradle-launch4j.git'
+                        developerConnection 'scm:git:git@github.com:TheBoegl/gradle-launch4j.git'
                     }
                     licenses {
                         license {
@@ -60,7 +84,22 @@ publishing {
                             id 'crotwell'
                             name 'Philip Crotwell'
                             email 'crotwell@seis.sc.edu'
+                            roles {
+                                role 'Founder'
+                            }
                         }
+                        developer {
+                            id 'theboegl'
+                            name 'Sebastian Bögl'
+                            email 'info@sebastianboegl.de'
+                            roles {
+                                role 'Developer'
+                            }
+                        }
+                    }
+                    issueManagement {
+                        system 'github'
+                        url 'https://github.com/TheBoegl/gradle-launch4j/issues'
                     }
                 }
             }

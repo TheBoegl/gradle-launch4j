@@ -21,26 +21,37 @@ Configuration
 The configuration follows the structure of the launch4j xml file. See the launch4j documentation for the meanings. The gradle-launch4j plugin tries to pick sensible defaults based on the project. The only required
 value is the mainClassName.
 
-An example configuration within your build.gradle might look like:
+An example configuration within your build.gradle for use in all Gradle versions might look like:
 
-	apply plugin: 'launch4j'
-	
+    buildscript {
+      repositories {
+        maven {
+          url "https://plugins.gradle.org/m2/"
+        }
+      }
+      dependencies {
+        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.0.7"
+      }
+    }
+    
+    apply plugin: "edu.sc.seis.launch4j"
+    
 	launch4j {
-	    mainClassName = "com.example.myapp.Start"
-	    icon = 'icons/myApp.ico'
-	}
-	
-	
-	buildscript {
-	    repositories {
-	        mavenCentral()
-	    }
-	
-	    dependencies {
-	        classpath 'edu.sc.seis.gradle:launch4j:1.0.6'
-	    }
+		mainClassName = "com.example.myapp.Start"
+		icon = 'icons/myApp.ico'
 	}
 
+The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
+
+    plugins {
+      id "edu.sc.seis.launch4j" version "1.0.7"
+    }
+    
+	launch4j {
+		mainClassName = "com.example.myapp.Start"
+		icon = 'icons/myApp.ico'
+	}
+    
 See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plugins.html#customPluginStandalone) for more information on how to use a custom plugin.
 
 The values configurable within the launch4j extension along with their defaults are:
