@@ -41,7 +41,7 @@ An example configuration within your build.gradle might look like:
 	    }
 	}
 
-See the [http://gradle.org/docs/current/userguide/custom_plugins.html#customPluginStandalone](Gradle User guide) for more information on how to use a custom plugin.
+See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plugins.html#customPluginStandalone) for more information on how to use a custom plugin.
 
 The values configurable within the launch4j extension along with their defaults are:
 
