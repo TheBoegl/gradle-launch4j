@@ -81,6 +81,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String description = project.name
  *    String productName = project.name
  *    String internalName = project.name
+ *    String trademarks
  *    String opt = ""
  *    String bundledJrePath
  *    boolean bundledJre64Bit = false

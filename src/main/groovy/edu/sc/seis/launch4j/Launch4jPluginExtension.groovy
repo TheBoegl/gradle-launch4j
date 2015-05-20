@@ -33,6 +33,7 @@ class Launch4jPluginExtension implements Serializable {
     String description
     String productName
     String internalName
+    String trademarks
 
 	String bundledJrePath
     boolean bundledJre64Bit = false
@@ -108,6 +109,7 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((productName == null) ? 0 : productName.hashCode());
         result = prime * result + ((internalName == null) ? 0 : internalName.hashCode());
+        result = prime * result + ((trademarks == null) ? 0 : trademarks.hashCode());
         result = prime * result + (bundledJre64Bit ? 1231 : 1237);
         result = prime * result + (bundledJreAsFallback ? 1231 : 1237);
         result = prime * result + ((splashFileName == null) ? 0 : splashFileName.hashCode());
@@ -255,6 +257,9 @@ class Launch4jPluginExtension implements Serializable {
             return false;
         }
         if ((internalName == null && other.internalName != null) || !internalName.equals(other.internalName)) {
+            return false;
+        }
+        if ((trademarks == null && other.trademarks != null) || !trademarks.equals(other.trademarks)) {
             return false;
         }
 	    if ((bundledJrePath == null && other.bundledJrePath != null) || !bundledJrePath.equals(other.bundledJrePath)) {
