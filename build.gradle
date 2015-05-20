@@ -91,7 +91,7 @@ publishing {
                         }
                         developer {
                             id 'theboegl'
-                            name 'Sebastian Bögl'
+                            name 'Sebastian BÃ¶gl'
                             email 'info@sebastianboegl.de'
                             roles {
                                 role 'Lead developer'
