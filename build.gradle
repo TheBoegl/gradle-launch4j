@@ -52,7 +52,7 @@ pluginBundle {
         launch4j {
             id = 'edu.sc.seis.launch4j'
             displayName = 'launch4j gradle plugin'
-            tags = ['launch4j', 'executable', ]
+            tags = ['launch4j', 'executable', 'wrapper']
         }
     }
 }
