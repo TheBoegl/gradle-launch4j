@@ -103,6 +103,8 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean splashWaitForWindows = true
  *    Integer splashTimeout = 60
  *    boolean splashTimeoutError = true
+ 
+ Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs.html#Configuration_file) for valid options.
 
 Mac OSX Lion and Later
 ======================
