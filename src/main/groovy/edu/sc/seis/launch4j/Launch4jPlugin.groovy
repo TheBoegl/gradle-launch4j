@@ -22,7 +22,6 @@ class Launch4jPlugin implements Plugin<Project> {
     Launch4jPluginExtension pluginConvention;
 
     def void apply(Project project) {
-        project.plugins.apply(JavaPlugin)
         project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
                 .setDescription('The launch4j configuration for this project.')
         Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension()

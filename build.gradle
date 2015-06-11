@@ -28,7 +28,7 @@ repositories {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "1.1.0"
+version "1.1.1-SNAPSHOT"
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
