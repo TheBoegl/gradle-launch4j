@@ -74,11 +74,11 @@ class Launch4jPlugin implements Plugin<Project> {
 
     private CopySpec configureDistSpec(Project project) {
         CopySpec distSpec = project.copySpec {}
-        def jar = project.tasks[JavaPlugin.JAR_TASK_NAME]
-
         distSpec.with {
-            from(jar)
-            from(project.configurations.runtime)
+            if (project.plugins.hasPlugin('java')) {
+                from(project.tasks[JavaPlugin.JAR_TASK_NAME])
+                from(project.configurations.runtime)
+            }
         }
 
         return distSpec
