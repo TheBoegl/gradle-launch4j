@@ -21,7 +21,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
     @TaskAction
     def void writeXmlConfig() {
         if (configuration == null) configuration = project.launch4j
-        def classpath = project.configurations.runtime.collect { "lib/${it.name}" }
+        def classpath = project.plugins.hasPlugin('java') ? project.configurations.runtime.collect { "lib/${it.name}" } : []
         def file = getXmlOutFile()
         file.parentFile.mkdirs()
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
