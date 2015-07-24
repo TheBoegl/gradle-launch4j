@@ -2,6 +2,7 @@
 package edu.sc.seis.launch4j
 
 import org.codehaus.groovy.util.HashCodeHelper
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 
@@ -74,7 +75,11 @@ class Launch4jPluginExtension implements Serializable {
         description = project.name
         productName = project.name
         internalName = project.name
-        jreMinVersion = project.targetCompatibility
+        if (project.hasProperty("targetCompatibility")) {
+            jreMinVersion = project.targetCompatibility
+        } else {
+            jreMinVersion = JavaVersion.current()
+        }
         while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
                 jreMinVersion = jreMinVersion+'.0'
             }

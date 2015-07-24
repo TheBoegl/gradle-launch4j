@@ -30,7 +30,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.1.2"
+        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.1.3"
       }
     }
     
@@ -44,7 +44,7 @@ An example configuration within your build.gradle for use in all Gradle versions
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
     plugins {
-      id "edu.sc.seis.launch4j" version "1.1.2"
+      id "edu.sc.seis.launch4j" version "1.1.3"
     }
     
 	launch4j {
@@ -85,7 +85,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String bundledJrePath
  *    boolean bundledJre64Bit = false
  *    boolean bundledJreAsFallback = false
- *    String jreMinVersion = project.targetCompatibility
+ *    String jreMinVersion = project.targetCompatibility or the current java version, if the property is not set
  *    String jreMaxVersion
  *    String jdkPreference = "preferJre"
  *    String jreRuntimeBits = "64/32"
