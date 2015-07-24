@@ -85,7 +85,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String bundledJrePath
  *    boolean bundledJre64Bit = false
  *    boolean bundledJreAsFallback = false
- *    String jreMinVersion = project.targetCompatibility
+ *    String jreMinVersion = project.targetCompatibility or the current java version, if the property is not set
  *    String jreMaxVersion
  *    String jdkPreference = "preferJre"
  *    String jreRuntimeBits = "64/32"
