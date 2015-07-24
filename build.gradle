@@ -122,7 +122,9 @@ publishing {
 }
 
 signing {
-    sign configurations.archives
+    if (System.console()) {
+        sign configurations.archives
+    }
 }
 
 import org.gradle.plugins.signing.Sign
