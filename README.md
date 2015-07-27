@@ -30,7 +30,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.1.4"
+        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.1.5"
       }
     }
     
@@ -44,7 +44,7 @@ An example configuration within your build.gradle for use in all Gradle versions
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
     plugins {
-      id "edu.sc.seis.launch4j" version "1.1.4"
+      id "edu.sc.seis.launch4j" version "1.1.5"
     }
     
 	launch4j {
