@@ -7,9 +7,10 @@ The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) to 
 Tasks
 -----
 
-There are 4 tasks:
+There are 5 tasks:
   * generateXmlConfig - Creates XML configuration file used by launch4j.
   * copyL4jLib - Copies the project dependency jars in the lib directory.
+  * copyL4jBinaryLibs - Copies the launch4j jars in the bin and bin/lib directories.
   * createExe - Runs launch4j to generate an .exe file.
   * launch4j - Placeholder task that depends on the above.
 
@@ -57,6 +58,7 @@ See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plug
 The values configurable within the launch4j extension along with their defaults are:
 
  *    String launch4jCmd = "launch4j"
+ *    boolean externalLaunch4j = false
  *    String outputDir = "launch4j"
  *    String xmlFileName = "launch4j.xml"
  *    String mainClassName

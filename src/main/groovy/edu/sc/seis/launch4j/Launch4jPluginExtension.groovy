@@ -9,6 +9,7 @@ import org.gradle.api.plugins.JavaPlugin
 class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
+    boolean externalLaunch4j = false
     String outputDir = "launch4j"
     String xmlFileName = "launch4j.xml"
     String mainClassName
@@ -94,6 +95,7 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((copyright == null) ? 0 : copyright.hashCode());
         result = prime * result + (restartOnCrash ? 1231 : 1237);
         result = prime * result + (dontWrapJar ? 1231 : 1237);
+        result = prime * result + (externalLaunch4j ? 1231 : 1237);
         result = prime * result + ((downloadUrl == null) ? 0 : downloadUrl.hashCode());
         result = prime * result + ((errTitle == null) ? 0 : errTitle.hashCode());
         result = prime * result + ((headerType == null) ? 0 : headerType.hashCode());
@@ -169,6 +171,8 @@ class Launch4jPluginExtension implements Serializable {
         if (restartOnCrash != other.restartOnCrash)
             return false;
         if (dontWrapJar != other.dontWrapJar)
+            return false;
+        if (externalLaunch4j != other.externalLaunch4j)
             return false;
         if (downloadUrl == null) {
             if (other.downloadUrl != null)
