@@ -3,6 +3,8 @@ package edu.sc.seis.launch4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.RelativePath
@@ -16,81 +18,89 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String LAUNCH4J_PLUGIN_NAME = "launch4j"
     static final String LAUNCH4J_GROUP = LAUNCH4J_PLUGIN_NAME
 
+    static final String LAUNCH4J_EXTENSION_NAME = LAUNCH4J_PLUGIN_NAME
     static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_XML_GENERATE_NAME = "generateXmlConfig"
     static final String TASK_LIB_COPY_NAME = "copyL4jLib"
-    static final String TASK_L4j_COPY_NAME = "copyL4jBinaryLibs"
-    static final String TASK_L4j_UNZIP_NAME = "unzipL4jWorkingBinaries"
+    static final String TASK_L4j_COPY_NAME = "copyL4jBinLib"
+    static final String TASK_L4j_UNZIP_NAME = "unzipL4jBin"
     static final String TASK_RUN_NAME = "createExe"
-    static final String TASK_RUN_LIB_NAME = "createExeFromJar"
+    static final String TASK_RUN_BIN_NAME = "createExeWithBin"
+    static final String TASK_RUN_LIB_NAME = "createExeWithJar"
     static final String TASK_LAUNCH4J_NAME = "launch4j"
-    Launch4jPluginExtension pluginConvention;
+    static final String ARTIFACT_VERSION = "3.8.0"
+
+    private Project project
 
     def void apply(Project project) {
-        def config = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
-                .setDescription('The launch4j configuration for this project.')
-        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension()
-        pluginExtension.initExtensionDefaults(project)
-        project.extensions.launch4j = pluginExtension
-        def l4jArtifact = 'net.sf.launch4j:launch4j:latest.release'
-        project.dependencies.add(LAUNCH4J_CONFIGURATION_NAME, "${l4jArtifact}")
+        this.project = project
+        Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
+                .setTransitive(true).setDescription('The launch4j configuration for this project.')
+        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension(project)
+        project.extensions.add(LAUNCH4J_EXTENSION_NAME, pluginExtension)
 
-        project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false).setTransitive(false)
-                .setDescription('The launch4j binary configuration for this project.')
+        Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
+                .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
+
+        def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
+        addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
         switch (OS.CURRENT) {
             case OS.Linux:
-                project.dependencies.add(LAUNCH4J_CONFIGURATION_NAME_BINARY, "${l4jArtifact}:workdir-linux")
+                addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
                 break
             case OS.Windows:
-                project.dependencies.add(LAUNCH4J_CONFIGURATION_NAME_BINARY, "${l4jArtifact}:workdir-win32")
+                addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
                 break
             case OS.MacOsX:
-                project.dependencies.add(LAUNCH4J_CONFIGURATION_NAME_BINARY, "${l4jArtifact}:workdir-mac")
+                addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
                 break
         }
-        config.exclude(group:'dsol')
-        config.exclude(group:'org.apache.batik')
-        Task xmlTask = addCreateLaunch4jXMLTask(project, pluginExtension)
-        Task copyTask = addCopyToLibTask(project, pluginExtension)
-        Task copyL4JTask = addCopyLaunch4JToLibTask(project, pluginExtension)
-        Task unzipL4jTask = addUnzipLaunch4JWorkingBinariesTask(project, pluginExtension)
-        copyL4JTask.dependsOn(unzipL4jTask)
-        Task runTask = addRunLauch4jTask(project, pluginExtension)
-        runTask.dependsOn(copyTask)
-        runTask.dependsOn(copyL4JTask)
-        runTask.dependsOn(xmlTask)
-        Task runLibTask = addRunLauch4jLibTask(project, pluginExtension)
-        runLibTask.dependsOn(copyTask)
-        runLibTask.dependsOn(copyL4JTask)
-        runLibTask.dependsOn(xmlTask)
-        runTask.dependsOn(runLibTask)
-        Task l4jTask = addLaunch4jTask(project, pluginExtension)
+
+        /* initialize default tasks */
+        Task xmlTask = addCreateLaunch4jXMLTask(pluginExtension)
+        Task copyTask = addCopyToLibTask(pluginExtension)
+        Task runTask = addRunLaunch4jTask()
+        Task runBinaryTask = addRunLaunch4jBinTask(pluginExtension)
+        runBinaryTask.dependsOn(copyTask)
+        runBinaryTask.inputs.files xmlTask.outputs.files
+        runTask.dependsOn(runBinaryTask)
+        Task l4jTask = addLaunch4jTask(pluginExtension)
         l4jTask.dependsOn(runTask)
+
+        /* initialize tasks to retrieve and execute the launch4j jar and its dependencies */
+        Task copyL4JTask = addCopyLaunch4JToLibTask(pluginExtension)
+        Task unzipL4jTask = addUnzipLaunch4JWorkingBinariesTask(pluginExtension)
+        copyL4JTask.dependsOn(unzipL4jTask)
+        Task runLibTask = addRunLaunch4jLibTask(pluginExtension)
+        runLibTask.dependsOn(copyL4JTask)
+        runLibTask.dependsOn(copyTask)
+        runLibTask.inputs.files xmlTask.outputs.files
+        runTask.dependsOn(runLibTask)
     }
 
-    private Task addCreateLaunch4jXMLTask(Project project, Launch4jPluginExtension configuration) {
-        Task task = project.tasks.create(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
+    private Task addCreateLaunch4jXMLTask(Launch4jPluginExtension configuration) {
+        def task = project.tasks.create(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
         task.description = "Creates XML configuration file used by launch4j to create an windows exe."
         task.group = LAUNCH4J_GROUP
         task.inputs.property("project version", project.version)
         task.inputs.property("Launch4j extension", configuration)
-        task.outputs.file(project.file(configuration.xmlFileName))
+        task.outputs.file(project.file("${-> configuration.xmlFileName}"))
         task.configuration = configuration
         return task
     }
 
-    private Task addCopyToLibTask(Project project, Launch4jPluginExtension configuration) {
-        Sync task = project.tasks.create(TASK_LIB_COPY_NAME, Sync)
+    private Task addCopyToLibTask(Launch4jPluginExtension configuration) {
+        def task = project.tasks.create(TASK_LIB_COPY_NAME, Sync)
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
-        task.with configureDistSpec(project)
-        task.into { project.file("${project.buildDir}/${configuration.outputDir}/lib") }
+        task.with configureDistSpec()
+        task.into { project.file("${-> project.buildDir}/${-> configuration.outputDir}/lib") }
         return task
     }
 
-    private Task addCopyLaunch4JToLibTask(Project project, Launch4jPluginExtension configuration) {
-        Sync task = project.tasks.create(TASK_L4j_COPY_NAME, Sync)
+    private Task addCopyLaunch4JToLibTask(Launch4jPluginExtension configuration) {
+        def task = project.tasks.create(TASK_L4j_COPY_NAME, Sync)
         task.description = "Copies the launch4j jars in the bin and bin/lib directories."
         task.group = LAUNCH4J_GROUP
         task.onlyIf { !configuration.externalLaunch4j }
@@ -99,7 +109,7 @@ class Launch4jPlugin implements Plugin<Project> {
             from(project.configurations.getByName(LAUNCH4J_CONFIGURATION_NAME))
         }
         task.with distSpec
-        File destination = project.file("${->project.buildDir}/${->configuration.outputDir}/bin/lib")
+        File destination = project.file("${-> project.buildDir}/${-> configuration.outputDir}/bin/lib")
         File jarFile = project.file("${destination.parentFile}/launch4j.jar")
         task.outputs.file(jarFile)
         task.into { destination }
@@ -113,8 +123,8 @@ class Launch4jPlugin implements Plugin<Project> {
         return task
     }
 
-    private Task addUnzipLaunch4JWorkingBinariesTask(Project project, Launch4jPluginExtension configuration) {
-        Copy task = project.tasks.create(TASK_L4j_UNZIP_NAME, Copy)
+    private Task addUnzipLaunch4JWorkingBinariesTask(Launch4jPluginExtension configuration) {
+        def task = project.tasks.create(TASK_L4j_UNZIP_NAME, Copy)
         task.description = "Unzips the launch4j working binaries in the bin directory."
         task.group = LAUNCH4J_GROUP
         task.onlyIf { !configuration.externalLaunch4j }
@@ -146,27 +156,38 @@ class Launch4jPlugin implements Plugin<Project> {
         return task
     }
 
-    private Task addRunLauch4jTask(Project project, Launch4jPluginExtension configuration) {
-        def task = project.tasks.create(TASK_RUN_NAME, Exec)
-        task.description = "Runs launch4j to generate an .exe file"
+    private Task addRunLaunch4jTask() {
+        def task = project.tasks.create(TASK_RUN_NAME)
+        task.description = "Placeholder task to run launch4j to generate an .exe file"
         task.group = LAUNCH4J_GROUP
-        task.onlyIf { configuration.externalLaunch4j }
-        task.commandLine "${-> configuration.launch4jCmd}", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
-        task.workingDir "${->project.buildDir}/${->configuration.outputDir}"
         return task
     }
 
-    private Task addRunLauch4jLibTask(Project project, Launch4jPluginExtension configuration) {
+
+    private Task addRunLaunch4jBinTask(Launch4jPluginExtension configuration) {
+        def task = project.tasks.create(TASK_RUN_BIN_NAME, Exec)
+        task.description = "Runs the launch4j binary to generate an .exe file"
+        task.group = LAUNCH4J_GROUP
+        task.onlyIf { configuration.externalLaunch4j }
+        task.commandLine "${-> configuration.launch4jCmd}", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
+        task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
+        task.inputs.dir("${-> project.buildDir}/${-> configuration.outputDir}/lib")
+        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        return task
+    }
+
+    private Task addRunLaunch4jLibTask(Launch4jPluginExtension configuration) {
         def task = project.tasks.create(TASK_RUN_LIB_NAME, Exec)
         task.description = "Runs the launch4j jar to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         task.onlyIf { !configuration.externalLaunch4j }
         task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
-        task.workingDir "${->project.buildDir}/${->configuration.outputDir}"
+        task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
+        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
         return task
     }
-    
-    private Task addLaunch4jTask(Project project, Launch4jPluginExtension configuration) {
+
+    private Task addLaunch4jTask(Launch4jPluginExtension configuration) {
         def task = project.tasks.create(TASK_LAUNCH4J_NAME)
         task.description = "Placeholder task for tasks relating to creating .exe applications with launch4j"
         task.group = LAUNCH4J_GROUP
@@ -174,7 +195,7 @@ class Launch4jPlugin implements Plugin<Project> {
         return task
     }
 
-    private CopySpec configureDistSpec(Project project) {
+    private CopySpec configureDistSpec() {
         CopySpec distSpec = project.copySpec {}
         distSpec.with {
             if (project.plugins.hasPlugin('java')) {
@@ -184,6 +205,12 @@ class Launch4jPlugin implements Plugin<Project> {
         }
 
         return distSpec
+    }
+
+    private ModuleDependency addDependency(Configuration configuration, String notation) {
+        ModuleDependency dependency = project.dependencies.create(notation) as ModuleDependency
+        configuration.dependencies.add(dependency)
+        dependency
     }
 }
 

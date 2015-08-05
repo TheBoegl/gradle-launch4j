@@ -6,6 +6,8 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 
+import javax.inject.Inject
+
 class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
@@ -62,11 +64,11 @@ class Launch4jPluginExtension implements Serializable {
     Integer splashTimeout = 60
     boolean splashTimeoutError = true
 
-    public File getXmlOutFileForProject(Project project) {
-        return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
+    Launch4jPluginExtension() {
     }
- 
-    void initExtensionDefaults(Project project) {
+
+    @Inject
+    Launch4jPluginExtension(Project project) {
         outfile = new File(project.name+'.exe')
         if (project.plugins.hasPlugin('java')) {
             jar = "lib/" + project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName
@@ -82,8 +84,12 @@ class Launch4jPluginExtension implements Serializable {
             jreMinVersion = JavaVersion.current()
         }
         while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
-                jreMinVersion = jreMinVersion+'.0'
-            }
+            jreMinVersion = jreMinVersion+'.0'
+        }
+    }
+
+    public File getXmlOutFileForProject(Project project) {
+        return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
     }
 
     @Override
@@ -301,7 +307,6 @@ class Launch4jPluginExtension implements Serializable {
         if (splashTimeoutError != other.splashTimeoutError) {
             return false;
         }
-		
 		if ((mutexName == null && other.mutexName != null) || !mutexName.equals(other.mutexName)) {
 			return false;
 		} 

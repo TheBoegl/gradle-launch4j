@@ -1,7 +1,5 @@
 package edu.sc.seis.launch4j;
 
-import java.util.Locale;
-
 /**
  * Use for backwards compatibility instead  of the incubating OperatingSystem class
  */
