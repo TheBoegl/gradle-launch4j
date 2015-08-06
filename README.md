@@ -2,18 +2,22 @@
 Introduction
 ============
 
-The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) to create windows .exe files for java applications. Launch4j must be installed and on the *PATH* as well to use this plugin.
+The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) to create windows .exe files for java applications.
 
 Tasks
 -----
+There are 8 tasks:
 
-There are 4 tasks:
   * generateXmlConfig - Creates XML configuration file used by launch4j.
   * copyL4jLib - Copies the project dependency jars in the lib directory.
-  * createExe - Runs launch4j to generate an .exe file.
+  * copyL4jBinLib - Copies the launch4j jars in the bin and bin/lib directories.
+  * unzipL4jBin - Unzips the launch4j working binaries in the bin directory.
+  * createExeWithBin - Runs the launch4j binary to generate an .exe file.
+  * createExeWithJar - Runs the launch4j jar to generate an .exe file.
+  * createExe - Placeholder task to run launch4j to generate an .exe file.
   * launch4j - Placeholder task that depends on the above.
 
-Launch4j must be installed separately as it includes native code.
+Launch4j must not be installed separately anymore, but can be used from the *PATH* with the configuration parameter `externalLaunch4j = true`.
 
 Configuration
 -------------
@@ -30,7 +34,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.1.3"
+        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.2.0"
       }
     }
     
@@ -44,7 +48,7 @@ An example configuration within your build.gradle for use in all Gradle versions
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
     plugins {
-      id "edu.sc.seis.launch4j" version "1.1.3"
+      id "edu.sc.seis.launch4j" version "1.2.0"
     }
     
 	launch4j {
@@ -57,6 +61,7 @@ See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plug
 The values configurable within the launch4j extension along with their defaults are:
 
  *    String launch4jCmd = "launch4j"
+ *    boolean externalLaunch4j = false
  *    String outputDir = "launch4j"
  *    String xmlFileName = "launch4j.xml"
  *    String mainClassName
