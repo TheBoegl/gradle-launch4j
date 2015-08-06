@@ -6,9 +6,12 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 
+import javax.inject.Inject
+
 class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
+    boolean externalLaunch4j = false
     String outputDir = "launch4j"
     String xmlFileName = "launch4j.xml"
     String mainClassName
@@ -61,11 +64,11 @@ class Launch4jPluginExtension implements Serializable {
     Integer splashTimeout = 60
     boolean splashTimeoutError = true
 
-    public File getXmlOutFileForProject(Project project) {
-        return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
+    Launch4jPluginExtension() {
     }
- 
-    void initExtensionDefaults(Project project) {
+
+    @Inject
+    Launch4jPluginExtension(Project project) {
         outfile = new File(project.name+'.exe')
         if (project.plugins.hasPlugin('java')) {
             jar = "lib/" + project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName
@@ -81,8 +84,12 @@ class Launch4jPluginExtension implements Serializable {
             jreMinVersion = JavaVersion.current()
         }
         while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
-                jreMinVersion = jreMinVersion+'.0'
-            }
+            jreMinVersion = jreMinVersion+'.0'
+        }
+    }
+
+    public File getXmlOutFileForProject(Project project) {
+        return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
     }
 
     @Override
@@ -94,6 +101,7 @@ class Launch4jPluginExtension implements Serializable {
         result = prime * result + ((copyright == null) ? 0 : copyright.hashCode());
         result = prime * result + (restartOnCrash ? 1231 : 1237);
         result = prime * result + (dontWrapJar ? 1231 : 1237);
+        result = prime * result + (externalLaunch4j ? 1231 : 1237);
         result = prime * result + ((downloadUrl == null) ? 0 : downloadUrl.hashCode());
         result = prime * result + ((errTitle == null) ? 0 : errTitle.hashCode());
         result = prime * result + ((headerType == null) ? 0 : headerType.hashCode());
@@ -169,6 +177,8 @@ class Launch4jPluginExtension implements Serializable {
         if (restartOnCrash != other.restartOnCrash)
             return false;
         if (dontWrapJar != other.dontWrapJar)
+            return false;
+        if (externalLaunch4j != other.externalLaunch4j)
             return false;
         if (downloadUrl == null) {
             if (other.downloadUrl != null)
@@ -297,7 +307,6 @@ class Launch4jPluginExtension implements Serializable {
         if (splashTimeoutError != other.splashTimeoutError) {
             return false;
         }
-		
 		if ((mutexName == null && other.mutexName != null) || !mutexName.equals(other.mutexName)) {
 			return false;
 		} 
