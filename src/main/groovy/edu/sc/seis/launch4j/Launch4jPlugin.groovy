@@ -147,6 +147,7 @@ class Launch4jPlugin implements Plugin<Project> {
                     def segments = fcp.relativePath.segments
                     def pathSegments = segments[1..-1] as String[]
                     fcp.relativePath = new RelativePath(!fcp.file.isDirectory(), pathSegments)
+                    fcp.mode = 0755
                 } else {
                     fcp.exclude()
                 }
