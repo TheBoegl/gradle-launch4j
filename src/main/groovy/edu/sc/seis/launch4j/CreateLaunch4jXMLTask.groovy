@@ -2,6 +2,7 @@ package edu.sc.seis.launch4j
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.slf4j.Logger
@@ -30,7 +31,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         xml.launch4jConfig() {
             dontWrapJar(configuration.dontWrapJar)
             headerType(configuration.headerType)
-            jar(configuration.jar)
+            jar(configuration.getJar(project))
             outfile(configuration.outfile)
             errTitle(configuration.errTitle)
             cmdLine(configuration.cmdLine)
