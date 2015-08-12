@@ -1,5 +1,6 @@
 package edu.sc.seis.launch4j
 
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -147,6 +148,7 @@ class Launch4jPlugin implements Plugin<Project> {
                     def segments = fcp.relativePath.segments
                     def pathSegments = segments[1..-1] as String[]
                     fcp.relativePath = new RelativePath(!fcp.file.isDirectory(), pathSegments)
+                    fcp.mode = 0755
                 } else {
                     fcp.exclude()
                 }
@@ -173,6 +175,21 @@ class Launch4jPlugin implements Plugin<Project> {
         task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
         task.inputs.dir("${-> project.buildDir}/${-> configuration.outputDir}/lib")
         task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.standardOutput = new ByteArrayOutputStream()
+        task.errorOutput = task.standardOutput
+        task.ignoreExitValue = true
+        task.doLast {
+            if (execResult.exitValue != 0) {
+                throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
+            } else {
+                //return value not set in launch4j 3.8.0, so test the outcome by iterating over the expected output files
+                outputs.files.each {
+                    if (!it.exists()) {
+                        throw new GradleException("$it.name not created:\n\t${standardOutput.toString()}")
+                    }
+                }
+            }
+        }
         return task
     }
 
@@ -184,6 +201,21 @@ class Launch4jPlugin implements Plugin<Project> {
         task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
         task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
         task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.standardOutput = new ByteArrayOutputStream()
+        task.errorOutput = task.standardOutput
+        task.ignoreExitValue = true
+        task.doLast {
+            if (execResult.exitValue != 0) {
+                throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
+            } else {
+                //return value not set in launch4j 3.8.0, so test the outcome by iterating over the expected output files
+                outputs.files.each {
+                    if (!it.exists()) {
+                        throw new GradleException("$it.name not created:\n\t${standardOutput.toString()}")
+                    }
+                }
+            }
+        }
         return task
     }
 

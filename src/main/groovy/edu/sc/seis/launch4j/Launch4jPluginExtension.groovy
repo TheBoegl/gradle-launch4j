@@ -17,7 +17,7 @@ class Launch4jPluginExtension implements Serializable {
     String mainClassName
     boolean dontWrapJar = false
     String headerType = "gui"
-    String jar = ""
+    private String jar
     String outfile
     String errTitle = ""
     String cmdLine = ""
@@ -70,9 +70,7 @@ class Launch4jPluginExtension implements Serializable {
     @Inject
     Launch4jPluginExtension(Project project) {
         outfile = new File(project.name+'.exe')
-        if (project.plugins.hasPlugin('java')) {
-            jar = "lib/" + project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName
-        }
+        // initialize the jar variable with a default value later
         version = project.version
         textVersion = project.version
         description = project.name
@@ -86,6 +84,21 @@ class Launch4jPluginExtension implements Serializable {
         while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
             jreMinVersion = jreMinVersion+'.0'
         }
+    }
+
+    public void setJar(String jar) {
+        this.jar = jar
+    }
+
+    public String getJar(Project project) {
+        if (jar == null) {
+            if (project.plugins.hasPlugin('java')) {
+                jar = "lib/${project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName}"
+            } else {
+                jar = ""
+            }
+        }
+        return jar
     }
 
     public File getXmlOutFileForProject(Project project) {
