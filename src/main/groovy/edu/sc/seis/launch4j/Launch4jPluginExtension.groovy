@@ -64,9 +64,6 @@ class Launch4jPluginExtension implements Serializable {
     Integer splashTimeout = 60
     boolean splashTimeoutError = true
 
-    Launch4jPluginExtension() {
-    }
-
     @Inject
     Launch4jPluginExtension(Project project) {
         outfile = new File(project.name+'.exe')
@@ -81,7 +78,7 @@ class Launch4jPluginExtension implements Serializable {
         } else {
             jreMinVersion = JavaVersion.current()
         }
-        while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
+        while (jreMinVersion ==~ /\d+(\.\d+)?/) {
             jreMinVersion = jreMinVersion+'.0'
         }
     }
