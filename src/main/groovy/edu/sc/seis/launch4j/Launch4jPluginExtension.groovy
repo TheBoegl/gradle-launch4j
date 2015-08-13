@@ -83,7 +83,7 @@ class Launch4jPluginExtension implements Serializable {
         } else {
             jreMinVersion = JavaVersion.current()
         }
-        while (jreMinVersion ==~ /\d+(\.\d+){0,1}/) {
+        while (jreMinVersion ==~ /\d+(\.\d+)?/) {
             jreMinVersion = jreMinVersion+'.0'
         }
     }
