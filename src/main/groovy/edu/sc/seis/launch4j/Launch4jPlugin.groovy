@@ -86,6 +86,7 @@ class Launch4jPlugin implements Plugin<Project> {
         task.group = LAUNCH4J_GROUP
         task.inputs.property("project version", project.version)
         task.inputs.property("Launch4j extension", configuration)
+        task.inputs.property("Launch4j extension", configuration.hashCode())
         task.outputs.file(project.file("${-> configuration.xmlFileName}"))
         task.configuration = configuration
         return task
