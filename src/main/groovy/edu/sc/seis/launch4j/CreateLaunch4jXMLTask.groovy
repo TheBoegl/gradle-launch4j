@@ -21,7 +21,9 @@ class CreateLaunch4jXMLTask extends DefaultTask {
     @TaskAction
     def void writeXmlConfig() {
         if (configuration == null) configuration = project.launch4j
-        def classpath = project.plugins.hasPlugin('java') ? project.configurations.runtime.collect { "lib/${it.name}" } : []
+        def classpath = project.plugins.hasPlugin('java') ? project.configurations.runtime.collect {
+            "lib/${it.name}"
+        } : []
         def file = getXmlOutFile()
         file.parentFile.mkdirs()
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
@@ -30,7 +32,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         xml.launch4jConfig() {
             dontWrapJar(configuration.dontWrapJar)
             headerType(configuration.headerType)
-            jar(configuration.jar)
+            jar(configuration.getJar(project))
             outfile(configuration.outfile)
             errTitle(configuration.errTitle)
             cmdLine(configuration.cmdLine)
@@ -80,23 +82,23 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 }
             }
             versionInfo() {
-                fileVersion(parseDotVersion(configuration.version) )
+                fileVersion(parseDotVersion(configuration.version))
                 txtFileVersion(configuration.textVersion)
                 fileDescription(configuration.description)
                 copyright(configuration.copyright)
-                productVersion(parseDotVersion(configuration.version) )
+                productVersion(parseDotVersion(configuration.version))
                 txtProductVersion(configuration.textVersion)
                 productName(configuration.productName)
-                companyName(configuration.companyName )
+                companyName(configuration.companyName)
                 internalName(configuration.internalName)
                 originalFilename(configuration.outfile)
             }
 
             if (configuration.messagesStartupError != null ||
-            configuration.messagesBundledJreError != null ||
-            configuration.messagesJreVersionError != null ||
-            configuration.messagesLauncherError != null) {
-                messages(){
+                    configuration.messagesBundledJreError != null ||
+                    configuration.messagesJreVersionError != null ||
+                    configuration.messagesLauncherError != null) {
+                messages() {
                     if (configuration.messagesStartupError != null)
                         startupErr(configuration.messagesStartupError)
                     if (configuration.messagesBundledJreError != null)
@@ -108,7 +110,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 }
             }
             if (configuration.mutexName != null || configuration.windowTitle != null) {
-                singleInstance(){
+                singleInstance() {
                     if (configuration.mutexName != null)
                         mutexName(configuration.mutexName)
 
@@ -131,9 +133,9 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         if (version ==~ /\d+(\.\d+){3}/) {
             return version
         } else if (version ==~ /\d+(\.\d+){0,2}/) {
-            def s = version+'.0'
+            def s = version + '.0'
             while (s ==~ /\d+(\.\d+){0,2}/) {
-                s = s+'.0'
+                s = s + '.0'
             }
             return s
         } else {

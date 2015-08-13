@@ -1,5 +1,6 @@
 package edu.sc.seis.launch4j
 
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -12,6 +13,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
+import org.gradle.internal.os.OperatingSystem
 
 class Launch4jPlugin implements Plugin<Project> {
 
@@ -45,16 +47,13 @@ class Launch4jPlugin implements Plugin<Project> {
 
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
         addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
-        switch (OS.CURRENT) {
-            case OS.Linux:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
-                break
-            case OS.Windows:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
-                break
-            case OS.MacOsX:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
-                break
+        OperatingSystem os = OperatingSystem.current()
+        if (os.isLinux()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
+        } else if (os.isWindows()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
+        } else if (os.isMacOsX()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
         }
 
         /* initialize default tasks */
@@ -83,9 +82,8 @@ class Launch4jPlugin implements Plugin<Project> {
         def task = project.tasks.create(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
         task.description = "Creates XML configuration file used by launch4j to create an windows exe."
         task.group = LAUNCH4J_GROUP
-        task.inputs.property("project version", project.version)
-        task.inputs.property("Launch4j extension", configuration)
-        task.outputs.file(project.file("${-> configuration.xmlFileName}"))
+        task.inputs.property("project version", { project.version })
+        task.inputs.property("Launch4j extension", { configuration.hashCode() })
         task.configuration = configuration
         return task
     }
@@ -174,6 +172,21 @@ class Launch4jPlugin implements Plugin<Project> {
         task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
         task.inputs.dir("${-> project.buildDir}/${-> configuration.outputDir}/lib")
         task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.standardOutput = new ByteArrayOutputStream()
+        task.errorOutput = task.standardOutput
+        task.ignoreExitValue = true
+        task.doLast {
+            if (execResult.exitValue != 0) {
+                throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
+            } else {
+                //return value not set in launch4j 3.8.0, so test the outcome by iterating over the expected output files
+                outputs.files.each {
+                    if (!it.exists()) {
+                        throw new GradleException("$it.name not created:\n\t${standardOutput.toString()}")
+                    }
+                }
+            }
+        }
         return task
     }
 
@@ -185,6 +198,21 @@ class Launch4jPlugin implements Plugin<Project> {
         task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
         task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
         task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.standardOutput = new ByteArrayOutputStream()
+        task.errorOutput = task.standardOutput
+        task.ignoreExitValue = true
+        task.doLast {
+            if (execResult.exitValue != 0) {
+                throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
+            } else {
+                //return value not set in launch4j 3.8.0, so test the outcome by iterating over the expected output files
+                outputs.files.each {
+                    if (!it.exists()) {
+                        throw new GradleException("$it.name not created:\n\t${standardOutput.toString()}")
+                    }
+                }
+            }
+        }
         return task
     }
 
