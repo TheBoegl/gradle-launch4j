@@ -6,6 +6,8 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 
+import javax.inject.Inject
+
 class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
@@ -62,7 +64,11 @@ class Launch4jPluginExtension implements Serializable {
     Integer splashTimeout = 60
     boolean splashTimeoutError = true
 
-    public void initProject(Project project) {
+    Launch4jPluginExtension() {
+    }
+
+    @Inject
+    Launch4jPluginExtension(Project project) {
         outfile = new File(project.name+'.exe')
         // initialize the jar variable with a default value later
         version = project.version
@@ -82,10 +88,6 @@ class Launch4jPluginExtension implements Serializable {
 
     public void setJar(String jar) {
         this.jar = jar
-    }
-
-    public String getJar() {
-        return jar
     }
 
     public String getJar(Project project) {
