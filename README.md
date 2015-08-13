@@ -37,25 +37,25 @@ An example configuration within your build.gradle for use in all Gradle versions
         classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.2.0"
       }
     }
-    
+
     apply plugin: "edu.sc.seis.launch4j"
-    
-	launch4j {
-		mainClassName = "com.example.myapp.Start"
-		icon = 'icons/myApp.ico'
-	}
+
+    launch4j {
+      mainClassName = "com.example.myapp.Start"
+      icon = 'icons/myApp.ico'
+    }
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
     plugins {
       id "edu.sc.seis.launch4j" version "1.2.0"
     }
-    
-	launch4j {
-		mainClassName = "com.example.myapp.Start"
-		icon = 'icons/myApp.ico'
-	}
-    
+
+    launch4j {
+      mainClassName = "com.example.myapp.Start"
+      icon = 'icons/myApp.ico'
+    }
+
 See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plugins.html#customPluginStandalone) for more information on how to use a custom plugin.
 
 The values configurable within the launch4j extension along with their defaults are:
@@ -99,7 +99,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String messagesStartupError
  *    String messagesBundledJreError
  *    String messagesJreVersionError
- *    String messagesLauncherError	
+ *    String messagesLauncherError
  *    Integer initialHeapSize
  *    Integer initialHeapPercent
  *    Integer maxHeapSize
@@ -108,5 +108,5 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean splashWaitForWindows = true
  *    Integer splashTimeout = 60
  *    boolean splashTimeoutError = true
- 
+
  Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs.html#Configuration_file) for valid options.
