@@ -64,9 +64,6 @@ class Launch4jPluginExtension implements Serializable {
     Integer splashTimeout = 60
     boolean splashTimeoutError = true
 
-    Launch4jPluginExtension() {
-    }
-
     @Inject
     Launch4jPluginExtension(Project project) {
         outfile = new File(project.name+'.exe')
