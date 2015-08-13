@@ -16,11 +16,29 @@ apply plugin: 'idea'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
+// Write the plugin's classpath to a file to share with the tests.
+task createClasspathManifest {
+    def outputDir = file("$buildDir/$name")
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+    }
+}
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
-}
 
+    testCompile gradleTestKit()
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.3'
+
+    // Add the classpath file to the test runtime classpath.
+    testRuntime files(createClasspathManifest)
+}
 
 repositories {
     mavenCentral()
