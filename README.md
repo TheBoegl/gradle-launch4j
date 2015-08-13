@@ -38,6 +38,10 @@ An example configuration within your build.gradle for use in all Gradle versions
       }
     }
 
+    repositories {
+      mavenCentral()
+    }
+
     apply plugin: "edu.sc.seis.launch4j"
 
     launch4j {
