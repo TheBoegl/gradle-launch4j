@@ -13,6 +13,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
+import org.gradle.internal.os.OperatingSystem
 
 class Launch4jPlugin implements Plugin<Project> {
 
@@ -46,16 +47,13 @@ class Launch4jPlugin implements Plugin<Project> {
 
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
         addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
-        switch (OS.CURRENT) {
-            case OS.Linux:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
-                break
-            case OS.Windows:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
-                break
-            case OS.MacOsX:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
-                break
+        OperatingSystem os = OperatingSystem.current()
+        if (os.isLinux()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
+        } else if (os.isWindows()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
+        } else if (os.isMacOsX()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
         }
 
         /* initialize default tasks */
