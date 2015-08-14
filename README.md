@@ -1,3 +1,4 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
 
 Introduction
 ============
