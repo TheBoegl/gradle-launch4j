@@ -82,9 +82,11 @@ class Launch4jPlugin implements Plugin<Project> {
             def copyTask2 = addCopyToLibTask(pluginExtension)
             project.tasks.each { it ->
                 if (it.dependsOn.contains(copyTask)) {
+                    it.dependsOn.remove(copyTask)
                     it.dependsOn copyTask2
                 }
             }
+            copyTask.dependsOn.clear()
             copyTask2.dependsOn copyTask.dependsOn
             xmlTask.dependsOn copyTask2
         }
