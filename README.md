@@ -35,7 +35,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.4.0"
+        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.4.1"
       }
     }
 
@@ -53,13 +53,16 @@ An example configuration within your build.gradle for use in all Gradle versions
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
     plugins {
-      id "edu.sc.seis.launch4j" version "1.4.0"
+      id "edu.sc.seis.launch4j" version "1.4.1"
     }
 
     launch4j {
       mainClassName = "com.example.myapp.Start"
       icon = 'icons/myApp.ico'
     }
+
+
+If no repository is configured before applying this plugin the *Maven central* repository will be added to the project.
 
 See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plugins.html#customPluginStandalone) for more information on how to use a custom plugin.
 

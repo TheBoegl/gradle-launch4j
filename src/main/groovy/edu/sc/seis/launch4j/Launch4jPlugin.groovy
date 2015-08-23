@@ -46,6 +46,10 @@ class Launch4jPlugin implements Plugin<Project> {
                 .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
 
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
+        if (project.repositories.isEmpty()) {
+            project.logger.lifecycle("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
+            project.repositories.mavenCentral()
+        }
         addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
         OperatingSystem os = OperatingSystem.current()
         if (os.isLinux()) {
