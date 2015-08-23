@@ -35,7 +35,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.3.0"
+        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.4.0"
       }
     }
 
@@ -53,7 +53,7 @@ An example configuration within your build.gradle for use in all Gradle versions
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
     plugins {
-      id "edu.sc.seis.launch4j" version "1.3.0"
+      id "edu.sc.seis.launch4j" version "1.4.0"
     }
 
     launch4j {
@@ -65,8 +65,11 @@ See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plug
 
 The values configurable within the launch4j extension along with their defaults are:
 
- *    String launch4jCmd = "launch4j"
  *    boolean externalLaunch4j = false
+ *    Object copyConfigurable
+
+
+ *    String launch4jCmd = "launch4j"
  *    String outputDir = "launch4j"
  *    String xmlFileName = "launch4j.xml"
  *    String mainClassName
@@ -115,3 +118,27 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean splashTimeoutError = true
 
  Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs.html#Configuration_file) for valid options.
+
+# Configurable input configuration
+
+In order to configure the input of the *copyL4jLib* task set the `copyConfigurable` property.
+The following example shows how to use this plugin hand in hand with the fatJar plugin:
+
+```
+fatJar {
+   classifier 'fat'
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+}
+
+copyL4jLib.dependsOn fatJar
+fatJarPrepareFiles.dependsOn jar
+
+launch4j {
+    copyConfigurable = project.tasks.fatJar.outputs.files
+    outfile = 'TestMain.exe'
+    mainClassName = project.mainClassName
+    jar = "lib/${project.tasks.fatJar.archiveName}"
+}
+```

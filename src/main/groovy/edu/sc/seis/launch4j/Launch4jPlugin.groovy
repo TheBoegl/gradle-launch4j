@@ -76,6 +76,20 @@ class Launch4jPlugin implements Plugin<Project> {
         runLibTask.dependsOn(copyTask)
         runLibTask.inputs.files xmlTask.outputs.files
         runTask.dependsOn(runLibTask)
+
+        pluginExtension.onSetCopyConfigurable { Object copyConfigurable ->
+            copyTask.enabled = false
+            def copyTask2 = addCopyToLibTask(pluginExtension)
+            project.tasks.each { it ->
+                if (it.dependsOn.contains(copyTask)) {
+                    it.dependsOn.remove(copyTask)
+                    it.dependsOn copyTask2
+                }
+            }
+            copyTask.dependsOn.clear()
+            copyTask2.dependsOn copyTask.dependsOn
+            xmlTask.dependsOn copyTask2
+        }
     }
 
     private Task addCreateLaunch4jXMLTask(Launch4jPluginExtension configuration) {
@@ -89,10 +103,10 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addCopyToLibTask(Launch4jPluginExtension configuration) {
-        def task = project.tasks.create(TASK_LIB_COPY_NAME, Sync)
+        def task = project.tasks.replace(TASK_LIB_COPY_NAME, Sync)
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
-        task.with configureDistSpec()
+        task.with configureDistSpec(configuration)
         task.into { project.file("${-> project.buildDir}/${-> configuration.outputDir}/lib") }
         return task
     }
@@ -224,15 +238,18 @@ class Launch4jPlugin implements Plugin<Project> {
         return task
     }
 
-    private CopySpec configureDistSpec() {
+    private CopySpec configureDistSpec(Launch4jPluginExtension configuration) {
         CopySpec distSpec = project.copySpec {}
+
         distSpec.with {
+            if (configuration.copyConfigurable) {
+                from {configuration.copyConfigurable}
+            } else
             if (project.plugins.hasPlugin('java')) {
                 from(project.tasks[JavaPlugin.JAR_TASK_NAME])
                 from(project.configurations.runtime)
             }
         }
-
         return distSpec
     }
 
@@ -240,6 +257,14 @@ class Launch4jPlugin implements Plugin<Project> {
         ModuleDependency dependency = project.dependencies.create(notation) as ModuleDependency
         configuration.dependencies.add(dependency)
         dependency
+    }
+
+    private <T extends Task> T createOrReplaceTask(String name, Class<T> type) {
+        if (project.tasks.findByName(name)) {
+            return project.tasks.replace(name, type)
+        } else {
+            return project.tasks.create(name, type)
+        }
     }
 }
 

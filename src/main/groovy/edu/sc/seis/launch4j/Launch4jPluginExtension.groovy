@@ -1,9 +1,10 @@
 package edu.sc.seis.launch4j
 
-import org.codehaus.groovy.util.HashCodeHelper
+import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.listener.ActionBroadcast
 
 import javax.inject.Inject
 
@@ -63,6 +64,10 @@ class Launch4jPluginExtension implements Serializable {
     Integer splashTimeout = 60
     boolean splashTimeoutError = true
 
+    private Object copyConfigurable
+
+    private ActionBroadcast<Object> onSetCopyConfigurable = new ActionBroadcast<>()
+
     @Inject
     Launch4jPluginExtension(Project project) {
         outfile = new File(project.name + '.exe')
@@ -95,6 +100,19 @@ class Launch4jPluginExtension implements Serializable {
             }
         }
         return jar
+    }
+
+    Object getCopyConfigurable() {
+        return copyConfigurable
+    }
+
+    void setCopyConfigurable(Object copyConfigurable) {
+        this.copyConfigurable = copyConfigurable
+        onSetCopyConfigurable.execute(copyConfigurable)
+    }
+
+    public void onSetCopyConfigurable(Action<Object> action) {
+        onSetCopyConfigurable.add(action)
     }
 
     public File getXmlOutFileForProject(Project project) {
@@ -152,6 +170,7 @@ class Launch4jPluginExtension implements Serializable {
         result = 31 * result + (splashWaitForWindows ? 1 : 0)
         result = 31 * result + (splashTimeout != null ? splashTimeout.hashCode() : 0)
         result = 31 * result + (splashTimeoutError ? 1 : 0)
+        result = 31 * result + (copyConfigurable != null ? copyConfigurable.hashCode() : 0)
         return result
     }
 
@@ -210,6 +229,7 @@ class Launch4jPluginExtension implements Serializable {
         if (version != that.version) return false
         if (windowTitle != that.windowTitle) return false
         if (xmlFileName != that.xmlFileName) return false
+        if (copyConfigurable != that.copyConfigurable) return false
 
         return true
     }
