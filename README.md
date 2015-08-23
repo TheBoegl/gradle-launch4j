@@ -68,6 +68,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean externalLaunch4j = false
  *    Object copyConfigurable
 
+&nbsp;  
 
  *    String launch4jCmd = "launch4j"
  *    String outputDir = "launch4j"
@@ -117,7 +118,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    Integer splashTimeout = 60
  *    boolean splashTimeoutError = true
 
- Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs.html#Configuration_file) for valid options.
+Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs.html#Configuration_file) for valid options.
 
 # Configurable input configuration
 
