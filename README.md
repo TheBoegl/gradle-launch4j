@@ -133,9 +133,9 @@ The following example shows how to use this plugin hand in hand with the fatJar 
 
 ```
 fatJar {
-   classifier 'fat'
+    classifier 'fat'
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes 'Main-Class': project.mainClassName
     }
 }
 
