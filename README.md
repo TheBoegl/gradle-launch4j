@@ -43,6 +43,7 @@ An example configuration within your build.gradle for use in all Gradle versions
       mavenCentral()
     }
 
+    apply plugin: 'java'
     apply plugin: 'edu.sc.seis.launch4j'
 
     launch4j {
@@ -51,6 +52,8 @@ An example configuration within your build.gradle for use in all Gradle versions
     }
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
+
+    apply plugin: 'java'
 
     plugins {
       id 'edu.sc.seis.launch4j' version '1.4.1'
