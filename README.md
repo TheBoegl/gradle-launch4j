@@ -1,3 +1,4 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
 
 Introduction
 ============
@@ -14,8 +15,8 @@ There are 8 tasks:
   * unzipL4jBin - Unzips the launch4j working binaries in the bin directory.
   * createExeWithBin - Runs the launch4j binary to generate an .exe file.
   * createExeWithJar - Runs the launch4j jar to generate an .exe file.
-  * createExe - Placeholder task to run launch4j to generate an .exe file.
-  * launch4j - Placeholder task that depends on the above.
+  * createExe - Backward compatible task to generate an .exe file.
+  * **launch4j** - Placeholder task that depends on the above. *Execute this task to generate an executable.*
 
 Launch4j must not be installed separately anymore, but can be used from the *PATH* with the configuration parameter `externalLaunch4j = true`.
 
@@ -30,38 +31,52 @@ An example configuration within your build.gradle for use in all Gradle versions
     buildscript {
       repositories {
         maven {
-          url "https://plugins.gradle.org/m2/"
+          url 'https://plugins.gradle.org/m2/'
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.2.1"
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.5.0'
       }
     }
-    
-    apply plugin: "edu.sc.seis.launch4j"
-    
-	launch4j {
-		mainClassName = "com.example.myapp.Start"
-		icon = 'icons/myApp.ico'
-	}
+
+    repositories {
+      mavenCentral()
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'edu.sc.seis.launch4j'
+
+    launch4j {
+      mainClassName = 'com.example.myapp.Start'
+      icon = 'icons/myApp.ico'
+    }
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
+    apply plugin: 'java'
+
     plugins {
-      id "edu.sc.seis.launch4j" version "1.2.1"
+      id 'edu.sc.seis.launch4j' version '1.5.0'
     }
-    
-	launch4j {
-		mainClassName = "com.example.myapp.Start"
-		icon = 'icons/myApp.ico'
-	}
-    
+
+    launch4j {
+      mainClassName = 'com.example.myapp.Start'
+      icon = 'icons/myApp.ico'
+    }
+
+
+If no repository is configured before applying this plugin the *Maven central* repository will be added to the project.
+
 See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plugins.html#customPluginStandalone) for more information on how to use a custom plugin.
 
 The values configurable within the launch4j extension along with their defaults are:
 
- *    String launch4jCmd = "launch4j"
  *    boolean externalLaunch4j = false
+ *    Object copyConfigurable
+
+&nbsp;  
+
+ *    String launch4jCmd = "launch4j"
  *    String outputDir = "launch4j"
  *    String xmlFileName = "launch4j.xml"
  *    String mainClassName
@@ -99,7 +114,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String messagesStartupError
  *    String messagesBundledJreError
  *    String messagesJreVersionError
- *    String messagesLauncherError	
+ *    String messagesLauncherError
  *    Integer initialHeapSize
  *    Integer initialHeapPercent
  *    Integer maxHeapSize
@@ -108,5 +123,29 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean splashWaitForWindows = true
  *    Integer splashTimeout = 60
  *    boolean splashTimeoutError = true
- 
- Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs.html#Configuration_file) for valid options.
+
+Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs.html#Configuration_file) for valid options.
+
+# Configurable input configuration
+
+In order to configure the input of the *copyL4jLib* task set the `copyConfigurable` property.
+The following example shows how to use this plugin hand in hand with the fatJar plugin:
+
+```
+fatJar {
+    classifier 'fat'
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+}
+
+copyL4jLib.dependsOn fatJar
+fatJarPrepareFiles.dependsOn jar
+
+launch4j {
+    copyConfigurable = project.tasks.fatJar.outputs.files
+    outfile = 'TestMain.exe'
+    mainClassName = project.mainClassName
+    jar = "lib/${project.tasks.fatJar.archiveName}"
+}
+```

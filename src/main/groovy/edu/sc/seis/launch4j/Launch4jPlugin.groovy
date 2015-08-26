@@ -13,6 +13,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
+import org.gradle.internal.os.OperatingSystem
 
 class Launch4jPlugin implements Plugin<Project> {
 
@@ -38,25 +39,25 @@ class Launch4jPlugin implements Plugin<Project> {
         this.project = project
         Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
                 .setTransitive(true).setDescription('The launch4j configuration for this project.')
-        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension()
-        pluginExtension.initProject(project)
+        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension(project)
         project.extensions.add(LAUNCH4J_EXTENSION_NAME, pluginExtension)
 
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
                 .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
 
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
+        if (project.repositories.isEmpty()) {
+            project.logger.lifecycle("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
+            project.repositories.mavenCentral()
+        }
         addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
-        switch (OS.CURRENT) {
-            case OS.Linux:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
-                break
-            case OS.Windows:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
-                break
-            case OS.MacOsX:
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
-                break
+        OperatingSystem os = OperatingSystem.current()
+        if (os.isLinux()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
+        } else if (os.isWindows()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
+        } else if (os.isMacOsX()) {
+            addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
         }
 
         /* initialize default tasks */
@@ -79,6 +80,20 @@ class Launch4jPlugin implements Plugin<Project> {
         runLibTask.dependsOn(copyTask)
         runLibTask.inputs.files xmlTask.outputs.files
         runTask.dependsOn(runLibTask)
+
+        pluginExtension.onSetCopyConfigurable { Object copyConfigurable ->
+            copyTask.enabled = false
+            def copyTask2 = addCopyToLibTask(pluginExtension)
+            project.tasks.each { it ->
+                if (it.dependsOn.contains(copyTask)) {
+                    it.dependsOn.remove(copyTask)
+                    it.dependsOn copyTask2
+                }
+            }
+            copyTask.dependsOn.clear()
+            copyTask2.dependsOn copyTask.dependsOn
+            xmlTask.dependsOn copyTask2
+        }
     }
 
     private Task addCreateLaunch4jXMLTask(Launch4jPluginExtension configuration) {
@@ -92,10 +107,10 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addCopyToLibTask(Launch4jPluginExtension configuration) {
-        def task = project.tasks.create(TASK_LIB_COPY_NAME, Sync)
+        def task = project.tasks.replace(TASK_LIB_COPY_NAME, Sync)
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
-        task.with configureDistSpec()
+        task.with configureDistSpec(configuration)
         task.into { project.file("${-> project.buildDir}/${-> configuration.outputDir}/lib") }
         return task
     }
@@ -178,7 +193,6 @@ class Launch4jPlugin implements Plugin<Project> {
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
-        task.doFirst { outputs.files.each { it.delete() } }
         task.doLast {
             if (execResult.exitValue != 0) {
                 throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
@@ -201,12 +215,10 @@ class Launch4jPlugin implements Plugin<Project> {
         task.onlyIf { !configuration.externalLaunch4j }
         task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
         task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
-        task.inputs.dir("${-> project.buildDir}/${-> configuration.outputDir}/lib")
         task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
-        task.doFirst { outputs.files.each { it.delete() } }
         task.doLast {
             if (execResult.exitValue != 0) {
                 throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
@@ -230,15 +242,18 @@ class Launch4jPlugin implements Plugin<Project> {
         return task
     }
 
-    private CopySpec configureDistSpec() {
+    private CopySpec configureDistSpec(Launch4jPluginExtension configuration) {
         CopySpec distSpec = project.copySpec {}
+
         distSpec.with {
+            if (configuration.copyConfigurable) {
+                from {configuration.copyConfigurable}
+            } else
             if (project.plugins.hasPlugin('java')) {
                 from(project.tasks[JavaPlugin.JAR_TASK_NAME])
                 from(project.configurations.runtime)
             }
         }
-
         return distSpec
     }
 
@@ -246,6 +261,14 @@ class Launch4jPlugin implements Plugin<Project> {
         ModuleDependency dependency = project.dependencies.create(notation) as ModuleDependency
         configuration.dependencies.add(dependency)
         dependency
+    }
+
+    private <T extends Task> T createOrReplaceTask(String name, Class<T> type) {
+        if (project.tasks.findByName(name)) {
+            return project.tasks.replace(name, type)
+        } else {
+            return project.tasks.create(name, type)
+        }
     }
 }
 
