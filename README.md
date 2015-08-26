@@ -15,8 +15,8 @@ There are 8 tasks:
   * unzipL4jBin - Unzips the launch4j working binaries in the bin directory.
   * createExeWithBin - Runs the launch4j binary to generate an .exe file.
   * createExeWithJar - Runs the launch4j jar to generate an .exe file.
-  * createExe - Placeholder task to run launch4j to generate an .exe file.
-  * launch4j - Placeholder task that depends on the above.
+  * createExe - Backward compatible task to generate an .exe file.
+  * **launch4j** - Placeholder task that depends on the above. *Execute this task to generate an executable.*
 
 Launch4j must not be installed separately anymore, but can be used from the *PATH* with the configuration parameter `externalLaunch4j = true`.
 
@@ -31,11 +31,11 @@ An example configuration within your build.gradle for use in all Gradle versions
     buildscript {
       repositories {
         maven {
-          url "https://plugins.gradle.org/m2/"
+          url 'https://plugins.gradle.org/m2/'
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.4.1"
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.5.0'
       }
     }
 
@@ -43,21 +43,24 @@ An example configuration within your build.gradle for use in all Gradle versions
       mavenCentral()
     }
 
-    apply plugin: "edu.sc.seis.launch4j"
+    apply plugin: 'java'
+    apply plugin: 'edu.sc.seis.launch4j'
 
     launch4j {
-      mainClassName = "com.example.myapp.Start"
+      mainClassName = 'com.example.myapp.Start'
       icon = 'icons/myApp.ico'
     }
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
+    apply plugin: 'java'
+
     plugins {
-      id "edu.sc.seis.launch4j" version "1.4.1"
+      id 'edu.sc.seis.launch4j' version '1.5.0'
     }
 
     launch4j {
-      mainClassName = "com.example.myapp.Start"
+      mainClassName = 'com.example.myapp.Start'
       icon = 'icons/myApp.ico'
     }
 
@@ -130,9 +133,9 @@ The following example shows how to use this plugin hand in hand with the fatJar 
 
 ```
 fatJar {
-   classifier 'fat'
+    classifier 'fat'
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes 'Main-Class': project.mainClassName
     }
 }
 
