@@ -31,11 +31,11 @@ An example configuration within your build.gradle for use in all Gradle versions
     buildscript {
       repositories {
         maven {
-          url "https://plugins.gradle.org/m2/"
+          url 'https://plugins.gradle.org/m2/'
         }
       }
       dependencies {
-        classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.4.1"
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.4.1'
       }
     }
 
@@ -43,21 +43,24 @@ An example configuration within your build.gradle for use in all Gradle versions
       mavenCentral()
     }
 
-    apply plugin: "edu.sc.seis.launch4j"
+    apply plugin: 'java'
+    apply plugin: 'edu.sc.seis.launch4j'
 
     launch4j {
-      mainClassName = "com.example.myapp.Start"
+      mainClassName = 'com.example.myapp.Start'
       icon = 'icons/myApp.ico'
     }
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
+    apply plugin: 'java'
+
     plugins {
-      id "edu.sc.seis.launch4j" version "1.4.1"
+      id 'edu.sc.seis.launch4j' version '1.4.1'
     }
 
     launch4j {
-      mainClassName = "com.example.myapp.Start"
+      mainClassName = 'com.example.myapp.Start'
       icon = 'icons/myApp.ico'
     }
 
@@ -130,9 +133,9 @@ The following example shows how to use this plugin hand in hand with the fatJar 
 
 ```
 fatJar {
-   classifier 'fat'
+    classifier 'fat'
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes 'Main-Class': project.mainClassName
     }
 }
 
