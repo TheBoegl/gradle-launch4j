@@ -15,8 +15,8 @@ There are 8 tasks:
   * unzipL4jBin - Unzips the launch4j working binaries in the bin directory.
   * createExeWithBin - Runs the launch4j binary to generate an .exe file.
   * createExeWithJar - Runs the launch4j jar to generate an .exe file.
-  * createExe - Placeholder task to run launch4j to generate an .exe file.
-  * launch4j - Placeholder task that depends on the above.
+  * createExe - Backward compatible task to generate an .exe file.
+  * **launch4j** - Placeholder task that depends on the above. *Execute this task to generate an executable.*
 
 Launch4j must not be installed separately anymore, but can be used from the *PATH* with the configuration parameter `externalLaunch4j = true`.
 
