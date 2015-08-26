@@ -193,6 +193,7 @@ class Launch4jPlugin implements Plugin<Project> {
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
+        task.doFirst { outputs.files.each { it.delete() } }
         task.doLast {
             if (execResult.exitValue != 0) {
                 throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
@@ -219,6 +220,7 @@ class Launch4jPlugin implements Plugin<Project> {
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
+        task.doFirst { outputs.files.each { it.delete() } }
         task.doLast {
             if (execResult.exitValue != 0) {
                 throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${standardOutput.toString()}");
