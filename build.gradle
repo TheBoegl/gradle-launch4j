@@ -142,6 +142,8 @@ publishing {
     }
 }
 
+publishPlugins.dependsOn build
+
 signing {
     if (System.console()) {
         sign configurations.archives
