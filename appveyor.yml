@@ -9,12 +9,11 @@ test_script:
   - gradlew check
 
 after_test:
-  - 7z a test-results.zip .\build\reports\tests\*
+  - ps: |
+      $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
+      $file = '.\build\test-results\TEST-edu.sc.seis.launch4j.Launch4jPluginExtensionTest.xml'
+      (New-Object 'System.Net.WebClient').UploadFile($url, (Resolve-Path $file))
 
 artifacts:
   - path: build\libs\*.jar
     name: Java archive
-
-# Deploy test result artifacts also for failed builds.
-on_finish:
-  - ps: Push-AppveyorArtifact test-results.zip -DeploymentName 'Test results'
