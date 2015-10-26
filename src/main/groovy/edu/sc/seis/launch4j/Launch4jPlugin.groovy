@@ -35,6 +35,7 @@ class Launch4jPlugin implements Plugin<Project> {
 
     private Project project
 
+    @Override
     def void apply(Project project) {
         this.project = project
         Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
@@ -249,9 +250,8 @@ class Launch4jPlugin implements Plugin<Project> {
 
         distSpec.with {
             if (configuration.copyConfigurable) {
-                from {configuration.copyConfigurable}
-            } else
-            if (project.plugins.hasPlugin('java')) {
+                from { configuration.copyConfigurable }
+            } else if (project.plugins.hasPlugin('java')) {
                 from(project.tasks[JavaPlugin.JAR_TASK_NAME])
                 from(project.configurations.runtime)
             }

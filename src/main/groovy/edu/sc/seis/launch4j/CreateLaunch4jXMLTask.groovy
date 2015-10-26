@@ -15,7 +15,8 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
     @OutputFile
     File getXmlOutFile() {
-        return project.launch4j.getXmlOutFileForProject(project)
+        Launch4jPluginExtension config = project.launch4j
+        return config.getXmlOutFileForProject(project)
     }
 
     @TaskAction
@@ -127,7 +128,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
      * @param version
      * @return
      */
-    String parseDotVersion(version) {
+    static String parseDotVersion(version) {
         if (version ==~ /\d+(\.\d+){3}/) {
             return version
         } else if (version ==~ /\d+(\.\d+){0,2}/) {
