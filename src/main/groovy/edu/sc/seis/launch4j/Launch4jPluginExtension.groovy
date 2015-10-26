@@ -10,7 +10,7 @@ class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
     boolean externalLaunch4j = false
-    String outputDir = "launch4j"
+    String outputDir
     String xmlFileName = "launch4j.xml"
     String mainClassName
     boolean dontWrapJar = false
@@ -70,6 +70,9 @@ class Launch4jPluginExtension implements Serializable {
         if (!outfile) {
             outfile = "${project.name}.exe"
         }
+        if (!outputDir) {
+            outputDir = "${project.buildDir}/launch4j"
+        }
         // initialize the jar variable with a default value later
         if (!version) {
             version = project.version
@@ -119,7 +122,7 @@ class Launch4jPluginExtension implements Serializable {
     }
 
     public File getXmlOutFileForProject(Project project) {
-        return project.file("${project.buildDir}/${outputDir}/${xmlFileName}")
+        return project.file("${outputDir}/${xmlFileName}")
     }
 
     @Override

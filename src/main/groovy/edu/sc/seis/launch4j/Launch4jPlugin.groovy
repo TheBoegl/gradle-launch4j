@@ -115,7 +115,7 @@ class Launch4jPlugin implements Plugin<Project> {
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
         task.with configureDistSpec(configuration)
-        task.into { project.file("${-> project.buildDir}/${-> configuration.outputDir}/lib") }
+        task.into { project.file("${-> configuration.outputDir}/lib") }
         return task
     }
 
@@ -129,7 +129,7 @@ class Launch4jPlugin implements Plugin<Project> {
             from(project.configurations.getByName(LAUNCH4J_CONFIGURATION_NAME))
         }
         task.with distSpec
-        File destination = project.file("${-> project.buildDir}/${-> configuration.outputDir}/bin/lib")
+        File destination = project.file("${-> configuration.outputDir}/bin/lib")
         File jarFile = project.file("${destination.parentFile}/launch4j.jar")
         task.outputs.file(jarFile)
         task.into { destination }
@@ -155,7 +155,7 @@ class Launch4jPlugin implements Plugin<Project> {
             }
             task.from project.zipTree(workingJar)
             task.includeEmptyDirs = false
-            def destination = "${-> project.buildDir}/${-> configuration.outputDir}/bin"
+            def destination = "${-> configuration.outputDir}/bin"
             task.into { "${-> destination}" }
 
             def jarName = project.file(workingJar).name
@@ -190,10 +190,10 @@ class Launch4jPlugin implements Plugin<Project> {
         task.description = "Runs the launch4j binary to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         task.onlyIf { configuration.externalLaunch4j }
-        task.commandLine "${-> configuration.launch4jCmd}", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
-        task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
-        task.inputs.dir("${-> project.buildDir}/${-> configuration.outputDir}/lib")
-        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.commandLine "${-> configuration.launch4jCmd}", "${-> configuration.outputDir}/${-> configuration.xmlFileName}"
+        task.workingDir "${-> configuration.outputDir}"
+        task.inputs.dir("${-> configuration.outputDir}/lib")
+        task.outputs.file("${-> configuration.outputDir}/${-> configuration.outfile}")
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
@@ -218,9 +218,9 @@ class Launch4jPlugin implements Plugin<Project> {
         task.description = "Runs the launch4j jar to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         task.onlyIf { !configuration.externalLaunch4j }
-        task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
-        task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
-        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> configuration.outputDir}/${-> configuration.xmlFileName}"
+        task.workingDir "${-> configuration.outputDir}"
+        task.outputs.file("${-> configuration.outputDir}/${-> configuration.outfile}")
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
@@ -244,7 +244,7 @@ class Launch4jPlugin implements Plugin<Project> {
         def task = project.tasks.create(TASK_LAUNCH4J_NAME)
         task.description = "Placeholder task for tasks relating to creating .exe applications with launch4j"
         task.group = LAUNCH4J_GROUP
-        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}")
+        task.outputs.file("${-> configuration.outputDir}")
         return task
     }
 
