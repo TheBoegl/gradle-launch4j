@@ -40,7 +40,10 @@ class Launch4jPlugin implements Plugin<Project> {
         this.project = project
         Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
                 .setTransitive(true).setDescription('The launch4j configuration for this project.')
-        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension(project)
+        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension()
+        project.afterEvaluate{
+            pluginExtension.afterEvaluate(project)
+        }
         project.extensions.add(LAUNCH4J_EXTENSION_NAME, pluginExtension)
 
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)

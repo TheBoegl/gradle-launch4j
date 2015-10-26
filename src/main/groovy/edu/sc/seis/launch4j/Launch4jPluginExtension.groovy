@@ -6,8 +6,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.listener.ActionBroadcast
 
-import javax.inject.Inject
-
 class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
@@ -17,7 +15,7 @@ class Launch4jPluginExtension implements Serializable {
     String mainClassName
     boolean dontWrapJar = false
     String headerType = "gui"
-    private String jar
+    String jar
     String outfile
     String errTitle = ""
     String cmdLine = ""
@@ -68,38 +66,43 @@ class Launch4jPluginExtension implements Serializable {
 
     private ActionBroadcast<Object> onSetCopyConfigurable = new ActionBroadcast<>()
 
-    @Inject
-    Launch4jPluginExtension(Project project) {
-        outfile = new File(project.name + '.exe')
+    void afterEvaluate(Project project) {
+        if (!outfile) {
+            outfile = "${project.name}.exe"
+        }
         // initialize the jar variable with a default value later
-        version = project.version
-        textVersion = project.version
-        description = project.name
-        productName = project.name
-        internalName = project.name
-        if (project.hasProperty("targetCompatibility")) {
-            jreMinVersion = project.targetCompatibility
-        } else {
-            jreMinVersion = JavaVersion.current()
+        if (!version) {
+            version = project.version
         }
-        while (jreMinVersion ==~ /\d+(\.\d+)?/) {
-            jreMinVersion = jreMinVersion + '.0'
+        if (!textVersion) {
+            textVersion = project.version
         }
-    }
-
-    public void setJar(String jar) {
-        this.jar = jar
-    }
-
-    public String getJar(Project project) {
-        if (jar == null) {
+        if (!description) {
+            description = project.name
+        }
+        if (!productName) {
+            productName = project.name
+        }
+        if (!internalName) {
+            internalName = project.name
+        }
+        if (!jreMinVersion) {
+            if (project.hasProperty("targetCompatibility")) {
+                jreMinVersion = project.targetCompatibility
+            } else {
+                jreMinVersion = JavaVersion.current()
+            }
+            while (jreMinVersion ==~ /\d+(\.\d+)?/) {
+                jreMinVersion = jreMinVersion + '.0'
+            }
+        }
+        if (!jar) {
             if (project.plugins.hasPlugin('java')) {
                 jar = "lib/${project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName}"
             } else {
                 jar = ""
             }
         }
-        return jar
     }
 
     Object getCopyConfigurable() {
