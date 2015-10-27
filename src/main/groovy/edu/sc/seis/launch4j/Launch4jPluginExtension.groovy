@@ -64,7 +64,7 @@ class Launch4jPluginExtension implements Serializable {
 
     private Object copyConfigurable
 
-    private ActionBroadcast<Object> onSetCopyConfigurable = new ActionBroadcast<>()
+    private transient ActionBroadcast<Object> onSetCopyConfigurable = new ActionBroadcast<>()
 
     void afterEvaluate(Project project) {
         if (!outfile) {
