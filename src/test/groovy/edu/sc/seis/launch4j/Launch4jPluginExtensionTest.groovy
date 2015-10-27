@@ -190,6 +190,10 @@ class Launch4jPluginExtensionTest extends Specification {
                 id 'edu.sc.seis.launch4j'
             }
 
+            repositories {
+                mavenCentral()
+            }
+
             dependencies {
                 compile 'org.slf4j:slf4j-api:1.7.12'
                 runtime 'org.slf4j:slf4j-simple:1.7.12'
