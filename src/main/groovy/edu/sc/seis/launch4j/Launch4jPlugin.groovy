@@ -72,6 +72,7 @@ class Launch4jPlugin implements Plugin<Project> {
             runBinaryTask.dependsOn(copyTask)
             runBinaryTask.inputs.files xmlTask.outputs.files
             runTask.dependsOn(runBinaryTask)
+            runTask.inputs.files copyTask.outputs.files
             Task l4jTask = addLaunch4jTask(pluginExtension)
             l4jTask.dependsOn(runTask)
 
@@ -83,6 +84,7 @@ class Launch4jPlugin implements Plugin<Project> {
             runLibTask.dependsOn(copyL4JTask)
             runLibTask.dependsOn(copyTask)
             runLibTask.inputs.files xmlTask.outputs.files
+            runLibTask.inputs.files copyTask.outputs.files
             runTask.dependsOn(runLibTask)
 
             pluginExtension.onSetCopyConfigurable { Object copyConfigurable ->
