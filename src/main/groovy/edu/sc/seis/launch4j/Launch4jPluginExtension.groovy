@@ -73,6 +73,7 @@ class Launch4jPluginExtension implements Serializable {
         if (!outputDir) {
             outputDir = "${project.buildDir}/launch4j"
         }
+        project.mkdir(outputDir)
         // initialize the jar variable with a default value later
         if (!version) {
             version = project.version
