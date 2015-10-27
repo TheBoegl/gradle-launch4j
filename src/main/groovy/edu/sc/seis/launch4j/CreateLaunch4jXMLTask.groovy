@@ -33,7 +33,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         xml.launch4jConfig() {
             dontWrapJar(configuration.dontWrapJar)
             headerType(configuration.headerType)
-            jar(configuration.getJar(project))
+            jar(configuration.jar)
             outfile(configuration.outfile)
             errTitle(configuration.errTitle)
             cmdLine(configuration.cmdLine)
@@ -45,7 +45,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             restartOnCrash(configuration.restartOnCrash)
             manifest(configuration.manifest)
             icon(configuration.icon)
-            if (!configuration.mainClassName) {
+            if (configuration.mainClassName) {
                 classPath() {
                     mainClass(configuration.mainClassName)
                     classpath.each() { val -> cp(val) }
