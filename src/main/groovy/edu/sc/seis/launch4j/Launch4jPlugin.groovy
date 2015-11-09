@@ -35,64 +35,71 @@ class Launch4jPlugin implements Plugin<Project> {
 
     private Project project
 
+    @Override
     def void apply(Project project) {
         this.project = project
         Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
                 .setTransitive(true).setDescription('The launch4j configuration for this project.')
-        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension(project)
+        Launch4jPluginExtension pluginExtension = new Launch4jPluginExtension()
+
         project.extensions.add(LAUNCH4J_EXTENSION_NAME, pluginExtension)
 
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
                 .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
 
-        def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
-        if (project.repositories.isEmpty()) {
-            project.logger.lifecycle("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
-            project.repositories.mavenCentral()
-        }
-        addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
-        OperatingSystem os = OperatingSystem.current()
-        if (os.isLinux()) {
-            addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
-        } else if (os.isWindows()) {
-            addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
-        } else if (os.isMacOsX()) {
-            addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
-        }
-
-        /* initialize default tasks */
-        Task xmlTask = addCreateLaunch4jXMLTask(pluginExtension)
-        Task copyTask = addCopyToLibTask(pluginExtension)
-        Task runTask = addRunLaunch4jTask()
-        Task runBinaryTask = addRunLaunch4jBinTask(pluginExtension)
-        runBinaryTask.dependsOn(copyTask)
-        runBinaryTask.inputs.files xmlTask.outputs.files
-        runTask.dependsOn(runBinaryTask)
-        Task l4jTask = addLaunch4jTask(pluginExtension)
-        l4jTask.dependsOn(runTask)
-
-        /* initialize tasks to retrieve and execute the launch4j jar and its dependencies */
-        Task copyL4JTask = addCopyLaunch4JToLibTask(pluginExtension)
-        Task unzipL4jTask = addUnzipLaunch4JWorkingBinariesTask(pluginExtension)
-        copyL4JTask.dependsOn(unzipL4jTask)
-        Task runLibTask = addRunLaunch4jLibTask(pluginExtension)
-        runLibTask.dependsOn(copyL4JTask)
-        runLibTask.dependsOn(copyTask)
-        runLibTask.inputs.files xmlTask.outputs.files
-        runTask.dependsOn(runLibTask)
-
-        pluginExtension.onSetCopyConfigurable { Object copyConfigurable ->
-            copyTask.enabled = false
-            def copyTask2 = addCopyToLibTask(pluginExtension)
-            project.tasks.each { it ->
-                if (it.dependsOn.contains(copyTask)) {
-                    it.dependsOn.remove(copyTask)
-                    it.dependsOn copyTask2
-                }
+        project.afterEvaluate {
+            pluginExtension.afterEvaluate(project)
+            def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
+            if (project.repositories.isEmpty()) {
+                project.logger.lifecycle("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
+                project.repositories.mavenCentral()
             }
-            copyTask.dependsOn.clear()
-            copyTask2.dependsOn copyTask.dependsOn
-            xmlTask.dependsOn copyTask2
+            addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
+            OperatingSystem os = OperatingSystem.current()
+            if (os.isLinux()) {
+                addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
+            } else if (os.isWindows()) {
+                addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
+            } else if (os.isMacOsX()) {
+                addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
+            }
+
+            /* initialize default tasks */
+            Task xmlTask = addCreateLaunch4jXMLTask(pluginExtension)
+            Task copyTask = addCopyToLibTask(pluginExtension)
+            Task runTask = addRunLaunch4jTask()
+            Task runBinaryTask = addRunLaunch4jBinTask(pluginExtension)
+            runBinaryTask.dependsOn(copyTask)
+            runBinaryTask.inputs.files xmlTask.outputs.files
+            runTask.dependsOn(runBinaryTask)
+            runTask.inputs.files copyTask.outputs.files
+            Task l4jTask = addLaunch4jTask(pluginExtension)
+            l4jTask.dependsOn(runTask)
+
+            /* initialize tasks to retrieve and execute the launch4j jar and its dependencies */
+            Task copyL4JTask = addCopyLaunch4JToLibTask(pluginExtension)
+            Task unzipL4jTask = addUnzipLaunch4JWorkingBinariesTask(pluginExtension)
+            copyL4JTask.dependsOn(unzipL4jTask)
+            Task runLibTask = addRunLaunch4jLibTask(pluginExtension)
+            runLibTask.dependsOn(copyL4JTask)
+            runLibTask.dependsOn(copyTask)
+            runLibTask.inputs.files xmlTask.outputs.files
+            runLibTask.inputs.files copyTask.outputs.files
+            runTask.dependsOn(runLibTask)
+
+            pluginExtension.onSetCopyConfigurable { Object copyConfigurable ->
+                copyTask.enabled = false
+                def copyTask2 = addCopyToLibTask(pluginExtension)
+                project.tasks.each { task ->
+                    if (task.dependsOn.contains(copyTask)) {
+                        task.dependsOn.remove(copyTask)
+                        task.dependsOn copyTask2
+                    }
+                }
+                copyTask.dependsOn.clear()
+                copyTask2.dependsOn copyTask.dependsOn
+                xmlTask.dependsOn copyTask2
+            }
         }
     }
 
@@ -100,8 +107,8 @@ class Launch4jPlugin implements Plugin<Project> {
         def task = project.tasks.create(TASK_XML_GENERATE_NAME, CreateLaunch4jXMLTask)
         task.description = "Creates XML configuration file used by launch4j to create an windows exe."
         task.group = LAUNCH4J_GROUP
-        task.inputs.property("project version", { project.version })
-        task.inputs.property("Launch4j extension", { configuration.hashCode() })
+        task.inputs.property("project version", { "${-> project.version}" })
+        task.inputs.property("Launch4j extension", { configuration })
         task.configuration = configuration
         return task
     }
@@ -111,7 +118,7 @@ class Launch4jPlugin implements Plugin<Project> {
         task.description = "Copies the project dependency jars in the lib directory."
         task.group = LAUNCH4J_GROUP
         task.with configureDistSpec(configuration)
-        task.into { project.file("${-> project.buildDir}/${-> configuration.outputDir}/lib") }
+        task.into { project.file("${-> configuration.outputDir}/lib") }
         return task
     }
 
@@ -125,7 +132,7 @@ class Launch4jPlugin implements Plugin<Project> {
             from(project.configurations.getByName(LAUNCH4J_CONFIGURATION_NAME))
         }
         task.with distSpec
-        File destination = project.file("${-> project.buildDir}/${-> configuration.outputDir}/bin/lib")
+        File destination = project.file("${-> configuration.outputDir}/bin/lib")
         File jarFile = project.file("${destination.parentFile}/launch4j.jar")
         task.outputs.file(jarFile)
         task.into { destination }
@@ -151,7 +158,7 @@ class Launch4jPlugin implements Plugin<Project> {
             }
             task.from project.zipTree(workingJar)
             task.includeEmptyDirs = false
-            def destination = "${-> project.buildDir}/${-> configuration.outputDir}/bin"
+            def destination = "${-> configuration.outputDir}/bin"
             task.into { "${-> destination}" }
 
             def jarName = project.file(workingJar).name
@@ -186,10 +193,10 @@ class Launch4jPlugin implements Plugin<Project> {
         task.description = "Runs the launch4j binary to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         task.onlyIf { configuration.externalLaunch4j }
-        task.commandLine "${-> configuration.launch4jCmd}", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
-        task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
-        task.inputs.dir("${-> project.buildDir}/${-> configuration.outputDir}/lib")
-        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.commandLine "${-> configuration.launch4jCmd}", "${-> configuration.outputDir}/${-> configuration.xmlFileName}"
+        task.workingDir "${-> configuration.outputDir}"
+        task.inputs.dir("${-> configuration.outputDir}/lib")
+        task.outputs.file("${-> configuration.outputDir}/${-> configuration.outfile}")
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
@@ -214,9 +221,9 @@ class Launch4jPlugin implements Plugin<Project> {
         task.description = "Runs the launch4j jar to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         task.onlyIf { !configuration.externalLaunch4j }
-        task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.xmlFileName}"
-        task.workingDir "${-> project.buildDir}/${-> configuration.outputDir}"
-        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}/${-> configuration.outfile}")
+        task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> configuration.outputDir}/${-> configuration.xmlFileName}"
+        task.workingDir "${-> configuration.outputDir}"
+        task.outputs.file("${-> configuration.outputDir}/${-> configuration.outfile}")
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput
         task.ignoreExitValue = true
@@ -240,7 +247,7 @@ class Launch4jPlugin implements Plugin<Project> {
         def task = project.tasks.create(TASK_LAUNCH4J_NAME)
         task.description = "Placeholder task for tasks relating to creating .exe applications with launch4j"
         task.group = LAUNCH4J_GROUP
-        task.outputs.file("${-> project.buildDir}/${-> configuration.outputDir}")
+        task.outputs.file("${-> configuration.outputDir}")
         return task
     }
 
@@ -249,9 +256,8 @@ class Launch4jPlugin implements Plugin<Project> {
 
         distSpec.with {
             if (configuration.copyConfigurable) {
-                from {configuration.copyConfigurable}
-            } else
-            if (project.plugins.hasPlugin('java')) {
+                from { configuration.copyConfigurable }
+            } else if (project.plugins.hasPlugin('java')) {
                 from(project.tasks[JavaPlugin.JAR_TASK_NAME])
                 from(project.configurations.runtime)
             }

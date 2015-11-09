@@ -15,7 +15,8 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
     @OutputFile
     File getXmlOutFile() {
-        return project.launch4j.getXmlOutFileForProject(project)
+        Launch4jPluginExtension config = project.launch4j
+        return config.getXmlOutFileForProject(project)
     }
 
     @TaskAction
@@ -32,7 +33,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         xml.launch4jConfig() {
             dontWrapJar(configuration.dontWrapJar)
             headerType(configuration.headerType)
-            jar(configuration.getJar(project))
+            jar(configuration.jar)
             outfile(configuration.outfile)
             errTitle(configuration.errTitle)
             cmdLine(configuration.cmdLine)
@@ -44,9 +45,11 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             restartOnCrash(configuration.restartOnCrash)
             manifest(configuration.manifest)
             icon(configuration.icon)
-            classPath() {
-                mainClass(configuration.mainClassName)
-                classpath.each() { val -> cp(val) }
+            if (configuration.mainClassName) {
+                classPath() {
+                    mainClass(configuration.mainClassName)
+                    classpath.each() { val -> cp(val) }
+                }
             }
             jre() {
                 xml.path(configuration.bundledJrePath != null ? configuration.bundledJrePath : "")
@@ -127,7 +130,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
      * @param version
      * @return
      */
-    String parseDotVersion(version) {
+    static String parseDotVersion(version) {
         if (version ==~ /\d+(\.\d+){3}/) {
             return version
         } else if (version ==~ /\d+(\.\d+){0,2}/) {
