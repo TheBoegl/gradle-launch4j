@@ -121,9 +121,11 @@ class Launch4jPluginExtensionTest extends Specification {
         def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
         outfile.exists()
 
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim().equals('Hello World!')
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+          def process = outfile.path.execute()
+          process.waitFor() == 0
+          process.in.text.trim().equals('Hello World!')
+        }
     }
 
     def 'Running the created executable with Java dependencies succeeds'() {
@@ -176,10 +178,12 @@ class Launch4jPluginExtensionTest extends Specification {
         def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
         outfile.exists()
 
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
-        process.err.text.trim().endsWith('Hello LOG!')
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+          def process = outfile.path.execute()
+          process.waitFor() == 0
+          process.in.text.trim().equals('Hello STDOUT!')
+          process.err.text.trim().endsWith('Hello LOG!')
+        }
     }
 
     def 'Running an unwrapped executable with Java dependencies succeeds'() {
@@ -244,9 +248,11 @@ class Launch4jPluginExtensionTest extends Specification {
         def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
         outfile.exists()
 
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
-        process.err.text.trim().endsWith('Hello LOG!')
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+          def process = outfile.path.execute()
+          process.waitFor() == 0
+          process.in.text.trim().equals('Hello STDOUT!')
+          process.err.text.trim().endsWith('Hello LOG!')
+        }
     }
 }
