@@ -35,7 +35,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.5.3'
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.5.4'
       }
     }
 
@@ -56,7 +56,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
     apply plugin: 'java'
 
     plugins {
-      id 'edu.sc.seis.launch4j' version '1.5.3'
+      id 'edu.sc.seis.launch4j' version '1.5.4'
     }
 
     launch4j {
