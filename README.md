@@ -35,7 +35,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.5.3'
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.5.4'
       }
     }
 
@@ -56,7 +56,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
     apply plugin: 'java'
 
     plugins {
-      id 'edu.sc.seis.launch4j' version '1.5.3'
+      id 'edu.sc.seis.launch4j' version '1.5.4'
     }
 
     launch4j {
@@ -129,23 +129,31 @@ Take a look at the [Launch4j documentation](http://launch4j.sourceforge.net/docs
 # Configurable input configuration
 
 In order to configure the input of the *copyL4jLib* task set the `copyConfigurable` property.
-The following example shows how to use this plugin hand in hand with the fatJar plugin:
+The following example shows how to use this plugin hand in hand with the shadow plugin:
 
-```
-fatJar {
-    classifier 'fat'
-    manifest {
-        attributes 'Main-Class': project.mainClassName
+    launch4j {
+        outfile = 'TestMain.exe'
+        mainClassName = project.mainClassName
+        copyConfigurable = project.tasks.shadowJar.outputs.files
+        jar = "lib/${project.tasks.shadowJar.archiveName}"
     }
-}
 
-copyL4jLib.dependsOn fatJar
-fatJarPrepareFiles.dependsOn jar
+If you use the outdated fatJar plugin the following configuration correctly wires the execution graph:
 
-launch4j {
-    copyConfigurable = project.tasks.fatJar.outputs.files
-    outfile = 'TestMain.exe'
-    mainClassName = project.mainClassName
-    jar = "lib/${project.tasks.fatJar.archiveName}"
-}
-```
+    fatJar {
+        classifier 'fat'
+        manifest {
+            attributes 'Main-Class': project.mainClassName
+        }
+    }
+    
+    copyL4jLib.dependsOn fatJar
+    fatJarPrepareFiles.dependsOn jar
+    
+    launch4j {
+        outfile = 'TestMain.exe'
+        mainClassName = project.mainClassName
+        copyConfigurable = project.tasks.fatJar.outputs.files
+        jar = "lib/${project.tasks.fatJar.archiveName}"
+    }
+

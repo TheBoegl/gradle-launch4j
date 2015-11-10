@@ -62,7 +62,7 @@ class Launch4jPluginExtension implements Serializable {
     Integer splashTimeout = 60
     boolean splashTimeoutError = true
 
-    private Object copyConfigurable
+    private transient Object copyConfigurable
 
     private transient ActionBroadcast<Object> onSetCopyConfigurable = new ActionBroadcast<>()
 

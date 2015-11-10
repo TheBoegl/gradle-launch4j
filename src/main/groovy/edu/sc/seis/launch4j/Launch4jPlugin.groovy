@@ -47,6 +47,10 @@ class Launch4jPlugin implements Plugin<Project> {
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
                 .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
 
+        project.tasks.create(TASK_LIB_COPY_NAME)
+        project.tasks.create(TASK_RUN_NAME)
+        project.tasks.create(TASK_LAUNCH4J_NAME)
+
         project.afterEvaluate {
             pluginExtension.afterEvaluate(project)
             def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
@@ -181,7 +185,7 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addRunLaunch4jTask() {
-        def task = project.tasks.create(TASK_RUN_NAME)
+        def task = project.tasks.replace(TASK_RUN_NAME)
         task.description = "Placeholder task to run launch4j to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         return task
@@ -244,7 +248,7 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     private Task addLaunch4jTask(Launch4jPluginExtension configuration) {
-        def task = project.tasks.create(TASK_LAUNCH4J_NAME)
+        def task = project.tasks.replace(TASK_LAUNCH4J_NAME)
         task.description = "Placeholder task for tasks relating to creating .exe applications with launch4j"
         task.group = LAUNCH4J_GROUP
         task.outputs.file("${-> configuration.outputDir}")
