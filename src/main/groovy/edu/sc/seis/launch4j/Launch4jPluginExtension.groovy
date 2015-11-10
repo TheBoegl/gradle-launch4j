@@ -17,7 +17,7 @@ class Launch4jPluginExtension implements Serializable {
     String mainClassName
     boolean dontWrapJar = false
     String headerType = "gui"
-    private String jar
+    String jar
     String outfile
     String errTitle = ""
     String cmdLine = ""
