@@ -44,9 +44,11 @@ class CreateLaunch4jXMLTask extends DefaultTask {
             restartOnCrash(configuration.restartOnCrash)
             manifest(configuration.manifest)
             icon(configuration.icon)
-            classPath() {
-                mainClass(configuration.mainClassName)
-                classpath.each() { val -> cp(val) }
+            if(configuration.mainClassName != null) {
+                classPath() {
+                    mainClass(configuration.mainClassName)
+                    classpath.each() { val -> cp(val) }
+                    }
             }
             jre() {
                 xml.path(configuration.bundledJrePath != null ? configuration.bundledJrePath : "")
