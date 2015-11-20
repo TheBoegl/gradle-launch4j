@@ -60,12 +60,12 @@ class Launch4jPlugin implements Plugin<Project> {
             }
             addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
             OperatingSystem os = OperatingSystem.current()
-            if (os.isLinux()) {
-                addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
-            } else if (os.isWindows()) {
+            if (os.isWindows()) {
                 addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
             } else if (os.isMacOsX()) {
                 addDependency(binaryConfig, "${l4jArtifact}:workdir-mac")
+            } else if (os.isLinux() || os.isUnix()) { // isUnix will also match MacOs, hence, call it as last resort
+                addDependency(binaryConfig, "${l4jArtifact}:workdir-linux")
             }
 
             /* initialize default tasks */
