@@ -171,3 +171,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 }
 
 //createReleaseTag.dependsOn publish
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}

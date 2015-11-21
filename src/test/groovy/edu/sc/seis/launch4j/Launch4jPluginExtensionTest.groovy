@@ -43,7 +43,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         then:
         result.task(':printProperties').outcome == SUCCESS
-        result.standardOutput.trim().equals('launch4j')
+        result.output.trim().equals('launch4j')
     }
 
     def 'Running the task to create the executable succeeds'() {
