@@ -59,6 +59,7 @@ class Launch4jPlugin implements Plugin<Project> {
                 project.repositories.mavenCentral()
             }
             addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
+            addDependency(defaultConfig, 'com.thoughtworks.xstream:xstream:1.4.8')
             OperatingSystem os = OperatingSystem.current()
             if (os.isWindows()) {
                 addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
