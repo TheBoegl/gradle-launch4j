@@ -120,10 +120,10 @@ class Launch4jPlugin implements Plugin<Project> {
 
     private Task addCopyToLibTask(Launch4jPluginExtension configuration) {
         def task = project.tasks.replace(TASK_LIB_COPY_NAME, Sync)
-        task.description = "Copies the project dependency jars in the ${-> configuration.cpLibsDir} directory."
+        task.description = "Copies the project dependency jars in the configured library directory."
         task.group = LAUNCH4J_GROUP
         task.with configureDistSpec(configuration)
-        task.into { project.file("${-> configuration.outputDir}/${-> configuration.cpLibsDir}") }
+        task.into { project.file("${-> configuration.outputDir}/${-> configuration.libraryDir}") }
         return task
     }
 
@@ -200,7 +200,7 @@ class Launch4jPlugin implements Plugin<Project> {
         task.onlyIf { configuration.externalLaunch4j }
         task.commandLine "${-> configuration.launch4jCmd}", "${-> configuration.outputDir}/${-> configuration.xmlFileName}"
         task.workingDir "${-> configuration.outputDir}"
-        task.inputs.dir("${-> configuration.outputDir}/${-> configuration.cpLibsDir}")
+        task.inputs.dir("${-> configuration.outputDir}/${-> configuration.libraryDir}")
         task.outputs.file("${-> configuration.outputDir}/${-> configuration.outfile}")
         task.standardOutput = new ByteArrayOutputStream()
         task.errorOutput = task.standardOutput

@@ -78,7 +78,7 @@ The values configurable within the launch4j extension along with their defaults 
 
  *    String launch4jCmd = "launch4j"
  *    String outputDir = "launch4j"
- *    String cpLibsDir = "lib"
+ *    String libraryDir = "lib"
  *    String xmlFileName = "launch4j.xml"
  *    String mainClassName
  *    boolean dontWrapJar = false
