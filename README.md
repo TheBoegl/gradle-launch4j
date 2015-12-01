@@ -71,14 +71,14 @@ See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plug
 
 The values configurable within the launch4j extension along with their defaults are:
 
+ *    String launch4jCmd = "launch4j"
+ *    String outputDir = "launch4j"
+ *    String libraryDir = "lib"
  *    boolean externalLaunch4j = false
  *    Object copyConfigurable
 
 &nbsp;  
 
- *    String launch4jCmd = "launch4j"
- *    String outputDir = "launch4j"
- *    String libraryDir = "lib"
  *    String xmlFileName = "launch4j.xml"
  *    String mainClassName
  *    boolean dontWrapJar = false
