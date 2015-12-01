@@ -35,7 +35,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.5.6'
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.6.0'
       }
     }
 
@@ -56,7 +56,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
     apply plugin: 'java'
 
     plugins {
-      id 'edu.sc.seis.launch4j' version '1.5.6'
+      id 'edu.sc.seis.launch4j' version '1.6.0'
     }
 
     launch4j {
@@ -71,13 +71,14 @@ See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plug
 
 The values configurable within the launch4j extension along with their defaults are:
 
+ *    String launch4jCmd = "launch4j"
+ *    String outputDir = "launch4j"
+ *    String libraryDir = "lib"
  *    boolean externalLaunch4j = false
  *    Object copyConfigurable
 
 &nbsp;  
 
- *    String launch4jCmd = "launch4j"
- *    String outputDir = "launch4j"
  *    String xmlFileName = "launch4j.xml"
  *    String mainClassName
  *    boolean dontWrapJar = false

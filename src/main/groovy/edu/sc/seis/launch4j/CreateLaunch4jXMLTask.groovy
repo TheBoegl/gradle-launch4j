@@ -23,7 +23,7 @@ class CreateLaunch4jXMLTask extends DefaultTask {
     def void writeXmlConfig() {
         if (configuration == null) configuration = project.launch4j
         def classpath = project.plugins.hasPlugin('java') ? project.configurations.runtime.collect {
-            "lib/${it.name}"
+            "${configuration.libraryDir}/${it.name}"
         } : []
         def file = getXmlOutFile()
         file.parentFile.mkdirs()
