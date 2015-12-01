@@ -11,6 +11,7 @@ class Launch4jPluginExtension implements Serializable {
     String launch4jCmd = "launch4j"
     boolean externalLaunch4j = false
     String outputDir
+	String cpLibsDir = "lib"
     String xmlFileName = "launch4j.xml"
     String mainClassName
     boolean dontWrapJar = false
@@ -102,7 +103,7 @@ class Launch4jPluginExtension implements Serializable {
         }
         if (!jar) {
             if (project.plugins.hasPlugin('java')) {
-                jar = "lib/${project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName}"
+                jar = "${cpLibsDir}/${project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName}"
             } else {
                 jar = ""
             }
