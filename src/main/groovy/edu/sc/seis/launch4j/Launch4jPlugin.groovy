@@ -129,7 +129,7 @@ class Launch4jPlugin implements Plugin<Project> {
 
     private Task addCopyLaunch4JToLibTask(Launch4jPluginExtension configuration) {
         def task = project.tasks.create(TASK_L4j_COPY_NAME, Sync)
-        task.description = "Copies the launch4j jars in the bin and bin/lib directories."
+        task.description = "Copies the launch4j jars in the bin-launch4j and bin-launch4j/lib directories."
         task.group = LAUNCH4J_GROUP
         task.onlyIf { !configuration.externalLaunch4j }
         CopySpec distSpec = project.copySpec {}
@@ -137,7 +137,7 @@ class Launch4jPlugin implements Plugin<Project> {
             from(project.configurations.getByName(LAUNCH4J_CONFIGURATION_NAME))
         }
         task.with distSpec
-        File destination = project.file("${-> configuration.outputDir}/bin/lib")
+        File destination = project.file("${-> configuration.outputDir}/${configuration.libraryDirLaunch4j}/lib")
         File jarFile = project.file("${destination.parentFile}/launch4j.jar")
         task.outputs.file(jarFile)
         task.into { destination }
@@ -163,7 +163,7 @@ class Launch4jPlugin implements Plugin<Project> {
             }
             task.from project.zipTree(workingJar)
             task.includeEmptyDirs = false
-            def destination = "${-> configuration.outputDir}/bin"
+            def destination = "${-> configuration.outputDir}/${configuration.libraryDirLaunch4j}"
             task.into { "${-> destination}" }
 
             def jarName = project.file(workingJar).name
@@ -226,7 +226,7 @@ class Launch4jPlugin implements Plugin<Project> {
         task.description = "Runs the launch4j jar to generate an .exe file"
         task.group = LAUNCH4J_GROUP
         task.onlyIf { !configuration.externalLaunch4j }
-        task.commandLine "java", "-jar", "bin/launch4j.jar", "${-> configuration.outputDir}/${-> configuration.xmlFileName}"
+        task.commandLine "java", "-jar", "${configuration.libraryDirLaunch4j}/launch4j.jar", "${-> configuration.outputDir}/${-> configuration.xmlFileName}"
         task.workingDir "${-> configuration.outputDir}"
         task.outputs.file("${-> configuration.outputDir}/${-> configuration.outfile}")
         task.standardOutput = new ByteArrayOutputStream()
