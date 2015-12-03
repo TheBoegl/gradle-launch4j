@@ -1,15 +1,17 @@
 package edu.sc.seis.launch4j
-
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.listener.ActionBroadcast
 
+import java.nio.file.Paths
+
 class Launch4jPluginExtension implements Serializable {
 
     String launch4jCmd = "launch4j"
     boolean externalLaunch4j = false
+    String libraryDirLaunch4j = "bin-launch4j"
     String outputDir
 	String libraryDir = "lib"
     String xmlFileName = "launch4j.xml"
@@ -75,6 +77,7 @@ class Launch4jPluginExtension implements Serializable {
             outputDir = "${project.buildDir}/launch4j"
         }
         project.mkdir(outputDir)
+        project.mkdir(Paths.get(outputDir, outfile).parent.toString())
         // initialize the jar variable with a default value later
         if (!version) {
             version = project.version
@@ -133,6 +136,8 @@ class Launch4jPluginExtension implements Serializable {
         result = (launch4jCmd != null ? launch4jCmd.hashCode() : 0)
         result = 31 * result + (externalLaunch4j ? 1 : 0)
         result = 31 * result + (outputDir != null ? outputDir.hashCode() : 0)
+        result = 31 * result + (libraryDir != null ? libraryDir.hashCode() : 0)
+        result = 31 * result + (libraryDirLaunch4j != null ? libraryDirLaunch4j.hashCode() : 0)
         result = 31 * result + (xmlFileName != null ? xmlFileName.hashCode() : 0)
         result = 31 * result + (mainClassName != null ? mainClassName.hashCode() : 0)
         result = 31 * result + (dontWrapJar ? 1 : 0)
@@ -228,6 +233,8 @@ class Launch4jPluginExtension implements Serializable {
         if (opt != that.opt) return false
         if (outfile != that.outfile) return false
         if (outputDir != that.outputDir) return false
+        if (libraryDir != that.libraryDir) return false
+        if (libraryDirLaunch4j != that.libraryDirLaunch4j) return false
         if (priority != that.priority) return false
         if (productName != that.productName) return false
         if (splashFileName != that.splashFileName) return false
