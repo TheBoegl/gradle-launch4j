@@ -133,6 +133,7 @@ class Launch4jPluginExtension implements Serializable {
         result = (launch4jCmd != null ? launch4jCmd.hashCode() : 0)
         result = 31 * result + (externalLaunch4j ? 1 : 0)
         result = 31 * result + (outputDir != null ? outputDir.hashCode() : 0)
+        result = 31 * result + (libraryDir != null ? libraryDir.hashCode() : 0)
         result = 31 * result + (xmlFileName != null ? xmlFileName.hashCode() : 0)
         result = 31 * result + (mainClassName != null ? mainClassName.hashCode() : 0)
         result = 31 * result + (dontWrapJar ? 1 : 0)
@@ -228,6 +229,7 @@ class Launch4jPluginExtension implements Serializable {
         if (opt != that.opt) return false
         if (outfile != that.outfile) return false
         if (outputDir != that.outputDir) return false
+        if (libraryDir != that.libraryDir) return false
         if (priority != that.priority) return false
         if (productName != that.productName) return false
         if (splashFileName != that.splashFileName) return false
