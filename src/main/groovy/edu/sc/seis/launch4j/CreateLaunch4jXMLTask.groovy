@@ -7,6 +7,8 @@ import org.gradle.api.tasks.TaskAction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.nio.file.Paths
+
 class CreateLaunch4jXMLTask extends DefaultTask {
 
     static final Logger LOGGER = LoggerFactory.getLogger(CreateLaunch4jXMLTask)
@@ -22,8 +24,9 @@ class CreateLaunch4jXMLTask extends DefaultTask {
     @TaskAction
     def void writeXmlConfig() {
         if (configuration == null) configuration = project.launch4j
+        def outFilePath = Paths.get(configuration.outputDir, configuration.outfile).parent
         def classpath = project.plugins.hasPlugin('java') ? project.configurations.runtime.collect {
-            "${configuration.libraryDir}/${it.name}"
+            outFilePath.relativize(Paths.get(configuration.outputDir, configuration.libraryDir, it.name)).toString() // relativize paths relative to outfile
         } : []
         def file = getXmlOutFile()
         file.parentFile.mkdirs()

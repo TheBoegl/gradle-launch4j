@@ -1,10 +1,11 @@
 package edu.sc.seis.launch4j
-
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.listener.ActionBroadcast
+
+import java.nio.file.Paths
 
 class Launch4jPluginExtension implements Serializable {
 
@@ -75,6 +76,7 @@ class Launch4jPluginExtension implements Serializable {
             outputDir = "${project.buildDir}/launch4j"
         }
         project.mkdir(outputDir)
+        project.mkdir(Paths.get(outputDir, outfile).parent.toString())
         // initialize the jar variable with a default value later
         if (!version) {
             version = project.version
