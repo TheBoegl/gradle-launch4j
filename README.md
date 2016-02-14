@@ -18,7 +18,7 @@ There are 8 tasks:
   * createExe - Backward compatible task to generate an .exe file.
   * **launch4j** - Placeholder task that depends on the above. *Execute this task to generate an executable.*
 
-Launch4j must not be installed separately anymore, but can be used from the *PATH* with the configuration parameter `externalLaunch4j = true`.
+Launch4j no longer needs to be installed separately, but if you want, you can still use it from the *PATH* with the configuration parameter `externalLaunch4j = true`.
 
 Configuration
 -------------
