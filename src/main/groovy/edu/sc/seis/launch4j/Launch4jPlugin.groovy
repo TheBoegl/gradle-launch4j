@@ -31,7 +31,7 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String TASK_RUN_BIN_NAME = "createExeWithBin"
     static final String TASK_RUN_LIB_NAME = "createExeWithJar"
     static final String TASK_LAUNCH4J_NAME = "launch4j"
-    static final String ARTIFACT_VERSION = "3.8.0"
+    static final String ARTIFACT_VERSION = "3.9"
 
     private Project project
 
