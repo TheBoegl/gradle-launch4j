@@ -39,6 +39,7 @@ class Launch4jPluginExtension implements Serializable {
     String productName
     String internalName
     String trademarks
+    String language = "ENGLISH_US"
 
     String bundledJrePath
     boolean bundledJre64Bit = false
@@ -171,6 +172,7 @@ class Launch4jPluginExtension implements Serializable {
         result = 31 * result + (jreMaxVersion != null ? jreMaxVersion.hashCode() : 0)
         result = 31 * result + (jdkPreference != null ? jdkPreference.hashCode() : 0)
         result = 31 * result + (jreRuntimeBits != null ? jreRuntimeBits.hashCode() : 0)
+        result = 31 * result + (language != null ? language.hashCode() : 0)
         result = 31 * result + (mutexName != null ? mutexName.hashCode() : 0)
         result = 31 * result + (windowTitle != null ? windowTitle.hashCode() : 0)
         result = 31 * result + (messagesStartupError != null ? messagesStartupError.hashCode() : 0)
@@ -218,6 +220,7 @@ class Launch4jPluginExtension implements Serializable {
         if (initialHeapSize != that.initialHeapSize) return false
         if (internalName != that.internalName) return false
         if (trademarks != that.trademarks) return false
+        if (language != that.language) return false
         if (jar != that.jar) return false
         if (jdkPreference != that.jdkPreference) return false
         if (jreMaxVersion != that.jreMaxVersion) return false
