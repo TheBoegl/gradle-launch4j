@@ -96,6 +96,8 @@ class CreateLaunch4jXMLTask extends DefaultTask {
                 companyName(configuration.companyName)
                 internalName(configuration.internalName)
                 originalFilename(configuration.outfile)
+                trademarks(configuration.trademarks)
+                language(configuration.language)
             }
 
             if (configuration.messagesStartupError != null ||
