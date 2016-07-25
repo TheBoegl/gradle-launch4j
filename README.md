@@ -35,7 +35,7 @@ An example configuration within your build.gradle for use in all Gradle versions
         }
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.6.1'
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:1.6.2'
       }
     }
 
