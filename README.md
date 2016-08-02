@@ -56,7 +56,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
     apply plugin: 'java'
 
     plugins {
-      id 'edu.sc.seis.launch4j' version '1.6.1'
+      id 'edu.sc.seis.launch4j' version '1.6.2'
     }
 
     launch4j {
