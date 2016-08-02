@@ -160,3 +160,6 @@ If you use the outdated fatJar plugin the following configuration correctly wire
         jar = "lib/${project.tasks.fatJar.archiveName}"
     }
 
+Version
+-------
+See [VERSION.md](VERSION.md) for more information.
