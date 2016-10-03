@@ -87,7 +87,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String outfile = project.name+'.exe'
  *    String errTitle = ""
  *    String cmdLine = ""
- *    String chdir = '.'
+ *    String chdir = ""
  *    String priority = 'normal'
  *    String downloadUrl = "http://java.com/download"
  *    String supportUrl = ""

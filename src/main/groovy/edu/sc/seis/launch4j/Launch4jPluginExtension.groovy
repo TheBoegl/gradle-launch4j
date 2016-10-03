@@ -22,7 +22,7 @@ class Launch4jPluginExtension implements Serializable {
     String outfile
     String errTitle = ""
     String cmdLine = ""
-    String chdir = '.'
+    String chdir = ""
     String priority = 'normal'
     String downloadUrl = "http://java.com/download"
     String supportUrl = ""
