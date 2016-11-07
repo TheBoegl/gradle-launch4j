@@ -76,7 +76,7 @@ pluginBundle {
     website = 'https://github.com/TheBoegl/gradle-launch4j'
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
     description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
-    plugins {
+    plugins.add {
         launch4j {
             id = 'edu.sc.seis.launch4j'
             displayName = 'launch4j gradle plugin'
@@ -173,5 +173,5 @@ gradle.taskGraph.whenReady { taskGraph ->
 //createReleaseTag.dependsOn publish
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.9'
+    gradleVersion = '3.1'
 }
