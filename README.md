@@ -10,9 +10,9 @@ Tasks
 There are 8 tasks:
 
   * generateXmlConfig - Creates XML configuration file used by launch4j.
-  * copyL4jLib - Copies the project dependency jars in the lib directory.
-  * copyL4jBinLib - Copies the launch4j jars in the bin and bin/lib directories.
-  * unzipL4jBin - Unzips the launch4j working binaries in the bin directory.
+  * copyL4jLib - Copies the project dependency jars in the lib directory. // TODO: remove
+  * copyL4jBinLib - Copies the launch4j jars in the bin and bin/lib directories. // TODO: remove
+  * unzipL4jBin - Unzips the launch4j working binaries in the bin directory. // ToDo: 
   * createExeWithBin - Runs the launch4j binary to generate an .exe file.
   * createExeWithJar - Runs the launch4j jar to generate an .exe file.
   * createExe - Backward compatible task to generate an .exe file.
