@@ -7,6 +7,7 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 class Launch4jPluginExtensionTest extends Specification {
+    private static final DEBUG = Boolean.parseBoolean(System.getProperty("org.gradle.testkit.debug", "false"))
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
     List<File> pluginClasspath
@@ -36,6 +37,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'printProperties')
                 .withPluginClasspath(pluginClasspath)
@@ -72,6 +74,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'jar', 'launch4j')
                 .withPluginClasspath(pluginClasspath)
@@ -109,6 +112,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'jar', 'launch4j')
                 .withPluginClasspath(pluginClasspath)
@@ -164,6 +168,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'jar', 'launch4j')
                 .withPluginClasspath(pluginClasspath)
@@ -221,6 +226,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'jar', 'launch4j')
                 .withPluginClasspath(pluginClasspath)
@@ -292,6 +298,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'jar', 'launch4j')
                 .withPluginClasspath(pluginClasspath)
@@ -364,6 +371,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'jar', 'launch4j')
                 .withPluginClasspath(pluginClasspath)
@@ -438,6 +446,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
         when:
         def result = GradleRunner.create()
+                .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
                 .withArguments('-q', 'jar', 'launch4j')
                 .withPluginClasspath(pluginClasspath)
