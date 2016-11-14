@@ -389,7 +389,7 @@ class Launch4jPluginExtensionTest extends Specification {
             plugins {
                 id 'java'
                 id 'edu.sc.seis.launch4j'
-                id 'com.github.johnrengelman.shadow' version '1.2.2'
+                id 'com.github.johnrengelman.shadow' version '1.2.4'
             }
 
             repositories {

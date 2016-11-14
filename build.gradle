@@ -38,7 +38,10 @@ dependencies {
     compile localGroovy()
 
     testCompile gradleTestKit()
-    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude module: 'junit-dep'
+        exclude module: 'groovy-all'
+    }
 
     // Add the classpath file to the test runtime classpath.
     testRuntime files(createClasspathManifest)
