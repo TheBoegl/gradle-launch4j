@@ -12,6 +12,14 @@ abstract class DefaultLaunch4jTask extends DefaultTask {
 
     protected DefaultLaunch4jTask() {
         this.config = project.launch4j
+        project.afterEvaluate {
+            if (project.hasProperty('shadowJar')) {
+                dependsOn.add(project.tasks.getByName('shadowJar'))
+            }
+            if (project.hasProperty('fatJar')) {
+                dependsOn.add(project.tasks.getByName('fatJar'))
+            }
+        }
     }
 
     String outputDir
