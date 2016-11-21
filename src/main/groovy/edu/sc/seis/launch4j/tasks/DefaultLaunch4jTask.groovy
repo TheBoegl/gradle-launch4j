@@ -3,9 +3,7 @@ package edu.sc.seis.launch4j.tasks
 import edu.sc.seis.launch4j.CopyLibraries
 import edu.sc.seis.launch4j.Launch4jPluginExtension
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.*
 
 abstract class DefaultLaunch4jTask extends DefaultTask {
 
@@ -23,31 +21,38 @@ abstract class DefaultLaunch4jTask extends DefaultTask {
         }
     }
 
-    // ToDo: remove from here
-    String outputDir
+    @Optional String outputDir
     @OutputDirectory
     File getOutputDirectory() {
         project.file("${project.buildDir}/${outputDir?:config.outputDir}")
     }
 
+    @Input
+    @Optional
     String outfile
     @OutputFile
     File getDest() {
         project.file("${getOutputDirectory()}/${outfile?:config.outfile}")
     }
 
+    @Input
+    @Optional
     String xmlFileName
 //    @InputFile
     File getXmlFile() {
         project.file("${getOutputDirectory()}/${xmlFileName?:config.xmlFileName}")
     }
 
+    @Input
+    @Optional
     String libraryDir
     //    task.inputs.dir("${-> configuration.outputDir}/${-> configuration.libraryDir}")
     @InputFiles File getLibraryDirectory() {
         project.file("${getOutputDirectory()}/${libraryDir?:config.libraryDir}")
     }
 
+    @Input
+    @Optional
     Object copyConfigurable
 
     def copyLibraries() {

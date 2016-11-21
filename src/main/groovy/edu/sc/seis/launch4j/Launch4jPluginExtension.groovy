@@ -22,40 +22,40 @@ class Launch4jPluginExtension {
     String jar
 
 //    String outputDir = "${project.buildDir}/launch4j"
-    @Input String outputDir = "launch4j"
+    @Input String outputDir = 'launch4j'
     @OutputDirectory
     File getOutputDirectory() {
         project.file("${project.buildDir}/${outputDir}")
     }
 
-    String libraryDir = "lib"
-    String xmlFileName = "launch4j.xml"
+    String libraryDir = 'lib'
+    String xmlFileName = 'launch4j.xml'
     boolean dontWrapJar = false
-    String headerType = "gui"
+    String headerType = 'gui'
     String outfile = "${project.name}.exe"
     File getDest() {
         project.file("${getOutputDirectory()}/${outfile}")
     }
-    String errTitle = ""
-    String cmdLine = ""
+    String errTitle = ''
+    String cmdLine = ''
     String chdir = '.'
     String priority = 'normal'
-    String downloadUrl = "http://java.com/download"
-    String supportUrl = ""
+    String downloadUrl = 'http://java.com/download'
+    String supportUrl = ''
     boolean stayAlive = false
     boolean restartOnCrash = false
-    String manifest = ""
-    String icon = ""
+    String manifest = ''
+    String icon = ''
     String version = "${project.version}"
     String textVersion = "${project.version}"
-    String copyright = "unknown"
-    String opt = ""
-    String companyName = ""
-    String description = "${project.name}"// ToDo: changed from description -> fileDescription. Comment
+    String copyright = 'unknown'
+    String opt = ''
+    String companyName = ''
+    String fileDescription = "${project.name}"// ToDo: changed from description -> fileDescription. Comment
     String productName = "${project.name}"
     String internalName = "${project.name}"
-    String trademarks = ""
-    String language = "ENGLISH_US"
+    String trademarks = ''
+    String language = 'ENGLISH_US'
 
     String bundledJrePath
     boolean bundledJre64Bit = false
@@ -63,7 +63,7 @@ class Launch4jPluginExtension {
     String jreMinVersion
     @PackageScope String internalJreMinVersion() {
         if (!jreMinVersion) {
-            if (project.hasProperty("targetCompatibility")) {
+            if (project.hasProperty('targetCompatibility')) {
                 jreMinVersion = project.targetCompatibility
             } else {
                 jreMinVersion = JavaVersion.current()
@@ -75,8 +75,8 @@ class Launch4jPluginExtension {
         jreMinVersion
     }
     String jreMaxVersion
-    String jdkPreference = "preferJre"
-    String jreRuntimeBits = "64/32"
+    String jdkPreference = 'preferJre'
+    String jreRuntimeBits = '64/32'
 
     String mutexName
     String windowTitle
@@ -99,7 +99,7 @@ class Launch4jPluginExtension {
     transient Object copyConfigurable
 
     @OutputFile
-    File getXmlOutFile() {
+    File getXmlFile() {
         project.file("${getOutputDirectory()}/${xmlFileName}")
     }
 

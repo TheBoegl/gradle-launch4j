@@ -14,7 +14,7 @@ class CreateXML {
     }
 
     void execute(Launch4jPluginExtension l4j) {
-        execute(l4j.getXmlOutFile(), l4j)
+        execute(l4j.getXmlFile(), l4j)
     }
 
     void execute(File xmlFile, Launch4jPluginExtension l4j) {
@@ -82,7 +82,7 @@ class CreateXML {
             versionInfo() {
                 xml.fileVersion(parseDotVersion(l4j.version))
                 xml.txtFileVersion(l4j.textVersion)
-                xml.fileDescription(l4j.description)
+                xml.fileDescription(l4j.fileDescription)
                 xml.copyright(l4j.copyright)
                 xml.productVersion(parseDotVersion(l4j.version))
                 xml.txtProductVersion(l4j.textVersion)
