@@ -17,105 +17,105 @@ class CreateXML {
         execute(l4j.getXmlFile(), l4j)
     }
 
-    void execute(File xmlFile, Launch4jPluginExtension l4j) {
-        def outputDir = l4j.getOutputDirectory()
+    void execute(File xmlFile, Launch4jConfiguration config) {
+        def outputDir = config.getOutputDirectory()
         outputDir.mkdirs()
-        def outFilePath = l4j.getDest().parentFile.toPath()
+        def outFilePath = config.getDest().parentFile.toPath()
         def classpath = project.plugins.hasPlugin('java') ? project.configurations.runtime.collect {
-            outFilePath.relativize(outputDir.toPath().resolve(Paths.get(l4j.libraryDir, it.name))).toString() // relativize paths relative to outfile
+            outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString() // relativize paths relative to outfile
         } : []
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
         xml.launch4jConfig() {
-            xml.dontWrapJar(l4j.dontWrapJar)
-            xml.headerType(l4j.headerType)
-            xml.jar(l4j.internalJar())
-            xml.outfile(l4j.outfile)
-            xml.errTitle(l4j.errTitle)
-            xml.cmdLine(l4j.cmdLine)
-            xml.chdir(l4j.chdir)
-            xml.priority(l4j.priority)
-            xml.downloadUrl(l4j.downloadUrl)
-            xml.supportUrl(l4j.supportUrl)
-            xml.stayAlive(l4j.stayAlive)
-            xml.restartOnCrash(l4j.restartOnCrash)
-            xml.manifest(l4j.manifest)
-            xml.icon(l4j.icon)
-            if (l4j.mainClassName) {
+            xml.dontWrapJar(config.dontWrapJar)
+            xml.headerType(config.headerType)
+            xml.jar(config.jar)
+            xml.outfile(config.outfile)
+            xml.errTitle(config.errTitle)
+            xml.cmdLine(config.cmdLine)
+            xml.chdir(config.chdir)
+            xml.priority(config.priority)
+            xml.downloadUrl(config.downloadUrl)
+            xml.supportUrl(config.supportUrl)
+            xml.stayAlive(config.stayAlive)
+            xml.restartOnCrash(config.restartOnCrash)
+            xml.manifest(config.manifest)
+            xml.icon(config.icon)
+            if (config.mainClassName) {
                 xml.classPath() {
-                    mainClass(l4j.mainClassName)
+                    mainClass(config.mainClassName)
                     classpath.each() { val -> xml.cp(val) }
                 }
             }
             jre() {
-                xml.path(l4j.bundledJrePath != null ? l4j.bundledJrePath : "")
-                xml.bundledJre64Bit(l4j.bundledJre64Bit)
-                xml.bundledJreAsFallback(l4j.bundledJreAsFallback)
-                xml.minVersion(l4j.internalJreMinVersion())
-                xml.maxVersion(l4j.jreMaxVersion != null ? l4j.jreMaxVersion : "")
-                xml.jdkPreference(l4j.jdkPreference)
-                xml.runtimeBits(l4j.jreRuntimeBits)
+                xml.path(config.bundledJrePath != null ? config.bundledJrePath : "")
+                xml.bundledJre64Bit(config.bundledJre64Bit)
+                xml.bundledJreAsFallback(config.bundledJreAsFallback)
+                xml.minVersion(config.internalJreMinVersion())
+                xml.maxVersion(config.jreMaxVersion != null ? config.jreMaxVersion : "")
+                xml.jdkPreference(config.jdkPreference)
+                xml.runtimeBits(config.jreRuntimeBits)
 
-                if (l4j.opt.length() != 0) xml.opt(l4j.opt)
+                if (config.opt.length() != 0) xml.opt(config.opt)
 
-                if (l4j.initialHeapSize != null)
-                    xml.initialHeapSize(l4j.initialHeapSize)
+                if (config.initialHeapSize != null)
+                    xml.initialHeapSize(config.initialHeapSize)
 
-                if (l4j.initialHeapPercent != null)
-                    xml.initialHeapPercent(l4j.initialHeapPercent)
+                if (config.initialHeapPercent != null)
+                    xml.initialHeapPercent(config.initialHeapPercent)
 
-                if (l4j.maxHeapSize != null)
-                    xml.maxHeapSize(l4j.maxHeapSize)
+                if (config.maxHeapSize != null)
+                    xml.maxHeapSize(config.maxHeapSize)
 
-                if (l4j.maxHeapPercent != null)
-                    xml.maxHeapPercent(l4j.maxHeapPercent)
+                if (config.maxHeapPercent != null)
+                    xml.maxHeapPercent(config.maxHeapPercent)
             }
-            if (l4j.splashFileName != null && l4j.splashTimeout != null) {
+            if (config.splashFileName != null && config.splashTimeout != null) {
                 splash() {
-                    xml.file(l4j.splashFileName)
-                    xml.waitForWindow(l4j.splashWaitForWindows)
-                    xml.timeout(l4j.splashTimeout)
-                    xml.timeoutErr(l4j.splashTimeoutError)
+                    xml.file(config.splashFileName)
+                    xml.waitForWindow(config.splashWaitForWindows)
+                    xml.timeout(config.splashTimeout)
+                    xml.timeoutErr(config.splashTimeoutError)
                 }
             }
             versionInfo() {
-                xml.fileVersion(parseDotVersion(l4j.version))
-                xml.txtFileVersion(l4j.textVersion)
-                xml.fileDescription(l4j.fileDescription)
-                xml.copyright(l4j.copyright)
-                xml.productVersion(parseDotVersion(l4j.version))
-                xml.txtProductVersion(l4j.textVersion)
-                xml.productName(l4j.productName)
-                xml.companyName(l4j.companyName)
-                xml.internalName(l4j.internalName)
-                xml.originalFilename(l4j.outfile)
-                xml.trademarks(l4j.trademarks)
-                xml.language(l4j.language)
+                xml.fileVersion(parseDotVersion(config.version))
+                xml.txtFileVersion(config.textVersion)
+                xml.fileDescription(config.fileDescription)
+                xml.copyright(config.copyright)
+                xml.productVersion(parseDotVersion(config.version))
+                xml.txtProductVersion(config.textVersion)
+                xml.productName(config.productName)
+                xml.companyName(config.companyName)
+                xml.internalName(config.internalName)
+                xml.originalFilename(config.outfile)
+                xml.trademarks(config.trademarks)
+                xml.language(config.language)
             }
 
-            if (l4j.messagesStartupError != null ||
-                    l4j.messagesBundledJreError != null ||
-                    l4j.messagesJreVersionError != null ||
-                    l4j.messagesLauncherError != null) {
+            if (config.messagesStartupError != null ||
+                    config.messagesBundledJreError != null ||
+                    config.messagesJreVersionError != null ||
+                    config.messagesLauncherError != null) {
                 messages() {
-                    if (l4j.messagesStartupError != null)
-                        xml.startupErr(l4j.messagesStartupError)
-                    if (l4j.messagesBundledJreError != null)
-                        xml.bundledJreErr(l4j.messagesBundledJreError)
-                    if (l4j.messagesJreVersionError != null)
-                        xml.jreVersionErr(l4j.messagesJreVersionError)
-                    if (l4j.messagesLauncherError != null)
-                        xml.launcherErr(l4j.messagesLauncherError)
+                    if (config.messagesStartupError != null)
+                        xml.startupErr(config.messagesStartupError)
+                    if (config.messagesBundledJreError != null)
+                        xml.bundledJreErr(config.messagesBundledJreError)
+                    if (config.messagesJreVersionError != null)
+                        xml.jreVersionErr(config.messagesJreVersionError)
+                    if (config.messagesLauncherError != null)
+                        xml.launcherErr(config.messagesLauncherError)
                 }
             }
-            if (l4j.mutexName != null || l4j.windowTitle != null) {
+            if (config.mutexName != null || config.windowTitle != null) {
                 singleInstance() {
-                    if (l4j.mutexName != null)
-                        xml.mutexName(l4j.mutexName)
+                    if (config.mutexName != null)
+                        xml.mutexName(config.mutexName)
 
-                    if (l4j.windowTitle != null)
-                        xml.windowTitle(l4j.windowTitle)
+                    if (config.windowTitle != null)
+                        xml.windowTitle(config.windowTitle)
                 }
             }
         }

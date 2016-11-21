@@ -18,7 +18,6 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
-    static final String TASK_RUN_BIN_NAME = 'createExeWithBin'
     static final String TASK_LAUNCH4J_NAME = 'launch4j'
     static final String ARTIFACT_VERSION = '3.9'
 
@@ -42,6 +41,9 @@ class Launch4jPlugin implements Plugin<Project> {
         createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
         def l4jPlaceholderTask = project.task(TASK_LAUNCH4J_NAME, group: LAUNCH4J_GROUP, description: 'Placeholder task to run launch4j to generate an .exe file')
         l4jPlaceholderTask.dependsOn runLibTask
+        l4jPlaceholderTask.doFirst {
+            project.logger.warn("The `launch4j` task is deprecated. Use the `createExe` task instead")
+        }
     }
 
     private ModuleDependency addDependency(Configuration configuration, String notation) {
