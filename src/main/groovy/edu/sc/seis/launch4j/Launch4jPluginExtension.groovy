@@ -1,7 +1,6 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.AutoClone
-import groovy.transform.PackageScope
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
@@ -10,7 +9,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 
 @AutoClone(excludes = [''])
-class Launch4jPluginExtension {
+class Launch4jPluginExtension implements Launch4jConfiguration {
 
     private final Project project
 
@@ -30,9 +29,11 @@ class Launch4jPluginExtension {
 
     String libraryDir = 'lib'
     String xmlFileName = 'launch4j.xml'
-    boolean dontWrapJar = false
+    Boolean dontWrapJar = false
     String headerType = 'gui'
+
     String outfile = "${project.name}.exe"
+
     File getDest() {
         project.file("${getOutputDirectory()}/${outfile}")
     }
@@ -42,8 +43,8 @@ class Launch4jPluginExtension {
     String priority = 'normal'
     String downloadUrl = 'http://java.com/download'
     String supportUrl = ''
-    boolean stayAlive = false
-    boolean restartOnCrash = false
+    Boolean stayAlive = false
+    Boolean restartOnCrash = false
     String manifest = ''
     String icon = ''
     String version = "${project.version}"
@@ -58,10 +59,12 @@ class Launch4jPluginExtension {
     String language = 'ENGLISH_US'
 
     String bundledJrePath
-    boolean bundledJre64Bit = false
-    boolean bundledJreAsFallback = false
+    Boolean bundledJre64Bit = false
+    Boolean bundledJreAsFallback = false
     String jreMinVersion
-    @PackageScope String internalJreMinVersion() {
+
+    @Override
+    String internalJreMinVersion() {
         if (!jreMinVersion) {
             if (project.hasProperty('targetCompatibility')) {
                 jreMinVersion = project.targetCompatibility
@@ -92,9 +95,9 @@ class Launch4jPluginExtension {
     Integer maxHeapPercent
 
     String splashFileName
-    boolean splashWaitForWindows = true
+    Boolean splashWaitForWindows = true
     Integer splashTimeout = 60
-    boolean splashTimeoutError = true
+    Boolean splashTimeoutError = true
 
     transient Object copyConfigurable
 
