@@ -39,6 +39,7 @@ class Launch4jPlugin implements Plugin<Project> {
         }
         def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements Launch4jLibraryTask')
         createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
+
         def l4jPlaceholderTask = project.task(TASK_LAUNCH4J_NAME, group: LAUNCH4J_GROUP, description: 'Placeholder task to run launch4j to generate an .exe file')
         l4jPlaceholderTask.dependsOn runLibTask
         l4jPlaceholderTask.doFirst {
@@ -53,7 +54,6 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     void configureDependencies(final Project project) {
-
         Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
                 .setTransitive(true).setDescription('The launch4j configuration for this project.')
 
