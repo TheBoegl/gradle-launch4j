@@ -1,6 +1,5 @@
 package edu.sc.seis.launch4j.tasks
 
-import edu.sc.seis.launch4j.CreateXML
 import edu.sc.seis.launch4j.ExtractLibraries
 import edu.sc.seis.launch4j.Launch4jPlugin
 import org.gradle.api.GradleException
@@ -12,7 +11,7 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
     def run() {
         copyLibraries()
         new ExtractLibraries(project).execute(getOutputDirectory())
-        new CreateXML(project).execute(getXmlFile(), this);
+        createXML();
         getDest().delete()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {
