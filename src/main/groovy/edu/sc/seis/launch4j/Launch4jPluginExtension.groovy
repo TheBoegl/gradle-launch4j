@@ -52,6 +52,15 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String opt = ''
     String companyName = ''
     String fileDescription = "${project.name}"// ToDo: changed from description -> fileDescription. Comment
+    @Deprecated
+    void setDescription(String description) {
+        fileDescription = description
+        project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.description property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.fileDescription instead.")
+    }
+    @Deprecated
+    String getDescription() {
+        return fileDescription
+    }
     String productName = "${project.name}"
     String internalName = "${project.name}"
     String trademarks = ''
