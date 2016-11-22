@@ -20,7 +20,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String mainClassName
     String jar
 
-//    String outputDir = "${project.buildDir}/launch4j"
     @Input String outputDir = 'launch4j'
     @OutputDirectory
     File getOutputDirectory() {
