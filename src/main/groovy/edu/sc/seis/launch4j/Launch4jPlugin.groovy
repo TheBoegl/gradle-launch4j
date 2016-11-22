@@ -37,13 +37,13 @@ class Launch4jPlugin implements Plugin<Project> {
         if (project.plugins.hasPlugin('java')) {
             runLibTask.dependsOn project.tasks[JavaPlugin.JAR_TASK_NAME]
         }
-        def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements Launch4jLibraryTask')
+        def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')
         createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
 
-        def l4jPlaceholderTask = project.task(TASK_LAUNCH4J_NAME, group: LAUNCH4J_GROUP, description: 'Placeholder task to run launch4j to generate an .exe file')
+        def l4jPlaceholderTask = project.task(TASK_LAUNCH4J_NAME, group: LAUNCH4J_GROUP, description: 'Deprecated placeholder task to run launch4j to generate an .exe file')
         l4jPlaceholderTask.dependsOn runLibTask
         l4jPlaceholderTask.doFirst {
-            project.logger.warn("The `launch4j` task is deprecated. Use the `createExe` task instead")
+            project.logger.warn("The `${TASK_LAUNCH4J_NAME}` task is deprecated. Use the `${TASK_RUN_NAME}` task instead")
         }
     }
 
