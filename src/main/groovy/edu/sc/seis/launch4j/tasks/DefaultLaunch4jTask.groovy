@@ -1,6 +1,7 @@
 package edu.sc.seis.launch4j.tasks
 
 import edu.sc.seis.launch4j.CopyLibraries
+import edu.sc.seis.launch4j.CreateXML
 import edu.sc.seis.launch4j.Launch4jConfiguration
 import edu.sc.seis.launch4j.Launch4jPluginExtension
 import org.gradle.api.DefaultTask
@@ -493,4 +494,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         jar
     }
 
+    def createXML() {
+        new CreateXML(project).execute(getXmlFile(), this)
+    }
 }
