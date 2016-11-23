@@ -11,7 +11,7 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
     def run() {
         copyLibraries()
         new ExtractLibraries(project).execute(getOutputDirectory())
-        createXML();
+        createXML()
         getDest().delete()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {

@@ -20,7 +20,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String mainClassName
     String jar
 
-    @Input String outputDir = 'launch4j'
+    @Input
+    String outputDir = 'launch4j'
+
     @OutputDirectory
     File getOutputDirectory() {
         project.file("${project.buildDir}/${outputDir}")
@@ -51,7 +53,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String copyright = 'unknown'
     String opt = ''
     String companyName = ''
-    String fileDescription = "${project.name}"// ToDo: changed from description -> fileDescription. Comment
+    String fileDescription = "${project.name}"
     @Deprecated
     void setDescription(String description) {
         fileDescription = description
@@ -115,7 +117,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     }
 
     String internalJar() {
-        if(!jar) {
+        if (!jar) {
             if (project.plugins.hasPlugin('java')) {
                 jar = "${libraryDir}/${project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName}"
             } else {
