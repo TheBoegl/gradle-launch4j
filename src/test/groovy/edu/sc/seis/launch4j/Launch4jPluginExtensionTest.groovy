@@ -95,6 +95,7 @@ class Launch4jPluginExtensionTest extends Specification {
 
             launch4j {
                 mainClassName = 'com.test.app.Main'
+                outfile = 'Launch4j.exe'
             }
 
             task libraryTask(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
@@ -117,17 +118,69 @@ class Launch4jPluginExtensionTest extends Specification {
         def result = GradleRunner.create()
                 .withDebug(DEBUG)
                 .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'libraryTask')
+                .withArguments('-q', 'jar', 'createExe', 'libraryTask')
                 .withPluginClasspath(pluginClasspath)
                 .build()
 
         then:
         result.task(':jar').outcome == SUCCESS // jar task has to be called
-//        result.task(':launch4j').outcome == SUCCESS
+        result.task(':createExe').outcome == SUCCESS
         result.task(':libraryTask').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/Test1234.exe')
+        def outfile = new File(testProjectDir.root, "build/launch4j/Launch4j.exe")
         outfile.exists()
+        def outFileLibraryTask = new File(testProjectDir.root, 'build/launch4j/Test1234.exe')
+        outFileLibraryTask.exists()
+    }
+
+    def 'Running the library task with a different output directory'() {
+        given:
+        buildFile << """
+            plugins {
+                id 'java'
+                id 'edu.sc.seis.launch4j'
+            }
+
+            launch4j {
+                mainClassName = 'com.test.app.Main'
+                outfile = 'Launch4j.exe'
+                outputDir = 'launch4j2'
+            }
+
+            task libraryTask(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
+                outfile = 'Test1234.exe'
+                outputDir = 'launch4j-test'
+            }
+        """
+
+        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        sourceFile << """
+            package com.test.app;
+
+            public class Main {
+                public static void main(String[] args) {
+                    System.out.println("Hello World!");
+                }
+            }
+        """
+
+        when:
+        def result = GradleRunner.create()
+                .withDebug(DEBUG)
+                .withProjectDir(testProjectDir.root)
+                .withArguments('-q', 'jar', 'createExe', 'libraryTask')
+                .withPluginClasspath(pluginClasspath)
+                .build()
+
+        then:
+        result.task(':jar').outcome == SUCCESS // jar task has to be called
+        result.task(':createExe').outcome == SUCCESS
+        result.task(':libraryTask').outcome == SUCCESS
+
+        def outfile = new File(testProjectDir.root, "build/launch4j2/Launch4j.exe")
+        outfile.exists()
+        def outFileLibraryTask = new File(testProjectDir.root, 'build/launch4j-test/Test1234.exe')
+        outFileLibraryTask.exists()
     }
 
     def 'Running the library task to create the executable with more options succeeds'() {
