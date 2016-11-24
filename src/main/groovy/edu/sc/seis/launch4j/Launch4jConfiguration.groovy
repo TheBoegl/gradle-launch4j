@@ -1,18 +1,13 @@
 package edu.sc.seis.launch4j
 
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
-
 interface Launch4jConfiguration {
 
     String getOutputDir()
 
-    @OutputDirectory
     File getOutputDirectory()
 
     String getOutfile()
 
-    @OutputFile
     File getDest()
 
     File getXmlFile()
