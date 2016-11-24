@@ -15,6 +15,7 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
         def tmpDir = new File(project.buildDir, TEMPORARY_DIRECTORY)
         new ExtractLibraries(project).execute(tmpDir)
         createXML()
+        createExecutableFolder()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {
             commandLine "java", "-jar", "${tmpDir}/${ExtractLibraries.LAUNCH4J_BINARY_DIRECTORY}/launch4j-${Launch4jPlugin.ARTIFACT_VERSION}.jar", "${getXmlFile()}"
