@@ -171,3 +171,7 @@ task wrapper(type: Wrapper) {
     gradleVersion = '3.2.1'
     distributionType = Wrapper.DistributionType.ALL
 }
+
+tasks.withType(Test) {
+    systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
+}
