@@ -5,8 +5,6 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
 
 @AutoClone(excludes = [''])
 class Launch4jPluginExtension implements Launch4jConfiguration {
@@ -23,7 +21,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     @Input
     String outputDir = 'launch4j'
 
-    @OutputDirectory
     File getOutputDirectory() {
         project.file("${project.buildDir}/${outputDir}")
     }
@@ -111,7 +108,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     transient Object copyConfigurable
 
-    @OutputFile
     File getXmlFile() {
         project.file("${getOutputDirectory()}/${xmlFileName}")
     }

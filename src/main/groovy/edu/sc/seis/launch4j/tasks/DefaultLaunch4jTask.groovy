@@ -51,7 +51,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     @Override
-    @OutputFile
     File getDest() {
         project.file("${getOutputDirectory()}/${getOutfile()}")
     }
@@ -78,7 +77,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         libraryDir ?: config.libraryDir
     }
 
-    @InputFiles
     File getLibraryDirectory() {
         project.file("${getOutputDirectory()}/${libraryDir ?: config.libraryDir}")
     }
