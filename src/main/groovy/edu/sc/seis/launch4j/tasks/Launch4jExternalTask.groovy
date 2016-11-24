@@ -12,7 +12,6 @@ class Launch4jExternalTask extends DefaultLaunch4jTask {
     def run() {
         copyLibraries()
         createXML()
-        getDest().delete()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {
             commandLine "${launch4jCmd}", "${getXmlFile()}"
