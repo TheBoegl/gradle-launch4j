@@ -7,15 +7,18 @@ import org.gradle.api.tasks.TaskAction
 
 class Launch4jLibraryTask extends DefaultLaunch4jTask {
 
+    private static final String TEMPORARY_DIRECTORY = "tmp/launch4j"
+
     @TaskAction
     def run() {
         copyLibraries()
-        new ExtractLibraries(project).execute(temporaryDir)
+        def tmpDir = new File(project.buildDir, TEMPORARY_DIRECTORY)
+        new ExtractLibraries(project).execute(tmpDir)
         createXML()
         createExecutableFolder()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {
-            commandLine "java", "-jar", "${temporaryDir}/${ExtractLibraries.LAUNCH4J_BINARY_DIRECTORY}/launch4j-${Launch4jPlugin.ARTIFACT_VERSION}.jar", "${getXmlFile()}"
+            commandLine "java", "-jar", "${tmpDir}/${ExtractLibraries.LAUNCH4J_BINARY_DIRECTORY}/launch4j-${Launch4jPlugin.ARTIFACT_VERSION}.jar", "${getXmlFile()}"
             workingDir getOutputDirectory()
             standardOutput = stdOut
             errorOutput = stdOut
