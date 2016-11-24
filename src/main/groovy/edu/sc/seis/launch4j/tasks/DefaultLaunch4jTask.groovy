@@ -688,4 +688,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     def createXML() {
         new CreateXML(project).execute(getXmlFile(), this)
     }
+
+    protected void createExecutableFolder() {
+        getDest().parentFile?.mkdirs()
+    }
 }
