@@ -674,6 +674,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         splashTimeoutError ?: config.splashTimeoutError
     }
 
+    @Input
+    @Optional
+    Boolean skipXMLCreation
+
+    @Override
+    Boolean getSkipXMLCreation() {
+        skipXMLCreation ?: config.skipXMLCreation
+    }
+
     String internalJar() {
         if (!jar) {
             if (project.plugins.hasPlugin('java')) {
@@ -686,7 +695,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     protected void createXML() {
-        new CreateXML(project).execute(getXmlFile(), this)
+        if (!getSkipXMLCreation()) {
+            new CreateXML(project).execute(getXmlFile(), this)
+        }
     }
 
     protected void createExecutableFolder() {

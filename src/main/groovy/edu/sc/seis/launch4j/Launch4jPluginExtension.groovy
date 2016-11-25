@@ -106,6 +106,8 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     Integer splashTimeout = 60
     Boolean splashTimeoutError = true
 
+    Boolean skipXMLCreation = false
+
     transient Object copyConfigurable
 
     File getXmlFile() {
