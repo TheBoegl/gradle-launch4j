@@ -24,13 +24,14 @@ class CreateXML {
         def classpath = project.plugins.hasPlugin('java') ? project.configurations.runtime.collect {
             outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString() // relativize paths relative to outfile
         } : []
+        def jar = config.dontWrapJar ? outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.jar))) : config.jar
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
         xml.launch4jConfig() {
             xml.dontWrapJar(config.dontWrapJar)
             xml.headerType(config.headerType)
-            xml.jar(config.jar)
+            xml.jar(jar)
             xml.outfile(config.outfile)
             xml.errTitle(config.errTitle)
             xml.cmdLine(config.cmdLine)
