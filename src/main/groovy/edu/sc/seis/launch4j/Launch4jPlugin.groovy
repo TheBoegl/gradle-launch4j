@@ -2,6 +2,7 @@ package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask
 import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
+import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -9,6 +10,7 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.os.OperatingSystem
 
+@CompileStatic
 class Launch4jPlugin implements Plugin<Project> {
 
     static final String LAUNCH4J_PLUGIN_NAME = "launch4j"
@@ -61,18 +63,14 @@ class Launch4jPlugin implements Plugin<Project> {
                 .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
 
 
-        project.configurations {
-            l4j
-        }
         if (project.repositories.isEmpty()) {
             project.logger.lifecycle("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
             project.repositories.mavenCentral()
         }
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
         project.dependencies {
-            l4j "${l4jArtifact}"
             addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
-            l4j 'com.thoughtworks.xstream:xstream:1.4.8'
+            addDependency(defaultConfig, 'com.thoughtworks.xstream:xstream:1.4.8')
             OperatingSystem os = OperatingSystem.current()
             if (os.isWindows()) {
                 addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")

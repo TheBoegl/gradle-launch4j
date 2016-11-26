@@ -1,11 +1,14 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.AutoClone
+import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.bundling.Jar
 
+@CompileStatic
 @AutoClone(excludes = [''])
 class Launch4jPluginExtension implements Launch4jConfiguration {
 
@@ -74,7 +77,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String internalJreMinVersion() {
         if (!jreMinVersion) {
             if (project.hasProperty('targetCompatibility')) {
-                jreMinVersion = project.targetCompatibility
+                jreMinVersion = project.property('targetCompatibility')
             } else {
                 jreMinVersion = JavaVersion.current()
             }
@@ -115,7 +118,8 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String internalJar() {
         if (!jar) {
             if (project.plugins.hasPlugin('java')) {
-                jar = "${libraryDir}/${project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName}"
+                def jarTask = project.tasks[JavaPlugin.JAR_TASK_NAME] as Jar
+                jar = "${libraryDir}/${jarTask.archiveName}"
             } else {
                 jar = ""
             }

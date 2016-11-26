@@ -1,5 +1,8 @@
 package edu.sc.seis.launch4j
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 interface Launch4jConfiguration {
 
     String getOutputDir()

@@ -3,8 +3,10 @@ package edu.sc.seis.launch4j.tasks
 import edu.sc.seis.launch4j.ExtractLibraries
 import edu.sc.seis.launch4j.Launch4jPlugin
 import org.gradle.api.GradleException
+import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 
+@ParallelizableTask
 class Launch4jLibraryTask extends DefaultLaunch4jTask {
 
     private static final String TEMPORARY_DIRECTORY = "tmp/launch4j"

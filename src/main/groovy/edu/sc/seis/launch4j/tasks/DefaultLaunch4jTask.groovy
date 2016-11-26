@@ -1,17 +1,24 @@
 package edu.sc.seis.launch4j.tasks
 
 import edu.sc.seis.launch4j.*
+import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.ParallelizableTask
+import org.gradle.api.tasks.bundling.Jar
 
+@CompileStatic
+@ParallelizableTask
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
     private Launch4jPluginExtension config
 
     protected DefaultLaunch4jTask() {
-        this.config = project.launch4j
+        config = project.getConvention().getByType(Launch4jPluginExtension.class)
         project.afterEvaluate {
             if (project.hasProperty('shadowJar')) {
                 dependsOn.add(project.tasks.getByName('shadowJar'))
@@ -436,7 +443,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String internalJreMinVersion() {
         if (!jreMinVersion) {
             if (project.hasProperty('targetCompatibility')) {
-                jreMinVersion = project.targetCompatibility
+                jreMinVersion = project.property('targetCompatibility')
             } else {
                 jreMinVersion = JavaVersion.current()
             }
@@ -677,7 +684,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String internalJar() {
         if (!jar) {
             if (project.plugins.hasPlugin('java')) {
-                jar = "${libraryDir}/${project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName}"
+                def jarTask = project.tasks[JavaPlugin.JAR_TASK_NAME] as Jar
+                jar = "${libraryDir}/${jarTask.archiveName}"
             } else {
                 jar = ""
             }
