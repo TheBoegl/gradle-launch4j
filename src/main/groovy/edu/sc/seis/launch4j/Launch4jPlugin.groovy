@@ -7,7 +7,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.os.OperatingSystem
 
 @CompileStatic
@@ -36,9 +35,6 @@ class Launch4jPlugin implements Plugin<Project> {
 
     void applyTasks(final Project project) {
         def runLibTask = project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
-        if (project.plugins.hasPlugin('java')) {
-            runLibTask.dependsOn project.tasks[JavaPlugin.JAR_TASK_NAME]
-        }
         def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')
         createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
 

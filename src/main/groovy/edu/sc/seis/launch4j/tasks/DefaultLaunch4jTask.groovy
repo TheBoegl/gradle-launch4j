@@ -19,12 +19,17 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     protected DefaultLaunch4jTask() {
         config = project.getConvention().getByType(Launch4jPluginExtension.class)
+        evaluateTaskDependencyIfAvailable('jar')
+        evaluateTaskDependencyIfAvailable('shadowJar')
+        evaluateTaskDependencyIfAvailable('fatJar')
+    }
+
+    private void evaluateTaskDependencyIfAvailable(String taskName) {
         project.afterEvaluate {
-            if (project.hasProperty('shadowJar')) {
-                dependsOn.add(project.tasks.getByName('shadowJar'))
-            }
-            if (project.hasProperty('fatJar')) {
-                dependsOn.add(project.tasks.getByName('fatJar'))
+            if (project.hasProperty(taskName)) {
+                def task = project.tasks.getByName(taskName)
+                dependsOn.add(task)
+                inputs.files(task.outputs.files)
             }
         }
     }
