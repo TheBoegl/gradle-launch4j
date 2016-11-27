@@ -1,47 +1,23 @@
 package edu.sc.seis.launch4j
 
-import org.gradle.testkit.runner.GradleRunner
-import static org.gradle.testkit.runner.TaskOutcome.*
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import spock.lang.Specification
+import edu.sc.seis.launch4j.util.FunctionalSpecification
 
-class Launch4jPluginExtensionTest extends Specification {
-    private static final DEBUG = Boolean.parseBoolean(System.getProperty("org.gradle.testkit.debug", "false"))
-    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
-    File buildFile
-    List<File> pluginClasspath
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-    def setup() {
-        buildFile = testProjectDir.newFile('build.gradle')
-
-        def pluginClasspathResource = getClass().classLoader.findResource('plugin-classpath.txt')
-        if (pluginClasspathResource == null) {
-            throw new IllegalStateException('Plugin classpath resource file not found. Run the "testClasses" task.')
-        }
-
-        pluginClasspath = pluginClasspathResource.readLines().collect { new File(it) }
-    }
+class Launch4jPluginExtensionTest extends FunctionalSpecification {
 
     def 'Applying the plugin provides properties'() {
         given:
         buildFile << """
-            plugins {
-                id 'edu.sc.seis.launch4j'
-            }
-
-            task printProperties << {
-                println launch4j.outputDir
+            task printProperties {
+                doLast {
+                    println launch4j.outputDir
+                }
             }
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'printProperties')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('-q', 'printProperties')
 
         then:
         result.task(':printProperties').outcome == SUCCESS
@@ -51,11 +27,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the task to create the executable succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             launch4j {
                 mainClassName = 'com.test.app.Main'
             }
@@ -73,12 +44,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -88,11 +54,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the library task to create the executable succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             launch4j {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'Launch4j.exe'
@@ -115,12 +76,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'createExe', 'libraryTask')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'createExe', 'libraryTask')
 
         then:
         result.task(':jar').outcome == SUCCESS // jar task has to be called
@@ -136,11 +92,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the library task with a different output directory'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             launch4j {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'Launch4j.exe'
@@ -165,12 +116,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'createExe', 'libraryTask')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'createExe', 'libraryTask')
 
         then:
         result.task(':jar').outcome == SUCCESS // jar task has to be called
@@ -186,11 +132,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the library task to create the executable with more options succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             launch4j {
                 mainClassName = 'com.test.app.Main'
             }
@@ -213,12 +154,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'libraryTask')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'libraryTask')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -231,11 +167,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the created executable succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             launch4j {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'test.exe'
@@ -254,12 +185,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -276,11 +202,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the created executable with Java dependencies succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             dependencies {
                 compile 'org.slf4j:slf4j-api:1.7.12'
                 runtime 'org.slf4j:slf4j-simple:1.7.12'
@@ -310,12 +231,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -333,11 +249,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the created executable in a subfolder with Java dependencies succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             dependencies {
                 compile 'org.slf4j:slf4j-api:1.7.12'
                 runtime 'org.slf4j:slf4j-simple:1.7.12'
@@ -368,12 +279,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -391,11 +297,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the created executable in a subfolder and default lib folder with Java dependencies succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             dependencies {
                 compile 'org.slf4j:slf4j-api:1.7.12'
                 runtime 'org.slf4j:slf4j-simple:1.7.12'
@@ -426,12 +327,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -449,11 +345,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running the created executable in a subfolder and changed lib folder with Java dependencies succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             dependencies {
                 compile 'org.slf4j:slf4j-api:1.7.12'
                 runtime 'org.slf4j:slf4j-simple:1.7.12'
@@ -485,12 +376,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -508,11 +394,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running an unwrapped executable with Java dependencies succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             repositories {
                 mavenCentral()
             }
@@ -557,12 +438,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -580,11 +456,6 @@ class Launch4jPluginExtensionTest extends Specification {
     def 'Running an unwrapped executable jar as executable with Java dependencies succeeds'() {
         given:
         buildFile << """
-            plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
-            }
-
             repositories {
                 mavenCentral()
             }
@@ -629,12 +500,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -653,8 +519,6 @@ class Launch4jPluginExtensionTest extends Specification {
         given:
         buildFile << """
             plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
                 id 'com.github.johnrengelman.shadow' version '1.2.4'
             }
 
@@ -703,12 +567,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -727,8 +586,6 @@ class Launch4jPluginExtensionTest extends Specification {
         given:
         buildFile << """
             plugins {
-                id 'java'
-                id 'edu.sc.seis.launch4j'
                 id 'com.github.johnrengelman.shadow' version '1.2.4'
             }
 
@@ -777,12 +634,7 @@ class Launch4jPluginExtensionTest extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withDebug(DEBUG)
-                .withProjectDir(testProjectDir.root)
-                .withArguments('-q', 'jar', 'shadowJar', 'launch4j')
-                .withPluginClasspath(pluginClasspath)
-                .build()
+        def result = build('jar', 'shadowJar', 'launch4j')
 
         then:
         result.task(':jar').outcome == SUCCESS

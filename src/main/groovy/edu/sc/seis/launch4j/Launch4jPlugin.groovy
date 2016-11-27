@@ -60,7 +60,7 @@ class Launch4jPlugin implements Plugin<Project> {
 
 
         if (project.repositories.isEmpty()) {
-            project.logger.lifecycle("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
+            project.logger.debug("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
             project.repositories.mavenCentral()
         }
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
