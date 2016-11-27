@@ -8,7 +8,8 @@ import org.gradle.api.tasks.TaskAction
 @ParallelizableTask
 class Launch4jExternalTask extends DefaultLaunch4jTask {
 
-    @Input String launch4jCmd = "launch4j"
+    @Input
+    String launch4jCmd = "launch4j"
 
     @TaskAction
     def run() {

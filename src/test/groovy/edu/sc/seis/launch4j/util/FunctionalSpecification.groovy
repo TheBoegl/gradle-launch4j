@@ -11,7 +11,8 @@ import spock.lang.Specification
 class FunctionalSpecification extends Specification {
     private final static boolean DEBUG = Boolean.parseBoolean(System.getProperty("org.gradle.testkit.debug", "false"))
 
-    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    @Rule
+    final TemporaryFolder testProjectDir = new TemporaryFolder()
 
     File projectDir
     File buildFile
@@ -22,7 +23,7 @@ class FunctionalSpecification extends Specification {
         projectDir = testProjectDir.root
         buildFile = testProjectDir.newFile('build.gradle')
 
-        def pluginClasspathResource = ((URLClassLoader)FunctionalSpecification.class.classLoader).findResource('plugin-classpath.txt')
+        def pluginClasspathResource = ((URLClassLoader) FunctionalSpecification.class.classLoader).findResource('plugin-classpath.txt')
         if (pluginClasspathResource == null) {
             throw new IllegalStateException('Plugin classpath resource file not found. Run the "testClasses" task.')
         }
@@ -41,15 +42,11 @@ class FunctionalSpecification extends Specification {
         createAndConfigureGradleRunner(arguments).build()
     }
 
-    protected BuildResult buildAndFail(String... arguments) {
-        createAndConfigureGradleRunner(arguments).buildAndFail()
-    }
-
     private GradleRunner createAndConfigureGradleRunner(String... arguments) {
         GradleRunner.create()
-                .withProjectDir(projectDir)
-                .withDebug(DEBUG)
-                .withPluginClasspath(pluginClasspath)
-                .withArguments(arguments)
+            .withProjectDir(projectDir)
+            .withDebug(DEBUG)
+            .withPluginClasspath(pluginClasspath)
+            .withArguments(arguments)
     }
 }

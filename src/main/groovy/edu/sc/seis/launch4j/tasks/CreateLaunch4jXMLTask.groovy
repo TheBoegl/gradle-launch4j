@@ -14,5 +14,4 @@ class CreateLaunch4jXMLTask extends DefaultTask {
         new CreateXML(project).execute(project.getExtensions().getByName('launch4j') as Launch4jPluginExtension)
     }
 
-
 }

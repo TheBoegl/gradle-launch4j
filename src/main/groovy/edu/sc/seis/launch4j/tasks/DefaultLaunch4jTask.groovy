@@ -551,6 +551,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getMessagesBundledJreError() {
         messagesBundledJreError ?: config.messagesBundledJreError
     }
+
     @Input
     @Optional
     String messagesJreVersionError

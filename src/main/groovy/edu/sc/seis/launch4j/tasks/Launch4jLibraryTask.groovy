@@ -30,7 +30,7 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
         if (execResult.exitValue == 0) {
             project.delete(getXmlFile())
         } else {
-            throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${stdOut.toString()}");
+            throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${stdOut.toString()}")
         }
     }
 

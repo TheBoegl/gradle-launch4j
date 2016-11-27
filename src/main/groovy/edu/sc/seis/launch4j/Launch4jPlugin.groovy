@@ -25,7 +25,7 @@ class Launch4jPlugin implements Plugin<Project> {
     private Project project
 
     @Override
-    def void apply(Project project) {
+    void apply(Project project) {
         this.project = project
         project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension, project)
 
@@ -53,10 +53,10 @@ class Launch4jPlugin implements Plugin<Project> {
 
     void configureDependencies(final Project project) {
         Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
-                .setTransitive(true).setDescription('The launch4j configuration for this project.')
+            .setTransitive(true).setDescription('The launch4j configuration for this project.')
 
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
-                .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
+            .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
 
 
         if (project.repositories.isEmpty()) {
