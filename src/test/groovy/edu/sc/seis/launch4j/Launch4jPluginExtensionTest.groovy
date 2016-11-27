@@ -83,9 +83,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
         result.task(':libraryTask').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, "build/launch4j/Launch4j.exe")
+        def outfile = new File(projectDir, "build/launch4j/Launch4j.exe")
         outfile.exists()
-        def outFileLibraryTask = new File(testProjectDir.root, 'build/launch4j/Test1234.exe')
+        def outFileLibraryTask = new File(projectDir, 'build/launch4j/Test1234.exe')
         outFileLibraryTask.exists()
     }
 
@@ -123,9 +123,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
         result.task(':libraryTask').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, "build/launch4j2/Launch4j.exe")
+        def outfile = new File(projectDir, "build/launch4j2/Launch4j.exe")
         outfile.exists()
-        def outFileLibraryTask = new File(testProjectDir.root, 'build/launch4j-test/Test1234.exe')
+        def outFileLibraryTask = new File(projectDir, 'build/launch4j-test/Test1234.exe')
         outFileLibraryTask.exists()
     }
 
@@ -160,7 +160,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':libraryTask').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/Test1234.exe')
+        def outfile = new File(projectDir, 'build/launch4j/Test1234.exe')
         outfile.exists()
     }
 
@@ -191,12 +191,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello World!')
+        process.in.text.trim() == 'Hello World!'
     }
 
     def 'Running the created executable with Java dependencies succeeds'() {
@@ -237,12 +237,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 
@@ -285,12 +285,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/app/bin/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/app/bin/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 
@@ -333,12 +333,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/app/bin/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/app/bin/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 
@@ -382,12 +382,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/app/bin/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/app/bin/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 
@@ -444,12 +444,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 
@@ -506,12 +506,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 
@@ -573,12 +573,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 
@@ -641,12 +641,12 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':shadowJar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(testProjectDir.root, 'build/launch4j/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
         outfile.exists()
 
         def process = outfile.path.execute()
         process.waitFor() == 0
-        process.in.text.trim().equals('Hello STDOUT!')
+        process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
     }
 }
