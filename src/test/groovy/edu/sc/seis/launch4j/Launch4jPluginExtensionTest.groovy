@@ -21,7 +21,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
 
         then:
         result.task(':printProperties').outcome == SUCCESS
-        result.output.trim().equals('launch4j')
+        result.output.trim() == 'launch4j'
     }
 
     def 'Running the task to create the executable succeeds'() {
@@ -44,7 +44,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -76,7 +76,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe', 'libraryTask')
+        def result = build('createExe', 'libraryTask')
 
         then:
         result.task(':jar').outcome == SUCCESS // jar task has to be called
@@ -116,7 +116,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe', 'libraryTask')
+        def result = build('createExe', 'libraryTask')
 
         then:
         result.task(':jar').outcome == SUCCESS // jar task has to be called
@@ -154,7 +154,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'libraryTask')
+        def result = build('libraryTask')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -185,7 +185,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -231,7 +231,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -279,7 +279,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -327,7 +327,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -376,7 +376,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -438,7 +438,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -500,7 +500,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -567,7 +567,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -634,7 +634,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('jar', 'shadowJar', 'createExe')
+        def result = build('createExe')
 
         then:
         result.task(':jar').outcome == SUCCESS
