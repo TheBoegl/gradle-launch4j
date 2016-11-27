@@ -51,6 +51,57 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
     }
 
+    def 'Checking the outputs succeeds'() {
+        given:
+        buildFile << """
+            launch4j {
+                mainClassName = 'com.test.app.Main'
+                outfile = 'Test.exe'
+            }
+
+            task copyLaunch4j(type: Copy) {
+                from createExe.outputs
+                into 'testOutput'
+            }
+        """
+        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+
+        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        sourceFile << """
+            package com.test.app;
+
+            public class Main {
+                public static void main(String[] args) {
+                    System.out.println("Hello World!");
+                }
+            }
+        """
+
+        when:
+        def result = build('copyLaunch4j')
+
+        then:
+        result.task(':jar').outcome == SUCCESS
+        result.task(':createExe').outcome == SUCCESS
+        result.task(':copyLaunch4j').outcome == SUCCESS
+
+        def testOutput = new File(projectDir, 'testOutput')
+        testOutput.exists()
+        new File(projectDir, "testOutput/Test.exe").exists()
+        new File(projectDir, "testOutput/lib/testProject.jar").exists()
+
+        testOutput.traverse {
+            switch (it.absolutePath){
+                case "${testOutput.absolutePath}/lib":
+                case "${testOutput.absolutePath}/lib/testProject.jar":
+                case "${testOutput.absolutePath}/Test.exe":
+                    break;
+                default:
+                    !it.exists()
+            }
+        }
+    }
+
     def 'Running the library task to create the executable succeeds'() {
         given:
         buildFile << """
