@@ -16,9 +16,9 @@ The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) to 
 
 There are 3 tasks:
 
-  * **createExe** - Backward compatible task to generate an .exe file. *Execute this task to generate an executable.* With default settings this creates the executable under `${project.buildDir}/launch4j` and puts all runtime libraries into the lib subfolder. 
-   * createAllExecutables - Helper task to run all tasks of the `Launch4jExternalTask` and `Launch4jLibraryTask` type.
-  * ~~launch4j~~ - Deprecated placeholder task that depends on the above. This task was deprecated in favor of the createExe task and to avoid the name conflict of launch4j on the project.
+* **createExe** - Backward compatible task to generate an .exe file. *Execute this task to generate an executable.* With default settings this creates the executable under `${project.buildDir}/launch4j` and puts all runtime libraries into the lib subfolder. 
+* createAllExecutables - Helper task to run all tasks of the `Launch4jExternalTask` and `Launch4jLibraryTask` type.
+* ~~launch4j~~ - Deprecated placeholder task that depends on the above. This task was deprecated in favor of the createExe task and to avoid the name conflict of launch4j on the project.
 
 Launch4j no longer needs to be installed separately, but if you want, you can still use it from the *PATH*. Since version 2.0 use the [Launch4jExternalTask](#launch4jexternaltask) to create your executable.
 

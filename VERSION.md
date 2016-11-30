@@ -1,8 +1,10 @@
-## Version [2.0.0](../../releases/tag/v2)
+## Version [2.0.0](../../releases/tag/v2.0.0)
 Rework and restructure the plugin
 - **NEW**: Add customizable task types `edu.sc.seis.launch4j.tasks.Launch4jLibraryTask` and `edu.sc.seis.launch4j.tasks.Launch4jExternalTask`
 - **FIX** [#7](../../issues/7): Create multiple executables with one gradle run.
 - **FIX** [#24](../../issues/24): Exposed tasks are not replaced.
+- **FIX** [#29](../../issues/29): Clean tasks work correctly new (see [#33](../../issues/33))
+- **FIX** [#33](../../issues/33): Tasks expose correct outputs.
 - **DEPRECATED**: The property `description` is deprecated in favor of the property `fileDescription` to avoid a name conflict with the task's description.
 - **DEPRECATED**: The task `launch4j` is deprecated in favor of `createExe` task to avoid a name conflict between this placeholder task and the launch4j configuration.
 - **REMOVED**: The tasks `generateXmlConfig`, `copyL4jLib`, `copyL4jBinLib`, `unzipL4jBin` `createExeWithBin`, and `createExeWithJar` are implemented internally instead of tasks.
