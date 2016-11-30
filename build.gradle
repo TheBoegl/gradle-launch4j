@@ -71,11 +71,12 @@ pluginBundle {
     website = 'https://github.com/TheBoegl/gradle-launch4j'
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
     description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
-    plugins.add {
+    tags = ['launch4j', 'executable', 'wrapper']
+
+    plugins {
         launch4j {
             id = 'edu.sc.seis.launch4j'
             displayName = 'launch4j gradle plugin'
-            tags = ['launch4j', 'executable', 'wrapper']
         }
     }
 }
