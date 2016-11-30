@@ -102,6 +102,48 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         }
     }
 
+    def 'Running the task to create the executable and cleaning it succeeds'() {
+        given:
+        buildFile << """
+            launch4j {
+                mainClassName = 'com.test.app.Main'
+                outfile = 'Test.exe'
+            }
+        """
+        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+
+        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        sourceFile << """
+            package com.test.app;
+
+            public class Main {
+                public static void main(String[] args) {
+                    System.out.println("Hello World!");
+                }
+            }
+        """
+
+        when:
+        def result = build('createExe')
+
+        then:
+        result.task(':jar').outcome == SUCCESS
+        result.task(':createExe').outcome == SUCCESS
+
+        new File(projectDir, 'build/launch4j/Test.exe').exists()
+        new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
+
+        when:
+        def resultTwo = build('cleanCreateExe')
+
+        then:
+        resultTwo.task(':cleanCreateExe').outcome == SUCCESS
+
+        !new File(projectDir, 'build/launch4j/Test.exe').exists()
+        !new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
+        !new File(projectDir, 'build/launch4j').exists()
+    }
+
     def 'Running the library task to create the executable succeeds'() {
         given:
         buildFile << """
