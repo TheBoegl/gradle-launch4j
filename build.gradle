@@ -1,15 +1,7 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.1"
-    }
+plugins {
+    id "com.gradle.plugin-publish" version "0.9.6"
 }
 
-apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -38,7 +30,10 @@ dependencies {
     compile localGroovy()
 
     testCompile gradleTestKit()
-    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude module: 'junit-dep'
+        exclude module: 'groovy-all'
+    }
 
     // Add the classpath file to the test runtime classpath.
     testRuntime files(createClasspathManifest)
@@ -52,7 +47,7 @@ configurations.all {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "1.6.2"
+version "2.0.0"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
@@ -76,7 +71,7 @@ pluginBundle {
     website = 'https://github.com/TheBoegl/gradle-launch4j'
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
     description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
-    plugins {
+    plugins.add {
         launch4j {
             id = 'edu.sc.seis.launch4j'
             displayName = 'launch4j gradle plugin'
@@ -173,5 +168,10 @@ gradle.taskGraph.whenReady { taskGraph ->
 //createReleaseTag.dependsOn publish
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.9'
+    gradleVersion = '3.2.1'
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+tasks.withType(Test) {
+    systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
