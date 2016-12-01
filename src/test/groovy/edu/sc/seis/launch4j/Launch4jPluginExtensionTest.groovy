@@ -1,6 +1,8 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
+import org.gradle.util.GradleVersion
+import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -24,6 +26,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.output.trim() == 'launch4j'
     }
 
+    @Unroll
     def 'Running the task to create the executable succeeds'() {
         given:
         buildFile << """
@@ -44,11 +47,15 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         """
 
         when:
-        def result = build('createExe')
+        def result = createAndConfigureGradleRunner('createExe').withGradleVersion(gradleVersion).build()
 
         then:
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
+
+        where:
+        // versions prior 2.8 will not allow the classpath injection
+        gradleVersion << ['2.14', '2.14.1', '3.0', '3.2.1', GradleVersion.current().getVersion()]
     }
 
     def 'Checking the outputs succeeds'() {

@@ -11,6 +11,7 @@ Go To section
 # Introduction
 
 The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) to create windows .exe files for java applications.
+This plugin is compatible with the Gradle versions 2 and later.
 
 # Tasks
 

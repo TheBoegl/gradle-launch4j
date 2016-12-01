@@ -1,7 +1,6 @@
 package edu.sc.seis.launch4j.tasks
 
 import edu.sc.seis.launch4j.*
-import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.plugins.JavaPlugin
@@ -11,7 +10,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.bundling.Jar
 
-@CompileStatic
+//@CompileStatic // bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
 @ParallelizableTask
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 

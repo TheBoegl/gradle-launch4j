@@ -42,7 +42,7 @@ class FunctionalSpecification extends Specification {
         createAndConfigureGradleRunner(arguments).build()
     }
 
-    private GradleRunner createAndConfigureGradleRunner(String... arguments) {
+    protected GradleRunner createAndConfigureGradleRunner(String... arguments) {
         GradleRunner.create()
             .withProjectDir(projectDir)
             .withDebug(DEBUG)
