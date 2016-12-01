@@ -1,3 +1,6 @@
+## Version [2.0.1](../../releases/tag/v2.0.1)
+- **FIX** [#34](../../issues/34): Fix compatibility issues with Gradle version 2.
+
 ## Version [2.0.0](../../releases/tag/v2.0.0)
 Rework and restructure the plugin
 - **NEW**: Add customizable task types `edu.sc.seis.launch4j.tasks.Launch4jLibraryTask` and `edu.sc.seis.launch4j.tasks.Launch4jExternalTask`
