@@ -4,6 +4,7 @@ import groovy.transform.AutoClone
 import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.bundling.Jar
@@ -13,9 +14,11 @@ import org.gradle.api.tasks.bundling.Jar
 class Launch4jPluginExtension implements Launch4jConfiguration {
 
     private final Project project
+    final FileOperations fileOperations
 
-    Launch4jPluginExtension(Project project) {
+    Launch4jPluginExtension(Project project, FileOperations fileOperations) {
         this.project = project
+        this.fileOperations = fileOperations
     }
 
     String mainClassName

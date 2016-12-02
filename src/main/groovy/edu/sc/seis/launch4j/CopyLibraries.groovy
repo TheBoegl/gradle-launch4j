@@ -1,13 +1,18 @@
 package edu.sc.seis.launch4j
 
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.file.CopySpec
+import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
 
 class CopyLibraries {
     Project project
+    FileOperations fileOperations
 
-    CopyLibraries(Project project) {
+    CopyLibraries(Project project, FileOperations fileOperations) {
         this.project = project
+        this.fileOperations = fileOperations
     }
 
     /**
@@ -28,7 +33,11 @@ class CopyLibraries {
             }
             into { libraryDir }
         }
-        project.copy(distSpec)
 
+        fileOperations.sync(new Action<CopySpec>() {
+            void execute(CopySpec t) {
+                project.configure(t, distSpec)
+            }
+        })
     }
 }

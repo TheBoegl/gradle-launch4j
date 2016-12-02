@@ -7,7 +7,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.internal.file.FileOperations
 import org.gradle.internal.os.OperatingSystem
+
+import javax.inject.Inject
 
 @CompileStatic
 class Launch4jPlugin implements Plugin<Project> {
@@ -23,11 +26,17 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String ARTIFACT_VERSION = '3.9'
 
     private Project project
+    private FileOperations fileOperations
+
+    @Inject
+    public Launch4jPlugin(FileOperations fileOperations) {
+        this.fileOperations = fileOperations
+    }
 
     @Override
     void apply(Project project) {
         this.project = project
-        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension, project)
+        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension, project, fileOperations)
 
         configureDependencies(project)
         applyTasks(project)

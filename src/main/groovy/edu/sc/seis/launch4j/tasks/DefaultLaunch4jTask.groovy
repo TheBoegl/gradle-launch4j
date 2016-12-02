@@ -97,7 +97,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     Object copyConfigurable
 
     def copyLibraries() {
-        new CopyLibraries(project).execute(getLibraryDirectory(), copyConfigurable ?: config.copyConfigurable)
+        new CopyLibraries(project, config.fileOperations).execute(getLibraryDirectory(), copyConfigurable ?: config.copyConfigurable)
     }
 
     /**
