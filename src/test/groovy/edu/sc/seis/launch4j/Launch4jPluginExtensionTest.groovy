@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2016 Sebastian Boegl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
@@ -748,5 +765,50 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         process.waitFor() == 0
         process.in.text.trim() == 'Hello STDOUT!'
         process.err.text.trim().endsWith('Hello LOG!')
+    }
+
+    def 'Updating the project version results in only one jar succeeds'() {
+        given:
+        buildFile << """
+            launch4j {
+                mainClassName = 'com.test.app.Main'
+                outfile = 'Test.exe'
+            }
+        """
+        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+
+        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        sourceFile << """
+            package com.test.app;
+
+            public class Main {
+                public static void main(String[] args) {
+                    System.out.println("Hello World!");
+                }
+            }
+        """
+
+        when:
+        def result = build('-Pversion=1.0', 'createExe')
+
+        then:
+        result.task(':jar').outcome == SUCCESS
+        result.task(':createExe').outcome == SUCCESS
+
+        new File(projectDir, 'build/launch4j/Test.exe').exists()
+        !new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
+        new File(projectDir, 'build/launch4j/lib/testProject-1.0.jar').exists()
+
+        when:
+        def resultTwo = build('-Pversion=1.0.1', 'createExe')
+
+        then:
+        result.task(':jar').outcome == SUCCESS
+        resultTwo.task(':createExe').outcome == SUCCESS
+
+        new File(projectDir, 'build/launch4j/Test.exe').exists()
+        !new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
+        !new File(projectDir, 'build/launch4j/lib/testProject-1.0.jar').exists()
+        new File(projectDir, 'build/launch4j/lib/testProject-1.0.1.jar').exists()
     }
 }
