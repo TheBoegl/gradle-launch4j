@@ -1,3 +1,7 @@
+## Version [2.1.0](../../releases/tag/v2.1.0)
+- **FIX** [#35](../../issues/35): Avoid jar version mismatch in launch4jäs lib folder.
+- **FIX** [#37](../../issues/37): Allow manual control of the classpath.
+
 ## Version [2.0.1](../../releases/tag/v2.0.1)
 - **FIX** [#34](../../issues/34): Fix compatibility issues with Gradle version 2.
 
