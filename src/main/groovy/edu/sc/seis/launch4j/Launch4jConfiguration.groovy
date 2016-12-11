@@ -125,4 +125,6 @@ interface Launch4jConfiguration {
     Integer getSplashTimeout()
 
     Boolean getSplashTimeoutError()
+
+    Object getCopyConfigurable()
 }
