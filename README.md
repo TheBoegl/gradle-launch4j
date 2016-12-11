@@ -6,6 +6,7 @@ Go To section
 * [Configuration](#configuration)
 * [Launch4jLibraryTask](#launch4jlibrarytask)
 * [Launch4jExternalTask](#launch4jexternaltask)
+* [Contributors](#contributors)
 * [Version](#version)
 
 # Introduction
@@ -212,6 +213,13 @@ In order to use a launch4j instance named 'launch4j-test' located in the PATH cr
         launch4jCmd = 'launch4j-test'
         outfile = 'MyApp.exe'
     }
+
+# Contributors
+
+* [Sebastian Bögl](https://github.com/TheBoegl) (Maintainer)
+* [Philip Crotwell](https://github.com/crotwell) (Creator)
+* [Sebastian Schuberth](https://github.com/sschuberth)
+* [FourtyTwo](https://github.com/FFourtyTwo)
 
 # Version
 
