@@ -1,5 +1,7 @@
 plugins {
     id "com.gradle.plugin-publish" version "0.9.6"
+    id "com.jfrog.bintray" version "1.7.3"
+    id "nu.studer.plugindev" version "1.0.6"
 }
 
 apply plugin: 'groovy'
@@ -7,6 +9,23 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
+
+/*
+ * Copyright (c) 2017 Sebastian Boegl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 
 // Write the plugin's classpath to a file to share with the tests.
 task createClasspathManifest {
@@ -52,19 +71,47 @@ version "2.1.0"
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-}
-task groovydocJar (type: Jar, dependsOn: groovydoc) {
-    classifier = 'javadoc'
-    from groovydoc.destinationDir
-}
-groovydocJar.dependsOn 'groovydoc'
-
-artifacts {
-    archives jar
-    archives groovydocJar
-    archives sourceJar
+plugindev {
+    pluginId 'edu.sc.seis.launch4j'
+    pluginName 'gradle-launch4j'
+    pluginImplementationClass 'edu.sc.seis.launch4j.Launch4jPlugin'
+    pluginDescription 'A gradle-plugin that uses launch4j to create windows .exe files for java applications.'
+    pluginLicenses 'Apache-2.0'
+    pluginTags 'gradle', 'launch4j', 'executable', 'wrapper'
+    authorId 'theboegl'
+    authorName 'Sebastian Bögl'
+    authorEmail 'info@sebastianboegl.de'
+    projectUrl 'https://github.com/TheBoegl/gradle-launch4j'
+    projectInceptionYear '2012'
+    pomConfiguration {
+        name project.name
+        description 'A gradle-plugin that uses launch4j to create windows .exe files for java applications.'
+        url 'https://github.com/TheBoegl/gradle-launch4j/'
+        scm {
+            url 'https://github.com/TheBoegl/gradle-launch4j/'
+            connection 'scm:git:git://github.com/TheBoegl/gradle-launch4j.git'
+            developerConnection 'scm:git:git@github.com:TheBoegl/gradle-launch4j.git'
+        }
+        licenses {
+            license {
+                name 'Apache License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+        developers {
+            developer {
+                id 'theboegl'
+                name 'Sebastian Bögl'
+                email 'info@sebastianboegl.de'
+            }
+        }
+        issueManagement {
+            system 'github'
+            url 'https://github.com/TheBoegl/gradle-launch4j/issues'
+        }
+    }
+    done() // do not omit this
 }
 
 pluginBundle {
@@ -81,65 +128,13 @@ pluginBundle {
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            pom.withXml {
-                asNode().children().last() + {
-                    resolveStrategy = Closure.DELEGATE_FIRST
-                    name "${project.name}"
-                    description 'A plugin for Gradle that uses launch4j to create windows .exe file for java applications. '
-                    url "https://github.com/TheBoegl/gradle-launch4j/"
-                    scm {
-                        url 'https://github.com/TheBoegl/gradle-launch4j/'
-                        connection 'scm:git:git://github.com/TheBoegl/gradle-launch4j.git'
-                        developerConnection 'scm:git:git@github.com:TheBoegl/gradle-launch4j.git'
-                    }
-                    licenses {
-                        license {
-                            name 'Apache License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            distribution 'repo'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id 'crotwell'
-                            name 'Philip Crotwell'
-                            email 'crotwell@seis.sc.edu'
-                            roles {
-                                role 'Previous lead developer'
-                            }
-                        }
-                        developer {
-                            id 'theboegl'
-                            name 'Sebastian Bögl'
-                            email 'info@sebastianboegl.de'
-                            roles {
-                                role 'Lead developer'
-                            }
-                        }
-                    }
-                    issueManagement {
-                        system 'github'
-                        url 'https://github.com/TheBoegl/gradle-launch4j/issues'
-                    }
-                }
-            }
-
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-            artifact groovydocJar {
-                classifier "javadoc"
-            }
-        }
-    }
-    repositories {
-        maven {
-            url "file:../mavenRepo/"
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+    pkg {
+        repo = 'gradle-plugins'
+        version {
+            vcsTag = "v${project.version}"
         }
     }
 }
