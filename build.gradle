@@ -129,8 +129,6 @@ pluginBundle {
 }
 
 bintray {
-    user = bintrayUser
-    key = bintrayApiKey
     pkg {
         repo = 'gradle-plugins'
         version {
