@@ -66,7 +66,7 @@ configurations.all {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "2.1.0"
+version "2.2.0"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
