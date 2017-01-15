@@ -1,13 +1,17 @@
-[ ![Get automatic notifications about new "gradle-launch4j" versions](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j?source=watch) [ ![Download](https://api.bintray.com/packages/theboegl/gradle-plugins/gradle-launch4j/images/download.svg) ](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j/_latestVersion) [ ![Build status](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
+[ ![Get automatic notifications about new "gradle-launch4j" versions](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j?source=watch) [ ![Download](https://api.bintray.com/packages/theboegl/gradle-plugins/gradle-launch4j/images/download.svg) ](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j/_latestVersion) 
 
-Go To section
+**Build status**:
+[ ![Build status master](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true&passingText=master%20-%20OK&failingText=master%20-%20Fails&pendingText=master%20-%20pending)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
+[ ![Build status develop](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/develop?svg=true&passingText=develop%20-%20OK&failingText=develop%20-%20Fails&pendingText=develop%20-%20pending)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/develop)
+
+**Table of contents**
 * [Introduction](#introduction)
 * [Tasks](#tasks)
 * [Configuration](#configuration)
 * [Launch4jLibraryTask](#launch4jlibrarytask)
 * [Launch4jExternalTask](#launch4jexternaltask)
 * [Contributors](#contributors)
-* [Version](#version)
+* [Version](#version) (see [VERSION.md](VERSION.md))
 
 # Introduction
 
