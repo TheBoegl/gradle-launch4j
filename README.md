@@ -98,7 +98,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean stayAlive = false
  *    boolean restartOnCrash = false
  *    String manifest = ""
- *    String icon = ""
+ *    String icon = "" <br>A relative path from the outfile or an absolute path to the icon file.
  *    String version = project.version
  *    String textVersion = project.version
  *    String copyright = "unknown"
@@ -127,7 +127,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    Integer initialHeapPercent
  *    Integer maxHeapSize
  *    Integer maxHeapPercent
- *    String splashFileName
+ *    String splashFileName <br>A relative path from the outfile or an absolute path to the bmp splash file.
  *    boolean splashWaitForWindows = true
  *    Integer splashTimeout = 60
  *    boolean splashTimeoutError = true

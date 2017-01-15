@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package edu.sc.seis.launch4j
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
 
+import java.nio.file.Path
 import java.nio.file.Paths
 
 class CreateXML {
@@ -60,7 +61,7 @@ class CreateXML {
             xml.stayAlive(config.stayAlive)
             xml.restartOnCrash(config.restartOnCrash)
             xml.manifest(config.manifest)
-            xml.icon(config.icon)
+            xml.icon(relativizeIfAbsolute(outFilePath, config.icon))
             if (config.mainClassName) {
                 xml.classPath() {
                     mainClass(config.mainClassName)
@@ -92,7 +93,7 @@ class CreateXML {
             }
             if (config.splashFileName != null && config.splashTimeout != null) {
                 splash() {
-                    xml.file(config.splashFileName)
+                    xml.file(relativizeIfAbsolute(outFilePath, config.splashFileName))
                     xml.waitForWindow(config.splashWaitForWindows)
                     xml.timeout(config.splashTimeout)
                     xml.timeoutErr(config.splashTimeoutError)
@@ -139,6 +140,22 @@ class CreateXML {
             }
         }
         writer.close()
+    }
+
+    /**
+     * Relativizes the other path from the source path if, and only if, it is absolute.
+     *
+     * @param source The source path to relativize from.
+     * @param other the path to relativize against the source path.
+     * @return the resulting relative path, or an empty path if both paths are equal
+     * @see Path#relativize(Path)
+     */
+    static String relativizeIfAbsolute(Path source, String other) {
+        def path = Paths.get(other)
+        if (path.absolute) {
+            path = source.relativize(path)
+        }
+        return path
     }
 
     /**
