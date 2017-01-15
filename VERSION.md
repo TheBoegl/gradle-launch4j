@@ -1,3 +1,5 @@
+## Version [2.2.0](../../releases/tag/v2.2.0)
+- **FIX** [#43](../../issues/43): Relativize absolute icon and splash paths to the outfile.
 ## Version [2.1.0](../../releases/tag/v2.1.0)
 - **FIX** [#35](../../issues/35): Avoid jar version mismatch in launch4jäs lib folder.
 - **FIX** [#37](../../issues/37): Allow manual control of the classpath.
