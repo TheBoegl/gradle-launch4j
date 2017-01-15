@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
     }
 
     @Unroll
-    def 'Running the task to create the executable succeeds'() {
+    def 'Running the task to create the executable with gradle #gradleVersion succeeds'() {
         given:
         buildFile << """
             launch4j {

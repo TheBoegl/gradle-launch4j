@@ -39,7 +39,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
         }
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.1.0'
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.2.0'
       }
     }
 
@@ -60,7 +60,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
     apply plugin: 'java'
 
     plugins {
-      id 'edu.sc.seis.launch4j' version '2.1.0'
+      id 'edu.sc.seis.launch4j' version '2.2.0'
     }
 
     launch4j {
@@ -98,7 +98,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    boolean stayAlive = false
  *    boolean restartOnCrash = false
  *    String manifest = ""
- *    String icon = ""
+ *    String icon = "" <br>A relative path from the outfile or an absolute path to the icon file.
  *    String version = project.version
  *    String textVersion = project.version
  *    String copyright = "unknown"
@@ -127,7 +127,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    Integer initialHeapPercent
  *    Integer maxHeapSize
  *    Integer maxHeapPercent
- *    String splashFileName
+ *    String splashFileName <br>A relative path from the outfile or an absolute path to the bmp splash file.
  *    boolean splashWaitForWindows = true
  *    Integer splashTimeout = 60
  *    boolean splashTimeoutError = true
