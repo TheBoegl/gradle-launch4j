@@ -68,7 +68,15 @@ interface Launch4jConfiguration {
 
     String getCopyright()
 
-    String getOpt()
+    String[] getJvmOptions()
+
+    /**
+     * this is a backwards compatible setter for opts which was a String.
+     * @param opt the JVM options
+     * @deprecated since 2.3 use {@link #getJvmOptions()}
+     */
+    @Deprecated
+    void setOpt(String opt)
 
     String getCompanyName()
 

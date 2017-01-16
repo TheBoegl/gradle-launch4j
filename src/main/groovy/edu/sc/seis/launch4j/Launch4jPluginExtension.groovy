@@ -71,7 +71,15 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String version = "${project.version}"
     String textVersion = "${project.version}"
     String copyright = 'unknown'
-    String opt = ''
+
+    String[] jvmOptions = []
+
+    @Deprecated
+    void setOpt(String opt) {
+        this.jvmOptions = [opt ]
+        project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
+    }
+
     String companyName = ''
     String fileDescription = "${project.name}"
 

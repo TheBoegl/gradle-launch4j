@@ -77,7 +77,11 @@ class CreateXML {
                 xml.jdkPreference(config.jdkPreference)
                 xml.runtimeBits(config.jreRuntimeBits)
 
-                if (config.opt.length() != 0) xml.opt(config.opt)
+                config.jvmOptions.each { opt ->
+                    if (opt) {
+                        xml.opt(opt)
+                    }
+                }
 
                 if (config.initialHeapSize != null)
                     xml.initialHeapSize(config.initialHeapSize)
