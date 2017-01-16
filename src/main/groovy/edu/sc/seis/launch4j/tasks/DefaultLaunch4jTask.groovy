@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -584,6 +584,16 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getMessagesLauncherError() {
         messagesLauncherError ?: config.messagesLauncherError
     }
+
+    @Input
+    @Optional
+    String messagesInstanceAlreadyExists
+
+    @Override
+    String getMessagesInstanceAlreadyExists() {
+        messagesInstanceAlreadyExists ?: config.messagesInstanceAlreadyExists
+    }
+
     /**
      * Optional, initial heap size in MB.<br>
      *

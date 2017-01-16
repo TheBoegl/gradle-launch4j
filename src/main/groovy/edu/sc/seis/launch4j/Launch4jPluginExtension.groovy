@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,6 +120,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String messagesBundledJreError
     String messagesJreVersionError
     String messagesLauncherError
+    String messagesInstanceAlreadyExists
 
     Integer initialHeapSize
     Integer initialHeapPercent

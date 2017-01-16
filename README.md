@@ -127,6 +127,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String messagesBundledJreError
  *    String messagesJreVersionError
  *    String messagesLauncherError
+ *    String messagesInstanceAlreadyExists
  *    Integer initialHeapSize
  *    Integer initialHeapPercent
  *    Integer maxHeapSize

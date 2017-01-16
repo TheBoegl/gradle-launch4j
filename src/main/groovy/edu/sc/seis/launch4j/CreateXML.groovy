@@ -117,7 +117,9 @@ class CreateXML {
             if (config.messagesStartupError != null ||
                 config.messagesBundledJreError != null ||
                 config.messagesJreVersionError != null ||
-                config.messagesLauncherError != null) {
+                config.messagesLauncherError != null
+                || config.messagesInstanceAlreadyExists != null
+            ) {
                 messages() {
                     if (config.messagesStartupError != null)
                         xml.startupErr(config.messagesStartupError)
@@ -127,6 +129,8 @@ class CreateXML {
                         xml.jreVersionErr(config.messagesJreVersionError)
                     if (config.messagesLauncherError != null)
                         xml.launcherErr(config.messagesLauncherError)
+                    if (config.messagesInstanceAlreadyExists != null)
+                        xml.instanceAlreadyExistsMsg(config.messagesInstanceAlreadyExists)
                 }
             }
             if (config.mutexName != null || config.windowTitle != null) {

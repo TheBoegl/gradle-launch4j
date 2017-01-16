@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,6 +109,8 @@ interface Launch4jConfiguration {
     String getMessagesJreVersionError()
 
     String getMessagesLauncherError()
+
+    String getMessagesInstanceAlreadyExists()
 
     Integer getInitialHeapSize()
 
