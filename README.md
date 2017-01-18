@@ -158,12 +158,12 @@ If you use the outdated fatJar plugin the following configuration correctly wire
 
     fatJar {
         classifier 'fat'
+        with jar
         manifest {
             attributes 'Main-Class': project.mainClassName
         }
     }
     
-    copyL4jLib.dependsOn fatJar
     fatJarPrepareFiles.dependsOn jar
     
     launch4j {
