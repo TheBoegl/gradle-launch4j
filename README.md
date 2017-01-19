@@ -220,6 +220,11 @@ In order to use a launch4j instance named 'launch4j-test' located in the PATH cr
         outfile = 'MyApp.exe'
     }
 
+# Debugging
+To get insight into the launch4j creation process start a launch4j task, e.g. `createExe`, `createExecutables` or your custom task, with the script parameter `-Pl4j-debug`. This will copy the created xml into `${buildDir}/tmp/${task.name}`.
+
+In order to debug the created executable call it with the command line argument `--l4j-debug`. This will create the log file `launch4j.log` next to the executable.
+
 # Contributors
 
 * [Sebastian Bögl](https://github.com/TheBoegl) (Maintainer)
