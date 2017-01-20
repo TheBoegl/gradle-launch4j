@@ -334,16 +334,17 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String[] jvmOptions
+    Set<String> jvmOptions = []
 
     @Override
-    String[] getJvmOptions() {
+    Set<String> getJvmOptions() {
         jvmOptions ?: config.jvmOptions
     }
 
     @Deprecated
     void setOpt(String opt) {
-        this.jvmOptions = [opt ]
+        if (!opt) return // null check
+        this.jvmOptions = [ opt ] as Set
         project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
     }
 

@@ -68,7 +68,7 @@ interface Launch4jConfiguration {
 
     String getCopyright()
 
-    String[] getJvmOptions()
+    Set<String> getJvmOptions()
 
     /**
      * this is a backwards compatible setter for opts which was a String.
