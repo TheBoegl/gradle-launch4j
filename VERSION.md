@@ -1,3 +1,10 @@
+## Version [2.3.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.3.0)
+- **FIX** [#45](https://github.com/TheBoegl/gradle-launch4j/issues/45): Add the missing message if an instance already exists.
+- **FIX** [#46](https://github.com/TheBoegl/gradle-launch4j/issues/46): Migrate the jvm options from `String opt` to `Set<String> jvmOptions`.
+- **FIX** [#47](https://github.com/TheBoegl/gradle-launch4j/issues/47): Only depend on one of the jar generating tasks.
+- **FIX** [#48](https://github.com/TheBoegl/gradle-launch4j/issues/48): Allow a customized classpath modification.
+- **FIX** [#49](https://github.com/TheBoegl/gradle-launch4j/issues/49): Keep a copy of the generated launch4j xml with the `l4j-debug` project property.
+
 ## Version [2.2.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.2.0)
 - **FIX** [#43](https://github.com/TheBoegl/gradle-launch4j/issues/43): Relativize absolute icon and splash paths to the outfile.
 
