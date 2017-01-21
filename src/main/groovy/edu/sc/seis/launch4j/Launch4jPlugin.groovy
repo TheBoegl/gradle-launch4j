@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,8 +86,8 @@ class Launch4jPlugin implements Plugin<Project> {
 
 
         if (project.repositories.isEmpty()) {
-            project.logger.debug("Adding the maven central repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
-            project.repositories.mavenCentral()
+            project.logger.debug("Adding the jcenter repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
+            project.repositories.jcenter()
         }
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
         project.dependencies {

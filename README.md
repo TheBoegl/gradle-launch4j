@@ -38,9 +38,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     buildscript {
       repositories {
-        maven {
-          url 'https://plugins.gradle.org/m2/'
-        }
+        jcenter()
       }
       dependencies {
         classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0'
@@ -48,7 +46,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
     }
 
     repositories {
-      mavenCentral()
+      jcenter()
     }
 
     apply plugin: 'java'

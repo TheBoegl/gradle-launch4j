@@ -551,7 +551,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             repositories {
-                mavenCentral()
+                jcenter()
             }
 
             dependencies {
@@ -613,7 +613,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             repositories {
-                mavenCentral()
+                jcenter()
             }
 
             dependencies {
@@ -679,7 +679,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
 
             repositories {
-                mavenCentral()
+                jcenter()
             }
 
             dependencies {
@@ -746,7 +746,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
 
             repositories {
-                mavenCentral()
+                jcenter()
             }
 
             dependencies {
