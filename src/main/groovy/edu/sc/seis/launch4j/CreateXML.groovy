@@ -19,6 +19,7 @@ package edu.sc.seis.launch4j
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -32,16 +33,23 @@ class CreateXML {
     }
 
     void execute(Launch4jPluginExtension l4j) {
-        execute(l4j.getXmlFile(), l4j)
+        execute(l4j.getXmlFile(), l4j, null)
     }
 
-    void execute(File xmlFile, Launch4jConfiguration config) {
+    void execute(File xmlFile, Launch4jConfiguration config, FileCollection copySpec) {
         def outputDir = config.getOutputDirectory()
         outputDir.mkdirs()
         def outFilePath = config.getDest().parentFile.toPath()
-        def classpath = (config.copyConfigurable ?: (project.plugins.hasPlugin('java') ? project.configurations.runtime : [])).collect {
-            outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString()
-            // relativize paths relative to outfile
+        def classpath
+        if (copySpec instanceof FileCollection) {
+            classpath = copySpec.collect {
+                outFilePath.relativize(it.toPath()).toString()
+            }
+        } else {
+            classpath = (copySpec ?: (project.plugins.hasPlugin('java') ? project.configurations.runtime : [])).collect {
+                outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString()
+                // relativize paths relative to outfile
+            }
         }
         def jar = config.dontWrapJar ? outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.jar))) : config.jar
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
@@ -77,7 +85,11 @@ class CreateXML {
                 xml.jdkPreference(config.jdkPreference)
                 xml.runtimeBits(config.jreRuntimeBits)
 
-                if (config.opt.length() != 0) xml.opt(config.opt)
+                config.jvmOptions.each { opt ->
+                    if (opt) {
+                        xml.opt(opt)
+                    }
+                }
 
                 if (config.initialHeapSize != null)
                     xml.initialHeapSize(config.initialHeapSize)
@@ -117,7 +129,9 @@ class CreateXML {
             if (config.messagesStartupError != null ||
                 config.messagesBundledJreError != null ||
                 config.messagesJreVersionError != null ||
-                config.messagesLauncherError != null) {
+                config.messagesLauncherError != null
+                || config.messagesInstanceAlreadyExists != null
+            ) {
                 messages() {
                     if (config.messagesStartupError != null)
                         xml.startupErr(config.messagesStartupError)
@@ -127,6 +141,8 @@ class CreateXML {
                         xml.jreVersionErr(config.messagesJreVersionError)
                     if (config.messagesLauncherError != null)
                         xml.launcherErr(config.messagesLauncherError)
+                    if (config.messagesInstanceAlreadyExists != null)
+                        xml.instanceAlreadyExistsMsg(config.messagesInstanceAlreadyExists)
                 }
             }
             if (config.mutexName != null || config.windowTitle != null) {

@@ -22,6 +22,7 @@ import org.gradle.util.GradleVersion
 import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class Launch4jPluginExtensionTest extends FunctionalSpecification {
 
@@ -166,6 +167,44 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         !new File(projectDir, 'build/launch4j/Test.exe').exists()
         !new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
         !new File(projectDir, 'build/launch4j').exists()
+    }
+
+    def 'Running the task to create the executable and be UP-To-DATE succeeds'() {
+        given:
+        buildFile << """
+            launch4j {
+                mainClassName = 'com.test.app.Main'
+                outfile = 'Test.exe'
+            }
+        """
+        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+
+        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        sourceFile << """
+            package com.test.app;
+
+            public class Main {
+                public static void main(String[] args) {
+                    System.out.println("Hello World!");
+                }
+            }
+        """
+
+        when:
+        def result = build('createExe')
+
+        then:
+        result.task(':jar').outcome == SUCCESS
+        result.task(':createExe').outcome == SUCCESS
+
+        new File(projectDir, 'build/launch4j/Test.exe').exists()
+        new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
+
+        when:
+        def resultTwo = build('createExe')
+
+        then:
+        resultTwo.task(':createExe').outcome == UP_TO_DATE
     }
 
     def 'Running the library task to create the executable succeeds'() {
@@ -687,7 +726,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         def result = build('createExe')
 
         then:
-        result.task(':jar').outcome == SUCCESS
+        result.task(':shadowJar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
         def outfile = new File(projectDir, 'build/launch4j/test.exe')
@@ -754,7 +793,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         def result = build('createExe')
 
         then:
-        result.task(':jar').outcome == SUCCESS
+        !result.task(':jar')
         result.task(':shadowJar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 

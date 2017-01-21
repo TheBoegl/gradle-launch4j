@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ package edu.sc.seis.launch4j
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
 
@@ -36,11 +38,16 @@ class CopyLibraries {
      * Copies the project dependency jars to the configured library directory
      * @param libraryDir
      */
-    void execute(File libraryDir, Object copyConfigurable) {
+    FileCollection execute(File libraryDir, Object copyConfigurable) {
+        def files = []
         def distSpec = {
             if (copyConfigurable) {
-                with {
-                    from { copyConfigurable }
+                if (copyConfigurable instanceof CopySpec) {
+                    with(copyConfigurable)
+                } else {
+                    with {
+                        from { copyConfigurable }
+                    }
                 }
             } else if (project.plugins.hasPlugin('java')) {
                 with {
@@ -49,6 +56,9 @@ class CopyLibraries {
                 }
             }
             into { libraryDir }
+            eachFile { FileCopyDetails details ->
+                files.add(details.relativePath.getFile(libraryDir))
+            }
         }
 
         fileOperations.sync(new Action<CopySpec>() {
@@ -56,5 +66,7 @@ class CopyLibraries {
                 project.configure(t, distSpec)
             }
         })
+
+        project.files(files)
     }
 }

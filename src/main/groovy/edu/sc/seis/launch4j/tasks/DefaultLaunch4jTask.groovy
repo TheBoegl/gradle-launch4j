@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ package edu.sc.seis.launch4j.tasks
 import edu.sc.seis.launch4j.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
+import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.file.copy.CopySpecInternal
+import org.gradle.api.internal.file.copy.DefaultCopySpec
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.ParallelizableTask
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Jar
 
 //@CompileStatic // bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
@@ -35,17 +35,18 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     protected DefaultLaunch4jTask() {
         config = project.getConvention().getByType(Launch4jPluginExtension.class)
-        evaluateTaskDependencyIfAvailable('jar')
-        evaluateTaskDependencyIfAvailable('shadowJar')
-        evaluateTaskDependencyIfAvailable('fatJar')
+        evaluateTaskDependencyIfAvailable('shadowJar', 'fatJar', 'jar')
     }
 
-    private void evaluateTaskDependencyIfAvailable(String taskName) {
+    private void evaluateTaskDependencyIfAvailable(String... taskNames) {
         project.afterEvaluate {
-            if (project.hasProperty(taskName)) {
-                def task = project.tasks.getByName(taskName)
-                dependsOn.add(task)
-                inputs.files(task.outputs.files)
+            for (String taskName : taskNames) {
+                if (project.hasProperty(taskName)) {
+                    def task = project.tasks.getByName(taskName)
+                    dependsOn.add(task)
+                    inputs.files(task.outputs.files)
+                    break;
+                }
             }
         }
     }
@@ -109,12 +110,38 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         project.file("${getOutputDirectory()}/${libraryDir ?: config.libraryDir}")
     }
 
-    @Input
-    @Optional
     Object copyConfigurable
 
-    def copyLibraries() {
-        new CopyLibraries(project, config.fileOperations).execute(getLibraryDirectory(), copyConfigurable ?: config.copyConfigurable)
+    /**
+     * Try to get the inputs right.
+     * @return the input files of the copyConfigurable
+     */
+    @InputFiles
+    @Optional
+    Object getCopyFiles() {
+        def copyConfigurable = getCopyConfigurable()
+        if (copyConfigurable instanceof CopySpecInternal) {
+            def specResolver = (copyConfigurable as CopySpecInternal).buildRootResolver()
+            def files = specResolver.allSource.files
+            def rootResolverDestination = specResolver.destPath.getFile(getLibraryDirectory())
+            files + rootResolverDestination
+            files.addAll((copyConfigurable as DefaultCopySpec).getChildren().collect { CopySpecInternal cpi ->
+                cpi.buildRootResolver().destPath.getFile(rootResolverDestination)
+            })
+            files
+        } else if (copyConfigurable instanceof FileCollection) {
+            copyConfigurable as FileCollection
+        } else {
+            null
+        }
+    }
+
+    private Object getCopyConfigurable() {
+        copyConfigurable ?: config.copyConfigurable
+    }
+
+    FileCollection copyLibraries() {
+        new CopyLibraries(project, config.fileOperations).execute(getLibraryDirectory(), getCopyConfigurable())
     }
 
     /**
@@ -333,11 +360,18 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String opt
+    Set<String> jvmOptions = []
 
     @Override
-    String getOpt() {
-        opt ?: config.opt
+    Set<String> getJvmOptions() {
+        jvmOptions ?: config.jvmOptions
+    }
+
+    @Deprecated
+    void setOpt(String opt) {
+        if (!opt) return // null check
+        this.jvmOptions = [ opt ] as Set
+        project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
     }
 
     /**
@@ -584,6 +618,16 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getMessagesLauncherError() {
         messagesLauncherError ?: config.messagesLauncherError
     }
+
+    @Input
+    @Optional
+    String messagesInstanceAlreadyExists
+
+    @Override
+    String getMessagesInstanceAlreadyExists() {
+        messagesInstanceAlreadyExists ?: config.messagesInstanceAlreadyExists
+    }
+
     /**
      * Optional, initial heap size in MB.<br>
      *
@@ -715,8 +759,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         jar
     }
 
-    protected void createXML() {
-        new CreateXML(project).execute(getXmlFile(), this)
+    protected void createXML(FileCollection copySpec) {
+        new CreateXML(project).execute(getXmlFile(), this, copySpec)
     }
 
     protected void createExecutableFolder() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,15 @@ interface Launch4jConfiguration {
 
     String getCopyright()
 
-    String getOpt()
+    Set<String> getJvmOptions()
+
+    /**
+     * this is a backwards compatible setter for opts which was a String.
+     * @param opt the JVM options
+     * @deprecated since 2.3 use {@link #getJvmOptions()}
+     */
+    @Deprecated
+    void setOpt(String opt)
 
     String getCompanyName()
 
@@ -110,6 +118,8 @@ interface Launch4jConfiguration {
 
     String getMessagesLauncherError()
 
+    String getMessagesInstanceAlreadyExists()
+
     Integer getInitialHeapSize()
 
     Integer getInitialHeapPercent()
@@ -125,6 +135,4 @@ interface Launch4jConfiguration {
     Integer getSplashTimeout()
 
     Boolean getSplashTimeoutError()
-
-    Object getCopyConfigurable()
 }

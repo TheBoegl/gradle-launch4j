@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,9 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
 
     @TaskAction
     def run() {
-        copyLibraries()
         def tmpDir = new File(project.buildDir, TEMPORARY_DIRECTORY)
         new ExtractLibraries(project).execute(tmpDir)
-        createXML()
+        createXML(copyLibraries())
         createExecutableFolder()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {
@@ -45,7 +44,11 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
         }
 
         if (execResult.exitValue == 0) {
-            project.delete(getXmlFile())
+            File xml = getXmlFile()
+            if (project.hasProperty("l4j-debug")) {
+                new File(temporaryDir, xml.name).text = xml.text
+            }
+            project.delete(xml)
         } else {
             throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${stdOut.toString()}")
         }

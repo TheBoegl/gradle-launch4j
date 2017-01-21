@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Sebastian Boegl
+ * Copyright (c) 2017 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,16 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String version = "${project.version}"
     String textVersion = "${project.version}"
     String copyright = 'unknown'
-    String opt = ''
+
+    Set<String> jvmOptions = []
+
+    @Deprecated
+    void setOpt(String opt) {
+        if (!opt) return // null check
+        this.jvmOptions = [ opt ] as Set
+        project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
+    }
+
     String companyName = ''
     String fileDescription = "${project.name}"
 
@@ -120,6 +129,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String messagesBundledJreError
     String messagesJreVersionError
     String messagesLauncherError
+    String messagesInstanceAlreadyExists
 
     Integer initialHeapSize
     Integer initialHeapPercent

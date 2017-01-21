@@ -1,13 +1,17 @@
-[ ![Get automatic notifications about new "gradle-launch4j" versions](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j?source=watch) [ ![Download](https://api.bintray.com/packages/theboegl/gradle-plugins/gradle-launch4j/images/download.svg) ](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j/_latestVersion) [ ![Build status](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
+[ ![Get automatic notifications about new "gradle-launch4j" versions](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j?source=watch) [ ![Download](https://api.bintray.com/packages/theboegl/gradle-plugins/gradle-launch4j/images/download.svg) ](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j/_latestVersion) 
 
-Go To section
+**Build status**:
+[ ![Build status master](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true&passingText=master%20-%20OK&failingText=master%20-%20Fails&pendingText=master%20-%20pending)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
+[ ![Build status develop](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/develop?svg=true&passingText=develop%20-%20OK&failingText=develop%20-%20Fails&pendingText=develop%20-%20pending)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/develop)
+
+**Table of contents**
 * [Introduction](#introduction)
 * [Tasks](#tasks)
 * [Configuration](#configuration)
 * [Launch4jLibraryTask](#launch4jlibrarytask)
 * [Launch4jExternalTask](#launch4jexternaltask)
 * [Contributors](#contributors)
-* [Version](#version)
+* [Version](#version) (see [VERSION.md](VERSION.md))
 
 # Introduction
 
@@ -39,7 +43,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
         }
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.2.0'
+        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0'
       }
     }
 
@@ -60,7 +64,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
     apply plugin: 'java'
 
     plugins {
-      id 'edu.sc.seis.launch4j' version '2.2.0'
+      id 'edu.sc.seis.launch4j' version '2.3.0'
     }
 
     launch4j {
@@ -109,7 +113,8 @@ The values configurable within the launch4j extension along with their defaults 
  *    String internalName = project.name
  *    String trademarks
  *    String language = "ENGLISH_US"
- *    String opt = ""
+ *    ~~String opt = ""~~ deprecated use jvmOptions instead
+ *    Set<String> jvmOptions = [ ]
  *    String bundledJrePath
  *    boolean bundledJre64Bit = false
  *    boolean bundledJreAsFallback = false
@@ -123,6 +128,7 @@ The values configurable within the launch4j extension along with their defaults 
  *    String messagesBundledJreError
  *    String messagesJreVersionError
  *    String messagesLauncherError
+ *    String messagesInstanceAlreadyExists
  *    Integer initialHeapSize
  *    Integer initialHeapPercent
  *    Integer maxHeapSize
@@ -152,12 +158,12 @@ If you use the outdated fatJar plugin the following configuration correctly wire
 
     fatJar {
         classifier 'fat'
+        with jar
         manifest {
             attributes 'Main-Class': project.mainClassName
         }
     }
     
-    copyL4jLib.dependsOn fatJar
     fatJarPrepareFiles.dependsOn jar
     
     launch4j {
@@ -213,6 +219,11 @@ In order to use a launch4j instance named 'launch4j-test' located in the PATH cr
         launch4jCmd = 'launch4j-test'
         outfile = 'MyApp.exe'
     }
+
+# Debugging
+To get insight into the launch4j creation process start a launch4j task, e.g. `createExe`, `createExecutables` or your custom task, with the script parameter `-Pl4j-debug`. This will copy the created xml into `${buildDir}/tmp/${task.name}`.
+
+In order to debug the created executable call it with the command line argument `--l4j-debug`. This will create the log file `launch4j.log` next to the executable.
 
 # Contributors
 
