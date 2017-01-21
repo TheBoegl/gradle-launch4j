@@ -1,15 +1,3 @@
-plugins {
-    id "com.gradle.plugin-publish" version "0.9.6"
-    id "com.jfrog.bintray" version "1.7.3"
-    id "nu.studer.plugindev" version "1.0.6"
-}
-
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'signing'
-apply plugin: 'maven-publish'
-
 /*
  * Copyright (c) 2017 Sebastian Boegl
  *
@@ -26,6 +14,18 @@ apply plugin: 'maven-publish'
  * limitations under the License.
  *
  */
+plugins {
+    id "com.gradle.plugin-publish" version "0.9.6"
+    id "com.jfrog.bintray" version "1.7.3"
+    id "nu.studer.plugindev" version "1.0.6"
+    id "com.jfrog.artifactory" version "4.4.12"
+}
+
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
 
 // Write the plugin's classpath to a file to share with the tests.
 task createClasspathManifest {
@@ -66,7 +66,7 @@ configurations.all {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "2.3.0"
+version "2.4.0-SNAPSHOT"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
@@ -138,6 +138,20 @@ bintray {
 }
 
 publishPlugins.dependsOn build
+
+artifactory {
+    contextUrl = "${artifactory_ojo_contextUrl}"
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = "${artifactory_ojo_user}"
+            password = "${artifactory_ojo_password}"
+        }
+        defaults {
+            publications 'plugin'
+        }
+    }
+}
 
 signing {
     if (System.console()) {

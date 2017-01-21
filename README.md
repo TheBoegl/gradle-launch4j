@@ -225,6 +225,24 @@ To get insight into the launch4j creation process start a launch4j task, e.g. `c
 
 In order to debug the created executable call it with the command line argument `--l4j-debug`. This will create the log file `launch4j.log` next to the executable.
 
+# Using `SNAPSHOT` versions
+
+When you report a bug and it got fixed, you will have access to some `-SNAPSHOT` version.
+Adjust your buildscript to use the OJO repo:
+```gradle
+buildscript {
+  repositories {
+    jcenter()
+    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
+  }
+  dependencies {
+    classpath 'edu.sc.seis.gradle:launch4j:latest.integration'
+  }
+}
+
+apply plugin: 'edu.sc.seis.launch4j'
+```
+
 # Contributors
 
 * [Sebastian Bögl](https://github.com/TheBoegl) (Maintainer)
