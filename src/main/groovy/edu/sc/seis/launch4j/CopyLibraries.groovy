@@ -43,7 +43,7 @@ class CopyLibraries {
         def distSpec = {
             if (copyConfigurable) {
                 if (copyConfigurable instanceof CopySpec) {
-                    with { copyConfigurable }
+                    with(copyConfigurable)
                 } else {
                     with {
                         from { copyConfigurable }
