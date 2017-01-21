@@ -141,8 +141,14 @@ bintray {
 
 publishPlugins.dependsOn build
 
+
+if (!project.hasProperty("artifactory_ojo_user")) {
+    ext.artifactory_ojo_user = "user"
+    ext.artifactory_ojo_password = "password"
+}
+
 artifactory {
-    contextUrl = "${artifactory_ojo_contextUrl}"
+    contextUrl = "https://oss.jfrog.org/artifactory"
     publish {
         repository {
             repoKey = 'oss-snapshot-local'
