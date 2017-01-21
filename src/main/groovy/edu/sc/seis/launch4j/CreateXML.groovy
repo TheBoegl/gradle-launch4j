@@ -19,6 +19,7 @@ package edu.sc.seis.launch4j
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -32,16 +33,23 @@ class CreateXML {
     }
 
     void execute(Launch4jPluginExtension l4j) {
-        execute(l4j.getXmlFile(), l4j)
+        execute(l4j.getXmlFile(), l4j, null)
     }
 
-    void execute(File xmlFile, Launch4jConfiguration config) {
+    void execute(File xmlFile, Launch4jConfiguration config, FileCollection copySpec) {
         def outputDir = config.getOutputDirectory()
         outputDir.mkdirs()
         def outFilePath = config.getDest().parentFile.toPath()
-        def classpath = (config.copyConfigurable ?: (project.plugins.hasPlugin('java') ? project.configurations.runtime : [])).collect {
-            outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString()
-            // relativize paths relative to outfile
+        def classpath
+        if (copySpec instanceof FileCollection) {
+            classpath = copySpec.collect {
+                outFilePath.relativize(it.toPath()).toString()
+            }
+        } else {
+            classpath = (copySpec ?: (project.plugins.hasPlugin('java') ? project.configurations.runtime : [])).collect {
+                outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString()
+                // relativize paths relative to outfile
+            }
         }
         def jar = config.dontWrapJar ? outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.jar))) : config.jar
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));

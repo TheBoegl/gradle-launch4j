@@ -30,10 +30,9 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
 
     @TaskAction
     def run() {
-        copyLibraries()
         def tmpDir = new File(project.buildDir, TEMPORARY_DIRECTORY)
         new ExtractLibraries(project).execute(tmpDir)
-        createXML()
+        createXML(copyLibraries())
         createExecutableFolder()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {
