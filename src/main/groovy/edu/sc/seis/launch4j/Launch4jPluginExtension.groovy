@@ -158,4 +158,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         }
         jar
     }
+
+    Set<String> classpath = []
 }

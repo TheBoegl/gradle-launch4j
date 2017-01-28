@@ -84,6 +84,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String outputDir | "launch4j" | |
 | String libraryDir | "lib" | |
 | Object copyConfigurable | | |
+| Set<String> classpath| [] | Use this property to override the classpath or configure it on you own if the `copyConfigurable` does not provide the results you want |
 |||
 | String xmlFileName | "launch4j.xml" | |
 | String mainClassName | | |

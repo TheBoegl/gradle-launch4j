@@ -759,6 +759,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         jar
     }
 
+    @Input
+    @Optional
+    Set<String> classpath = []
+
+    @Override
+    Set<String> getClasspath() {
+        classpath ?: config.classpath
+    }
+
     protected void createXML(FileCollection copySpec) {
         new CreateXML(project).execute(getXmlFile(), this, copySpec)
     }

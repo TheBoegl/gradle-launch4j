@@ -135,4 +135,6 @@ interface Launch4jConfiguration {
     Integer getSplashTimeout()
 
     Boolean getSplashTimeoutError()
+
+    Set<String> getClasspath()
 }
