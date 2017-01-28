@@ -46,9 +46,21 @@ repositories {
     jcenter()
 }
 
+ext {
+    ARTIFACT_VERSION = '3.9'
+}
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
+    compile ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
+//        exclude(group: 'dsol')
+        exclude(group: 'org.apache.batik')
+        exclude(group: 'org.apache.ant')
+        exclude(group: 'net.java.abeille')
+        exclude(group: 'com.jgoodies')
+        exclude(group: 'foxtrot')
+    }
 
     testCompile gradleTestKit()
     testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {

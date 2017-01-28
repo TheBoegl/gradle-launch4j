@@ -36,7 +36,7 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String LAUNCH4J_GROUP = LAUNCH4J_PLUGIN_NAME
 
     static final String LAUNCH4J_EXTENSION_NAME = LAUNCH4J_PLUGIN_NAME
-    static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
+//    static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
     static final String TASK_LAUNCH4J_NAME = 'launch4j'
@@ -78,8 +78,8 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     void configureDependencies(final Project project) {
-        Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
-            .setTransitive(true).setDescription('The launch4j configuration for this project.')
+//        Configuration defaultConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME).setVisible(false)
+//            .setTransitive(true).setDescription('The launch4j configuration for this project.')
 
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
             .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
@@ -91,8 +91,8 @@ class Launch4jPlugin implements Plugin<Project> {
         }
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
         project.dependencies {
-            addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
-            addDependency(defaultConfig, 'com.thoughtworks.xstream:xstream:1.4.8')
+//            addDependency(defaultConfig, "${l4jArtifact}").exclude(group: 'dsol').exclude(group: 'org.apache.batik')
+//            addDependency(defaultConfig, 'com.thoughtworks.xstream:xstream:1.4.8')
             OperatingSystem os = OperatingSystem.current()
             if (os.isWindows()) {
                 addDependency(binaryConfig, "${l4jArtifact}:workdir-win32")
