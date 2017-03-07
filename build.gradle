@@ -53,6 +53,7 @@ ext {
 dependencies {
     compile gradleApi()
     compile localGroovy()
+    compile 'com.thoughtworks.xstream:xstream:1.4.9'
     compile ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
 //        exclude(group: 'dsol')
         exclude(group: 'org.apache.batik')
@@ -60,6 +61,7 @@ dependencies {
         exclude(group: 'net.java.abeille')
         exclude(group: 'com.jgoodies')
         exclude(group: 'foxtrot')
+        exclude(group: 'com.thoughtworks.xstream', module: 'xstream')
     }
 
     testCompile gradleTestKit()
