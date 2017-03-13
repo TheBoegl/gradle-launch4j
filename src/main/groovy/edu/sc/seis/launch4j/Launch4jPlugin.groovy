@@ -101,7 +101,12 @@ class Launch4jPlugin implements Plugin<Project> {
         } else if (os.isMacOsX()) {
             return 'workdir-mac'
         } else if (os.isLinux() || os.isUnix()) { // isUnix will also match MacOs, hence, call it as last resort
-            return 'workdir-linux'
+            String arch = System.getProperty("os.arch")
+            if ("amd64".equals(arch) || "x86_64".equals(arch)) {
+                return 'workdir-linux64'
+            } else {
+                return 'workdir-linux'
+            }
         }
         return ''
     }
