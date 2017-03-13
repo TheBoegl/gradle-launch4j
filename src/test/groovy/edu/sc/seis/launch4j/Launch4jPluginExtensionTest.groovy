@@ -73,7 +73,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
 
         where:
         // versions prior 2.8 will not allow the classpath injection
-        gradleVersion << ['2.14', '2.14.1', '3.0', '3.2.1', GradleVersion.current().getVersion()]
+        gradleVersion << ['2.14', '2.14.1', '3.0', '3.2.1', '3.3', '3.4.1', GradleVersion.current().getVersion()]
     }
 
     def 'Checking the outputs succeeds'() {
