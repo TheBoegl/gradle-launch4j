@@ -99,7 +99,7 @@ class Launch4jPlugin implements Plugin<Project> {
         if (os.isWindows()) {
             return 'workdir-win32'
         } else if (os.isMacOsX()) {
-            return 'workdir-mac'
+            return "workdir-${isBelowMacOsX108() ? 'mac' : 'osx'}"
         } else if (os.isLinux() || os.isUnix()) { // isUnix will also match MacOs, hence, call it as last resort
             String arch = System.getProperty("os.arch")
             if ("amd64".equals(arch) || "x86_64".equals(arch)) {
@@ -109,5 +109,12 @@ class Launch4jPlugin implements Plugin<Project> {
             }
         }
         return ''
+    }
+
+    static boolean isBelowMacOsX108() {
+        def version = System.getProperty("os.version").split('\\.')
+        def major = version[0] as int
+        def minor = version[0] as int
+        return major < 10 || (major == 10 && minor < 8)
     }
 }
