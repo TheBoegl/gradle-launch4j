@@ -41,7 +41,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
         jcenter()
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0'
+        classpath 'edu.sc.seis.gradle:launch4j:2.3.0'
       }
     }
 
