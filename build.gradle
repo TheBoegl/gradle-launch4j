@@ -47,7 +47,7 @@ repositories {
 }
 
 ext {
-    ARTIFACT_VERSION = '3.9'
+    ARTIFACT_VERSION = '3.11'
 }
 
 dependencies {

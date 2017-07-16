@@ -20,6 +20,7 @@ package edu.sc.seis.launch4j
 import edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask
 import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
 import groovy.transform.CompileStatic
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -40,7 +41,7 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
     static final String TASK_LAUNCH4J_NAME = 'launch4j'
-    static final String ARTIFACT_VERSION = '3.9'
+    static final String ARTIFACT_VERSION = '3.11'
     static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/bin-launch4j-${ARTIFACT_VERSION}"
 
     private Project project
@@ -99,7 +100,10 @@ class Launch4jPlugin implements Plugin<Project> {
         if (os.isWindows()) {
             return 'workdir-win32'
         } else if (os.isMacOsX()) {
-            return "workdir-${isBelowMacOsX108() ? 'mac' : 'osx'}"
+            if(isBelowMacOsX108()) {
+                throw new GradleException('Mac OS X below version 10.8 (Mountain Lion) is not supported by launch4j version 3.11 and later. Please use an earlier version of this plugin, e.g. 2.3.0.')
+            }
+            return 'workdir-mac'
         } else if (os.isLinux() || os.isUnix()) { // isUnix will also match MacOs, hence, call it as last resort
             String arch = System.getProperty("os.arch")
             if ("amd64".equals(arch) || "x86_64".equals(arch)) {
