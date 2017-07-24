@@ -1,3 +1,12 @@
+## Version [2.4.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.0)
+- **NEW** [#48](https://github.com/TheBoegl/gradle-launch4j/issues/48): Add last resort fallback option classpath `Set<String> classpath`.
+- **FIX** [#52](https://github.com/TheBoegl/gradle-launch4j/issues/52): Use launch4j version _3.11_ which added the linux 64 bit binaries.
+- **FIX** [#53](https://github.com/TheBoegl/gradle-launch4j/issues/53): Update the xstream dependency to version _1.4.9_.
+- **FIX** [#54](https://github.com/TheBoegl/gradle-launch4j/issues/54): Add test case for the gradle versions _3.3_ and _3.4.1_.
+- **FIX** [#56](https://github.com/TheBoegl/gradle-launch4j/issues/56): Correct the table rendering in the README's description ([thc202](https://github.com/thc202))
+- **FIX** [#58](https://github.com/TheBoegl/gradle-launch4j/issues/58): Correct the example dependency ([Colin Rudd](https://github.com/cnrudd))
+- **NEW** [#50](https://github.com/TheBoegl/gradle-launch4j/issues/59): Add the `variables` property to set the environment variables.
+
 ## Version [2.3.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.3.0)
 - **FIX** [#45](https://github.com/TheBoegl/gradle-launch4j/issues/45): Add the missing message if an instance already exists.
 - **FIX** [#46](https://github.com/TheBoegl/gradle-launch4j/issues/46): Migrate the jvm options from `String opt` to `Set<String> jvmOptions`.

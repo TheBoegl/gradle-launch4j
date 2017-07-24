@@ -1,3 +1,5 @@
+
+
 /*
  * Copyright (c) 2017 Sebastian Boegl
  *
@@ -14,7 +16,6 @@
  * limitations under the License.
  *
  */
-
 
 plugins {
     id "com.gradle.plugin-publish" version "0.9.6"
@@ -83,7 +84,7 @@ configurations.all {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "2.4.0-1-SNAPSHOT"
+version "2.4.0"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
