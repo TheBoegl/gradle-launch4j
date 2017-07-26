@@ -72,6 +72,7 @@ class CreateXML {
             xml.restartOnCrash(config.restartOnCrash)
             xml.manifest(config.manifest)
             xml.icon(relativizeIfAbsolute(outFilePath, config.icon))
+            config.variables.each { var -> xml.var(var) }
             if (config.mainClassName) {
                 xml.classPath() {
                     mainClass(config.mainClassName)

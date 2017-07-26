@@ -120,6 +120,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String jreMaxVersion | | |
 | String jdkPreference | "preferJre" | |
 | String jreRuntimeBits | "64/32" | |
+| Set&lt;String&gt; variables | [ ] | |
 | String mutexName | | |
 | String windowTitle | | |
 | String messagesStartupError | | |

@@ -374,6 +374,14 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
     }
 
+    @Input
+    @Optional
+    Set<String> variables = []
+
+    @Override
+    Set<String> getVariables() {
+        variables ?: config.variables
+    }
     /**
      * Optional text.
      */

@@ -122,6 +122,8 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String jdkPreference = 'preferJre'
     String jreRuntimeBits = '64/32'
 
+    Set<String> variables = []
+
     String mutexName
     String windowTitle
 
