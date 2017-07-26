@@ -84,7 +84,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String outputDir | "launch4j" | |
 | String libraryDir | "lib" | |
 | Object copyConfigurable | | |
-| Set<String> classpath| [] | Use this property to override the classpath or configure it on you own if the `copyConfigurable` does not provide the results you want |
+| Set&lt;String&gt; classpath| [] | Use this property to override the classpath or configure it on you own if the `copyConfigurable` does not provide the results you want |
 | String xmlFileName | "launch4j.xml" | |
 | String mainClassName | | |
 | boolean dontWrapJar | false | |
@@ -112,7 +112,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String trademarks | | |
 | String language | "ENGLISH_US" | |
 | ~~String opt~~ | "" | deprecated use `jvmOptions` instead |
-| Set<String> jvmOptions | [ ] | |
+| Set&lt;String&gt; jvmOptions | [ ] | |
 | String bundledJrePath | | |
 | boolean bundledJre64Bit | false | |
 | boolean bundledJreAsFallback | false | |
