@@ -24,6 +24,7 @@ plugins {
 }
 
 apply plugin: 'groovy'
+apply plugin: 'jacoco'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'signing'
@@ -205,3 +206,13 @@ task wrapper(type: Wrapper) {
 tasks.withType(Test) {
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
+    }
+}
+
+check.dependsOn jacocoTestReport
