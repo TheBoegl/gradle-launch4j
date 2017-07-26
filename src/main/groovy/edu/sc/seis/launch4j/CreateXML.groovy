@@ -41,7 +41,9 @@ class CreateXML {
         outputDir.mkdirs()
         def outFilePath = config.getDest().parentFile.toPath()
         def classpath
-        if (copySpec instanceof FileCollection) {
+        if (config.classpath) {
+            classpath = config.classpath
+        } else if (copySpec instanceof FileCollection) {
             classpath = copySpec.collect {
                 outFilePath.relativize(it.toPath()).toString()
             }
@@ -70,6 +72,7 @@ class CreateXML {
             xml.restartOnCrash(config.restartOnCrash)
             xml.manifest(config.manifest)
             xml.icon(relativizeIfAbsolute(outFilePath, config.icon))
+            config.variables.each { var -> xml.var(var) }
             if (config.mainClassName) {
                 xml.classPath() {
                     mainClass(config.mainClassName)

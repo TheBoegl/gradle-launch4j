@@ -17,6 +17,7 @@
 
 package edu.sc.seis.launch4j.tasks
 
+import edu.sc.seis.launch4j.Extract
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.ParallelizableTask
@@ -30,6 +31,7 @@ class Launch4jExternalTask extends DefaultLaunch4jTask {
 
     @TaskAction
     def run() {
+        Extract.binaries(project)
         createXML(copyLibraries())
         createExecutableFolder()
         def stdOut = new ByteArrayOutputStream()

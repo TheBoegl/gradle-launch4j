@@ -38,17 +38,15 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     buildscript {
       repositories {
-        maven {
-          url 'https://plugins.gradle.org/m2/'
-        }
+        jcenter()
       }
       dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0'
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.0'
       }
     }
 
     repositories {
-      mavenCentral()
+      jcenter()
     }
 
     apply plugin: 'java'
@@ -64,7 +62,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
     apply plugin: 'java'
 
     plugins {
-      id 'edu.sc.seis.launch4j' version '2.3.0'
+      id 'edu.sc.seis.launch4j' version '2.4.0'
     }
 
     launch4j {
@@ -81,66 +79,68 @@ See the [Gradle User guide](http://gradle.org/docs/current/userguide/custom_plug
 
 The values configurable within the launch4j extension along with their defaults are:
 
- *    String outputDir = "launch4j"
- *    String libraryDir = "lib"
- *    Object copyConfigurable
+| Property Name | Default Value | Comment |
+|---------------|---------------|---------|
+| String outputDir | "launch4j" | |
+| String libraryDir | "lib" | |
+| Object copyConfigurable | | |
+| Set&lt;String&gt; classpath| [] | Use this property to override the classpath or configure it on you own if the `copyConfigurable` does not provide the results you want |
+| String xmlFileName | "launch4j.xml" | |
+| String mainClassName | | |
+| boolean dontWrapJar | false | |
+| String headerType | "gui" | |
+| String jar | "lib/"+project.tasks[jar].archiveName or<br> "", if the JavaPlugin is not loaded | |
+| String outfile | project.name+'.exe' | |
+| String errTitle | "" | |
+| String cmdLine | "" | |
+| String chdir | '.' | |
+| String priority | 'normal' | |
+| String downloadUrl | "http://java.com/download" | |
+| String supportUrl | "" | |
+| boolean stayAlive | false | |
+| boolean restartOnCrash | false | |
+| String manifest | "" | |
+| String icon | "" | A relative path from the outfile or an absolute path to the icon file. |
+| String version | project.version | |
+| String textVersion | project.version | |
+| String copyright | "unknown" | |
+| String companyName | "" | |
+| ~~String description~~| project.name | deprecated use `fileDescription` instead |
+| String fileDescription | project.name | |
+| String productName | project.name | |
+| String internalName | project.name | |
+| String trademarks | | |
+| String language | "ENGLISH_US" | |
+| ~~String opt~~ | "" | deprecated use `jvmOptions` instead |
+| Set&lt;String&gt; jvmOptions | [ ] | |
+| String bundledJrePath | | |
+| boolean bundledJre64Bit | false | |
+| boolean bundledJreAsFallback | false | |
+| String jreMinVersion | project.targetCompatibility or<br> the current java version,<br> if the property is not set | |
+| String jreMaxVersion | | |
+| String jdkPreference | "preferJre" | |
+| String jreRuntimeBits | "64/32" | |
+| Set&lt;String&gt; variables | [ ] | |
+| String mutexName | | |
+| String windowTitle | | |
+| String messagesStartupError | | |
+| String messagesBundledJreError | | |
+| String messagesJreVersionError | | |
+| String messagesLauncherError | | |
+| String messagesInstanceAlreadyExists | | |
+| Integer initialHeapSize | | |
+| Integer initialHeapPercent | | |
+| Integer maxHeapSize | | |
+| Integer maxHeapPercent | | |
+| String splashFileName | | A relative path from the outfile or an absolute path to the bmp splash file. |
+| boolean splashWaitForWindows | true | |
+| Integer splashTimeout | 60 | |
+| boolean splashTimeoutError | true | |
 
-&nbsp;  
-
- *    String xmlFileName = "launch4j.xml"
- *    String mainClassName
- *    boolean dontWrapJar = false
- *    String headerType = "gui"
- *    String jar = "lib/"+project.tasks[JavaPlugin.JAR_TASK_NAME].archiveName or "", if the JavaPlugin is not loaded
- *    String outfile = project.name+'.exe'
- *    String errTitle = ""
- *    String cmdLine = ""
- *    String chdir = '.'
- *    String priority = 'normal'
- *    String downloadUrl = "http://java.com/download"
- *    String supportUrl = ""
- *    boolean stayAlive = false
- *    boolean restartOnCrash = false
- *    String manifest = ""
- *    String icon = "" <br>A relative path from the outfile or an absolute path to the icon file.
- *    String version = project.version
- *    String textVersion = project.version
- *    String copyright = "unknown"
- *    String companyName = ""
- *    ~~String description = project.name~~ deprecated use fileDescription instead
- *    String fileDescription = project.name
- *    String productName = project.name
- *    String internalName = project.name
- *    String trademarks
- *    String language = "ENGLISH_US"
- *    ~~String opt = ""~~ deprecated use jvmOptions instead
- *    Set<String> jvmOptions = [ ]
- *    String bundledJrePath
- *    boolean bundledJre64Bit = false
- *    boolean bundledJreAsFallback = false
- *    String jreMinVersion = project.targetCompatibility or the current java version, if the property is not set
- *    String jreMaxVersion
- *    String jdkPreference = "preferJre"
- *    String jreRuntimeBits = "64/32"
- *    String mutexName
- *    String windowTitle
- *    String messagesStartupError
- *    String messagesBundledJreError
- *    String messagesJreVersionError
- *    String messagesLauncherError
- *    String messagesInstanceAlreadyExists
- *    Integer initialHeapSize
- *    Integer initialHeapPercent
- *    Integer maxHeapSize
- *    Integer maxHeapPercent
- *    String splashFileName <br>A relative path from the outfile or an absolute path to the bmp splash file.
- *    boolean splashWaitForWindows = true
- *    Integer splashTimeout = 60
- *    boolean splashTimeoutError = true
-
-Removed properties
-*    ~~String launch4jCmd = "launch4j"~~ (use the [Launch4jExternalTask](#launch4jexternaltask) instead)
-*    ~~boolean externalLaunch4j = false~~ (use the [Launch4jExternalTask](#launch4jexternaltask) instead)
+| Removed properties | Default Value|Description |
+|---|---|---|
+| ~~String launch4jCmd~~ | "launch4j" | use the [Launch4jExternalTask](#launch4jexternaltask) instead |
+| ~~boolean externalLaunch4j~~ | false | use the [Launch4jExternalTask](#launch4jexternaltask) instead |
 
 ### Configurable input configuration
 
@@ -224,6 +224,24 @@ In order to use a launch4j instance named 'launch4j-test' located in the PATH cr
 To get insight into the launch4j creation process start a launch4j task, e.g. `createExe`, `createExecutables` or your custom task, with the script parameter `-Pl4j-debug`. This will copy the created xml into `${buildDir}/tmp/${task.name}`.
 
 In order to debug the created executable call it with the command line argument `--l4j-debug`. This will create the log file `launch4j.log` next to the executable.
+
+# Using `SNAPSHOT` versions
+
+When you report a bug and it got fixed, you will have access to some `-SNAPSHOT` version.
+Adjust your buildscript to use the OJO repo:
+```gradle
+buildscript {
+  repositories {
+    jcenter()
+    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
+  }
+  dependencies {
+    classpath 'edu.sc.seis.gradle:launch4j:latest.integration'
+  }
+}
+
+apply plugin: 'edu.sc.seis.launch4j'
+```
 
 # Contributors
 

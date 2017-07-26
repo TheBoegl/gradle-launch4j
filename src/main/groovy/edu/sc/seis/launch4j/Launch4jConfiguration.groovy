@@ -106,6 +106,8 @@ interface Launch4jConfiguration {
 
     String getJreRuntimeBits()
 
+    Set<String> getVariables()
+
     String getMutexName()
 
     String getWindowTitle()
@@ -135,4 +137,6 @@ interface Launch4jConfiguration {
     Integer getSplashTimeout()
 
     Boolean getSplashTimeoutError()
+
+    Set<String> getClasspath()
 }
