@@ -69,6 +69,8 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
       icon = 'icons/myApp.ico'
     }
 
+Using the plugin DSL may result in a [404 error](https://github.com/TheBoegl/gradle-launch4j/issues/60) which can be fixed by running `./gradlew --refresh-dependencies`.
+
 
 If no repository is configured before applying this plugin the *Maven central* repository will be added to the project.
 
