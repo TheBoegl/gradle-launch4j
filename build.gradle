@@ -18,18 +18,17 @@
  */
 
 plugins {
+    id 'groovy'
+    id 'jacoco'
+    id 'eclipse'
+    id 'idea'
+    id 'signing'
+    id 'maven-publish'
     id "com.gradle.plugin-publish" version "0.9.6"
     id "com.jfrog.bintray" version "1.7.3"
     id "nu.studer.plugindev" version "1.0.6"
     id "com.jfrog.artifactory" version "4.4.12"
 }
-
-apply plugin: 'groovy'
-apply plugin: 'jacoco'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'signing'
-apply plugin: 'maven-publish'
 
 // Write the plugin's classpath to a file to share with the tests.
 task createClasspathManifest {
