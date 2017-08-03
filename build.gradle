@@ -57,11 +57,11 @@ dependencies {
     compile 'com.thoughtworks.xstream:xstream:1.4.9'
     compile ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
 //        exclude(group: 'dsol')
-        exclude(group: 'org.apache.batik')
-        exclude(group: 'org.apache.ant')
-        exclude(group: 'net.java.abeille')
-        exclude(group: 'com.jgoodies')
-        exclude(group: 'foxtrot')
+        exclude(group: 'org.apache.batik', module: '*')
+        exclude(group: 'org.apache.ant', module: '*')
+        exclude(group: 'net.java.abeille', module: '*')
+        exclude(group: 'com.jgoodies', module: '*')
+        exclude(group: 'foxtrot', module: '*')
         exclude(group: 'com.thoughtworks.xstream', module: 'xstream')
     }
 
