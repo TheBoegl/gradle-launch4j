@@ -24,11 +24,9 @@ import net.sf.launch4j.Builder
 import net.sf.launch4j.Log
 import net.sf.launch4j.config.ConfigPersister
 import org.gradle.api.logging.Logger
-import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
 
-@ParallelizableTask
 class Launch4jLibraryTask extends DefaultLaunch4jTask {
 
     @TaskAction

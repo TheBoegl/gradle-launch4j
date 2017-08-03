@@ -41,7 +41,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
         jcenter()
       }
       dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.4.0'
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.1'
       }
     }
 
@@ -59,10 +59,9 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
-    apply plugin: 'java'
-
     plugins {
-      id 'edu.sc.seis.launch4j' version '2.4.0'
+      id 'java'
+      id 'edu.sc.seis.launch4j' version '2.4.1'
     }
 
     launch4j {

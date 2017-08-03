@@ -18,18 +18,17 @@
  */
 
 plugins {
-    id "com.gradle.plugin-publish" version "0.9.6"
+    id 'groovy'
+    id 'jacoco'
+    id 'eclipse'
+    id 'idea'
+    id 'signing'
+    id 'maven-publish'
+    id "com.gradle.plugin-publish" version "0.9.7"
     id "com.jfrog.bintray" version "1.7.3"
     id "nu.studer.plugindev" version "1.0.6"
     id "com.jfrog.artifactory" version "4.4.12"
 }
-
-apply plugin: 'groovy'
-apply plugin: 'jacoco'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'signing'
-apply plugin: 'maven-publish'
 
 // Write the plugin's classpath to a file to share with the tests.
 task createClasspathManifest {
@@ -58,11 +57,11 @@ dependencies {
     compile 'com.thoughtworks.xstream:xstream:1.4.9'
     compile ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
 //        exclude(group: 'dsol')
-        exclude(group: 'org.apache.batik')
-        exclude(group: 'org.apache.ant')
-        exclude(group: 'net.java.abeille')
-        exclude(group: 'com.jgoodies')
-        exclude(group: 'foxtrot')
+        exclude(group: 'org.apache.batik', module: '*')
+        exclude(group: 'org.apache.ant', module: '*')
+        exclude(group: 'net.java.abeille', module: '*')
+        exclude(group: 'com.jgoodies', module: '*')
+        exclude(group: 'foxtrot', module: '*')
         exclude(group: 'com.thoughtworks.xstream', module: 'xstream')
     }
 
@@ -84,7 +83,7 @@ configurations.all {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "2.4.0"
+version "2.4.1"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
@@ -200,7 +199,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 //createReleaseTag.dependsOn publish
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+    gradleVersion = '4.0.2'
     distributionType = Wrapper.DistributionType.ALL
 }
 
