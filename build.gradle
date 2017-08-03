@@ -199,7 +199,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 //createReleaseTag.dependsOn publish
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+    gradleVersion = '4.0.2'
     distributionType = Wrapper.DistributionType.ALL
 }
 

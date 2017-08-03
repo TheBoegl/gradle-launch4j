@@ -20,10 +20,8 @@ package edu.sc.seis.launch4j.tasks
 import edu.sc.seis.launch4j.Extract
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 
-@ParallelizableTask
 class Launch4jExternalTask extends DefaultLaunch4jTask {
 
     @Input

@@ -28,7 +28,6 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Jar
 
 //@CompileStatic // bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
-@ParallelizableTask
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
     private Launch4jPluginExtension config
