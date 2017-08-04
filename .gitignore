@@ -133,3 +133,4 @@ local.properties
 
 .shelf/
 /gradle.properties
+/.gradletasknamecache
