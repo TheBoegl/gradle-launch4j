@@ -1,5 +1,9 @@
+## Version [2.4.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.2)
+- **FIX** [#62](https://github.com/TheBoegl/gradle-launch4j/issues/62): Correctly read `restartOnCrash` from the configuration. ([Jacob Ilsø Christensen](//github.com/jacobilsoe))
+- *INTERNAL* [#61](https://github.com/TheBoegl/gradle-launch4j/issues/61): Ignore gradle task name cache. ([Oliver](h//github.com/obearn))
+
 ## Version [2.4.1](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.1)
--**FIX** [#60](https://github.com/TheBoegl/gradle-launch4j/issues/60): Add work around for [gradle/#2650](https://github.com/gradle/gradle/issues/2650)
+- **FIX** [#60](https://github.com/TheBoegl/gradle-launch4j/issues/60): Add work around for [gradle/#2650](https://github.com/gradle/gradle/issues/2650)
 ## Version [2.4.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.0)
 - **NEW** [#48](https://github.com/TheBoegl/gradle-launch4j/issues/48): Add last resort fallback option classpath `Set<String> classpath`.
 - **FIX** [#52](https://github.com/TheBoegl/gradle-launch4j/issues/52): Use launch4j version _3.11_ which added the linux 64 bit binaries.

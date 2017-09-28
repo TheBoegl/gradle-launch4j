@@ -294,7 +294,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getRestartOnCrash() {
-        restartOnCrash ?: config.stayAlive
+        restartOnCrash ?: config.restartOnCrash
     }
 
     @Input
