@@ -161,5 +161,15 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         jar
     }
 
-    Set<String> classpath = []
+    def classpath
+
+    Set<String> getClasspath() {
+        switch (classpath) {
+            case Closure:
+                ((Closure) classpath).call()
+                break
+            default:
+                (Set<String>) classpath
+        }
+    }
 }
