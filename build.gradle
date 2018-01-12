@@ -54,7 +54,7 @@ ext {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'com.thoughtworks.xstream:xstream:1.4.9'
+    compile 'com.thoughtworks.xstream:xstream:1.4.10'
     compile ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
 //        exclude(group: 'dsol')
         exclude(group: 'org.apache.batik', module: '*')
