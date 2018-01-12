@@ -41,7 +41,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
         jcenter()
       }
       dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.4.2'
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.3'
       }
     }
 
@@ -54,19 +54,19 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     launch4j {
       mainClassName = 'com.example.myapp.Start'
-      icon = 'icons/myApp.ico'
+      icon = "${projectDir}/icons/myApp.ico"
     }
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 
     plugins {
       id 'java'
-      id 'edu.sc.seis.launch4j' version '2.4.2'
+      id 'edu.sc.seis.launch4j' version '2.4.3'
     }
 
     launch4j {
       mainClassName = 'com.example.myapp.Start'
-      icon = 'icons/myApp.ico'
+      icon = "${projectDir}/icons/myApp.ico"
     }
 
 
@@ -80,7 +80,7 @@ The values configurable within the launch4j extension along with their defaults 
 
 | Property Name | Default Value | Comment |
 |---------------|---------------|---------|
-| String outputDir | "launch4j" | |
+| String outputDir | "launch4j" | This is the plugin's working path relative to `$buildDir`. Use the distribution plugin or a custom implementation to copy necessary files to an output location instead of adjusting this property.|
 | String libraryDir | "lib" | |
 | Object copyConfigurable | | |
 | Set&lt;String&gt; classpath| [] | Use this property to override the classpath or configure it on you own if the `copyConfigurable` does not provide the results you want |
@@ -99,7 +99,7 @@ The values configurable within the launch4j extension along with their defaults 
 | boolean stayAlive | false | |
 | boolean restartOnCrash | false | |
 | String manifest | "" | |
-| String icon | "" | A relative path from the outfile or an absolute path to the icon file. |
+| String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are uncertain use "${projectDir}/path/to/icon.ico" |
 | String version | project.version | |
 | String textVersion | project.version | |
 | String copyright | "unknown" | |
@@ -153,6 +153,9 @@ The following example shows how to use this plugin hand in hand with the shadow 
         jar = "lib/${project.tasks.shadowJar.archiveName}"
     }
 
+The `outputDir` will contain the _lib_ folder even if the shadow plugin creates only one shadowed jar.
+Use the distribution plugin or a custom implementation to copy necessary files to an output location.
+
 If you use the outdated fatJar plugin the following configuration correctly wires the execution graph:
 
     fatJar {
@@ -181,14 +184,14 @@ Creating three executables is as easy as:
     launch4j {
         outfile = 'MyApp.exe'
         mainClassName = 'com.example.myapp.Start'
-        icon = 'icons/myApp.ico'
+        icon = "${projectDir}/icons/myApp.ico"
         productName = 'My App'
     }
     
     task createFastStart(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
         outfile = 'FastMyApp.exe'
         mainClassName = 'om.example.myapp.FastStart'
-        icon = "icons/myAppFast.ico"
+        icon = "${projectDir}/icons/myAppFast.ico"
         fileDescription = 'The lightning fast implementation'
     }
     

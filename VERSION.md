@@ -1,3 +1,7 @@
+## Version [2.4.3](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.3)
+- **FIX** [#66](https://github.com/TheBoegl/gradle-launch4j/issues/66): Update the xstream dependency to version _1.4.10_.
+- **FIX** [#69](https://github.com/TheBoegl/gradle-launch4j/issues/69), [#68](https://github.com/TheBoegl/gradle-launch4j/issues/68) and, [#51](https://github.com/TheBoegl/gradle-launch4j/issues/51): Improve documentation.
+
 ## Version [2.4.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.2)
 - **FIX** [#62](https://github.com/TheBoegl/gradle-launch4j/issues/62): Correctly read `restartOnCrash` from the configuration. ([Jacob Ilsø Christensen](//github.com/jacobilsoe))
 - *INTERNAL* [#61](https://github.com/TheBoegl/gradle-launch4j/issues/61): Ignore gradle task name cache. ([Oliver](h//github.com/obearn))

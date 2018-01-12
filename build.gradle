@@ -1,7 +1,7 @@
 
 
 /*
- * Copyright (c) 2017 Sebastian Boegl
+ * Copyright (c) 2018 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ ext {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'com.thoughtworks.xstream:xstream:1.4.9'
+    compile 'com.thoughtworks.xstream:xstream:1.4.10'
     compile ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
 //        exclude(group: 'dsol')
         exclude(group: 'org.apache.batik', module: '*')
@@ -83,7 +83,7 @@ configurations.all {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "2.4.2"
+version "2.4.3"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
@@ -199,7 +199,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 //createReleaseTag.dependsOn publish
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.2'
+    gradleVersion = '4.4.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
