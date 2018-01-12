@@ -54,7 +54,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     launch4j {
       mainClassName = 'com.example.myapp.Start'
-      icon = 'icons/myApp.ico'
+      icon = "${projectDir}/icons/myApp.ico"
     }
 
 The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
@@ -66,7 +66,7 @@ The same script snippet for new, incubating, plugin mechanism introduced in Grad
 
     launch4j {
       mainClassName = 'com.example.myapp.Start'
-      icon = 'icons/myApp.ico'
+      icon = "${projectDir}/icons/myApp.ico"
     }
 
 
@@ -99,7 +99,7 @@ The values configurable within the launch4j extension along with their defaults 
 | boolean stayAlive | false | |
 | boolean restartOnCrash | false | |
 | String manifest | "" | |
-| String icon | "" | A relative path from the outfile or an absolute path to the icon file. |
+| String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are uncertain use "${projectDir}/path/to/icon.ico" |
 | String version | project.version | |
 | String textVersion | project.version | |
 | String copyright | "unknown" | |
@@ -181,14 +181,14 @@ Creating three executables is as easy as:
     launch4j {
         outfile = 'MyApp.exe'
         mainClassName = 'com.example.myapp.Start'
-        icon = 'icons/myApp.ico'
+        icon = "${projectDir}/icons/myApp.ico"
         productName = 'My App'
     }
     
     task createFastStart(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
         outfile = 'FastMyApp.exe'
         mainClassName = 'om.example.myapp.FastStart'
-        icon = "icons/myAppFast.ico"
+        icon = "${projectDir}/icons/myAppFast.ico"
         fileDescription = 'The lightning fast implementation'
     }
     
