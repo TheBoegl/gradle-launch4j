@@ -153,6 +153,9 @@ The following example shows how to use this plugin hand in hand with the shadow 
         jar = "lib/${project.tasks.shadowJar.archiveName}"
     }
 
+The `outputDir` will contain the _lib_ folder even if the shadow plugin creates only one shadowed jar.
+Use the distribution plugin or a custom implementation to copy necessary files to an output location.
+
 If you use the outdated fatJar plugin the following configuration correctly wires the execution graph:
 
     fatJar {
