@@ -80,7 +80,7 @@ The values configurable within the launch4j extension along with their defaults 
 
 | Property Name | Default Value | Comment |
 |---------------|---------------|---------|
-| String outputDir | "launch4j" | |
+| String outputDir | "launch4j" | This is the plugin's working path relative to `$buildDir`. Use the distribution plugin or a custom implementation to copy necessary files to an output location instead of adjusting this property.|
 | String libraryDir | "lib" | |
 | Object copyConfigurable | | |
 | Set&lt;String&gt; classpath| [] | Use this property to override the classpath or configure it on you own if the `copyConfigurable` does not provide the results you want |
