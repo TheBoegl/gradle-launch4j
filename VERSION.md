@@ -1,3 +1,6 @@
+## Version [2.4.4](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.4)
+- **FIX** [#72](https://github.com/TheBoegl/gradle-launch4j/issues/72): Update the launch4j dependency to version _3.12_ which correctly validates JRE 9 and 10 version numbers.
+
 ## Version [2.4.3](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.3)
 - **FIX** [#66](https://github.com/TheBoegl/gradle-launch4j/issues/66): Update the xstream dependency to version _1.4.10_.
 - **FIX** [#69](https://github.com/TheBoegl/gradle-launch4j/issues/69), [#68](https://github.com/TheBoegl/gradle-launch4j/issues/68) and, [#51](https://github.com/TheBoegl/gradle-launch4j/issues/51): Improve documentation.

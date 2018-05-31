@@ -26,7 +26,7 @@ import spock.lang.Specification
 
 @CompileStatic
 class FunctionalSpecification extends Specification {
-    private final static boolean DEBUG = Boolean.parseBoolean(System.getProperty("org.gradle.testkit.debug", "false"))
+    private final static boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")
 
     @Rule
     final TemporaryFolder testProjectDir = new TemporaryFolder()
