@@ -27,7 +27,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.bundling.Jar
 
 @CompileStatic
-@AutoClone(excludes = [''])
+@AutoClone
 class Launch4jPluginExtension implements Launch4jConfiguration {
 
     private final Project project
