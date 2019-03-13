@@ -60,7 +60,7 @@ class Issue47Test extends FunctionalSpecification {
         given:
         buildFile << """
             plugins {
-                id 'com.github.johnrengelman.shadow' version '1.2.4'
+                id 'com.github.johnrengelman.shadow' version '4.0.4'
             }
 
             repositories {

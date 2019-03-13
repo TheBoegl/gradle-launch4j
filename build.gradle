@@ -85,7 +85,7 @@ configurations.all {
 
 group "edu.sc.seis.gradle"
 // use semantic versioning (http://semver.org/)
-version "2.4.4"
+version "2.4.5"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
@@ -200,8 +200,8 @@ gradle.taskGraph.whenReady { taskGraph ->
 
 //createReleaseTag.dependsOn publish
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
+wrapper {
+    gradleVersion = '4.10.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 

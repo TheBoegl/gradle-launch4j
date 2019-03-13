@@ -1,3 +1,7 @@
+## Version [2.4.5](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.5)
+- **FIX** [#77](https://github.com/TheBoegl/gradle-launch4j/issues/77): Do not initialize boolean properties to simplify setting it to another value than the default one.
+- **FIX** [#79](https://github.com/TheBoegl/gradle-launch4j/issues/79): Allow to set chdir to an empty value.
+
 ## Version [2.4.4](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.4)
 - **FIX** [#72](https://github.com/TheBoegl/gradle-launch4j/issues/72): Update the launch4j dependency to version _3.12_ which correctly validates JRE 9 and 10 version numbers.
 

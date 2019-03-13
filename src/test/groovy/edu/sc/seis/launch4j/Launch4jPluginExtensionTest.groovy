@@ -675,7 +675,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             plugins {
-                id 'com.github.johnrengelman.shadow' version '1.2.4'
+                id 'com.github.johnrengelman.shadow' version '4.0.4'
             }
 
             repositories {
@@ -742,7 +742,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             plugins {
-                id 'com.github.johnrengelman.shadow' version '1.2.4'
+                id 'com.github.johnrengelman.shadow' version '4.0.4'
             }
 
             repositories {

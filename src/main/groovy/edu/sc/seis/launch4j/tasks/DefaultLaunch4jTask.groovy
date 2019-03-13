@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,11 +176,14 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    Boolean dontWrapJar = false
+    Boolean dontWrapJar
 
     @Override
     Boolean getDontWrapJar() {
-        dontWrapJar ?: config.dontWrapJar
+        if (dontWrapJar == null) {
+            return config.getDontWrapJar()
+        }
+        return dontWrapJar
     }
 
     /**
@@ -233,7 +236,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     String getChdir() {
-        chdir ?: config.chdir
+        (chdir != null) ? chdir : config.chdir
     }
 
     /**
@@ -281,7 +284,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getStayAlive() {
-        stayAlive ?: config.stayAlive
+        if (stayAlive == null) {
+            return config.stayAlive
+        }
+        return stayAlive
     }
 
     /**
@@ -294,7 +300,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getRestartOnCrash() {
-        restartOnCrash ?: config.restartOnCrash
+        if (restartOnCrash == null) {
+            return config.restartOnCrash
+        }
+        return restartOnCrash
     }
 
     @Input
@@ -369,7 +378,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Deprecated
     void setOpt(String opt) {
         if (!opt) return // null check
-        this.jvmOptions = [ opt ] as Set
+        this.jvmOptions = [opt] as Set
         project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
     }
 
@@ -473,7 +482,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getBundledJre64Bit() {
-        bundledJre64Bit ?: config.bundledJre64Bit
+        if (bundledJre64Bit == null) {
+            return config.bundledJre64Bit
+        }
+        return bundledJre64Bit
     }
 
     /**
@@ -485,7 +497,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getBundledJreAsFallback() {
-        bundledJreAsFallback ?: config.bundledJreAsFallback
+        if (bundledJreAsFallback == null) {
+            return config.bundledJreAsFallback
+        }
+        return bundledJreAsFallback
     }
     /**
      * If {@link #bundledJrePath} is set:
@@ -727,7 +742,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getSplashWaitForWindows() {
-        splashWaitForWindows ?: config.splashWaitForWindows
+        if (splashWaitForWindows == null) {
+            return config.splashWaitForWindows
+        }
+        return splashWaitForWindows
     }
 
     /**
@@ -751,7 +769,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getSplashTimeoutError() {
-        splashTimeoutError ?: config.splashTimeoutError
+        if (splashTimeoutError == null) {
+            return config.splashTimeoutError
+        }
+        return splashTimeoutError
     }
 
     String internalJar() {
