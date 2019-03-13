@@ -181,9 +181,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     Boolean getDontWrapJar() {
         if (dontWrapJar == null) {
-            config.getDontWrapJar()
+            return config.getDontWrapJar()
         }
-        dontWrapJar
+        return dontWrapJar
     }
 
     /**
@@ -285,9 +285,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     Boolean getStayAlive() {
         if (stayAlive == null) {
-            config.stayAlive
+            return config.stayAlive
         }
-        stayAlive
+        return stayAlive
     }
 
     /**
@@ -301,9 +301,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     Boolean getRestartOnCrash() {
         if (restartOnCrash == null) {
-            config.restartOnCrash
+            return config.restartOnCrash
         }
-        restartOnCrash
+        return restartOnCrash
     }
 
     @Input
@@ -378,7 +378,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Deprecated
     void setOpt(String opt) {
         if (!opt) return // null check
-        this.jvmOptions = [ opt ] as Set
+        this.jvmOptions = [opt] as Set
         project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
     }
 
@@ -483,9 +483,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     Boolean getBundledJre64Bit() {
         if (bundledJre64Bit == null) {
-            config.bundledJre64Bit
+            return config.bundledJre64Bit
         }
-        bundledJre64Bit
+        return bundledJre64Bit
     }
 
     /**
@@ -498,9 +498,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     Boolean getBundledJreAsFallback() {
         if (bundledJreAsFallback == null) {
-            config.bundledJreAsFallback
+            return config.bundledJreAsFallback
         }
-        bundledJreAsFallback
+        return bundledJreAsFallback
     }
     /**
      * If {@link #bundledJrePath} is set:
@@ -743,9 +743,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     Boolean getSplashWaitForWindows() {
         if (splashWaitForWindows == null) {
-            config.splashWaitForWindows
+            return config.splashWaitForWindows
         }
-        splashWaitForWindows
+        return splashWaitForWindows
     }
 
     /**
@@ -769,10 +769,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     Boolean getSplashTimeoutError() {
-        if (splashTimeoutError ==null) {
-            config.splashTimeoutError
+        if (splashTimeoutError == null) {
+            return config.splashTimeoutError
         }
-        splashTimeoutError
+        return splashTimeoutError
     }
 
     String internalJar() {
