@@ -236,7 +236,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     String getChdir() {
-        chdir ?: config.chdir
+        (chdir != null) ? chdir : config.chdir
     }
 
     /**
