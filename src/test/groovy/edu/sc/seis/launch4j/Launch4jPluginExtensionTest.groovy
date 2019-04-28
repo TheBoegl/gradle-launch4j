@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import org.gradle.util.GradleVersion
-import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
@@ -42,38 +40,6 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         then:
         result.task(':printProperties').outcome == SUCCESS
         result.output.trim() == 'launch4j'
-    }
-
-    @Unroll
-    def 'Running the task to create the executable with gradle #gradleVersion succeeds'() {
-        given:
-        buildFile << """
-            launch4j {
-                mainClassName = 'com.test.app.Main'
-            }
-        """
-
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
-        sourceFile << """
-            package com.test.app;
-
-            public class Main {
-                public static void main(String[] args) {
-                    System.out.println("Hello World!");
-                }
-            }
-        """
-
-        when:
-        def result = createAndConfigureGradleRunner('createExe').withGradleVersion(gradleVersion).build()
-
-        then:
-        result.task(':jar').outcome == SUCCESS
-        result.task(':createExe').outcome == SUCCESS
-
-        where:
-        // versions prior 2.8 will not allow the classpath injection
-        gradleVersion << ['2.14', '2.14.1', '3.0', '3.2.1', '3.3', '3.4.1', GradleVersion.current().getVersion()]
     }
 
     def 'Checking the outputs succeeds'() {

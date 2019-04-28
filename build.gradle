@@ -1,7 +1,7 @@
 
 
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7.3"
     id "nu.studer.plugindev" version "1.0.6"
     id "com.jfrog.artifactory" version "4.4.12"
+    id 'org.unbroken-dome.test-sets' version '2.1.1'
 }
 
 // Write the plugin's classpath to a file to share with the tests.
@@ -53,6 +54,11 @@ ext {
     spock_version = '1.1-groovy-2.4'
 }
 
+
+testSets {
+    backwardsCompatibiltyTest
+}
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
@@ -67,11 +73,12 @@ dependencies {
         exclude(group: 'com.thoughtworks.xstream', module: 'xstream')
     }
 
-    testCompile gradleTestKit()
-    testCompile ("org.spockframework:spock-core:${spock_version}") {
+    testImplementation gradleTestKit()
+    testImplementation ("org.spockframework:spock-core:${spock_version}") {
         exclude module: 'junit-dep'
         exclude module: 'groovy-all'
     }
+    backwardsCompatibiltyTestImplementation sourceSets.test.output
 
     // Add the classpath file to the test runtime classpath.
     testRuntime files(createClasspathManifest)
@@ -157,7 +164,6 @@ bintray {
 }
 
 publishPlugins.dependsOn build
-
 
 if (!project.hasProperty("artifactory_ojo_user")) {
     ext.artifactory_ojo_user = "user"

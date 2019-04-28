@@ -6,7 +6,7 @@ build_script:
   - gradlew assemble
 
 test_script:
-  - gradlew check
+  - gradlew check backwardsCompatibiltyTest
 
 after_test:
   - ps: |
