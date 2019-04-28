@@ -515,7 +515,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     String getJreMinVersion() {
-        jreMinVersion ? internalJreMinVersion() : config.internalJreMinVersion()
+        if (jreMinVersion != null) {
+            return jreMinVersion
+        }
+        return config.jreMinVersion
     }
 
     @Override
