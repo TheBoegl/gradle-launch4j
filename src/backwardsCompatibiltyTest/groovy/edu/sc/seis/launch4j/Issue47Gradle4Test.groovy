@@ -23,44 +23,14 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 /**
  * Test case to check jar task is not in the task graph if shadowjar is called.
  */
-class Issue47Test extends FunctionalSpecification {
+class Issue47Gradle4Test extends FunctionalSpecification {
 
 
-    def 'Check that the shadowJar task is not present on a normal build succeeds'() {
-        given:
-        buildFile << """
-            launch4j {
-                mainClassName = 'com.test.app.Main'
-                outfile = 'test.exe'
-            }
-        """
-
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
-        sourceFile << """
-            package com.test.app;
-            
-            public class Main {
-                public static void main(String[] args) {
-                    System.out.println("Hello World!");
-                }
-            }
-        """
-
-        when:
-        def result = build('createExe')
-
-        then:
-        !result.task(':shadowJar')
-        result.task(':jar')
-        result.task(':jar').outcome == SUCCESS
-        result.task(':createExe').outcome == SUCCESS
-    }
-
-    def 'Check that the jar task is not present on a shadowJar build succeeds'() {
+    def 'Check that the shadowJar task is not present on a fatJar build succeeds'() {
         given:
         buildFile << """
             plugins {
-                id 'com.github.johnrengelman.shadow' version '4.0.4'
+                id "eu.appsatori.fatjar" version "0.3"
             }
 
             repositories {
@@ -71,6 +41,7 @@ class Issue47Test extends FunctionalSpecification {
                 mainTestClassName = 'com.test.app.Main'
             }
 
+            
             jar {
                 manifest {
                     attributes 'Main-Class': mainTestClassName
@@ -78,10 +49,20 @@ class Issue47Test extends FunctionalSpecification {
                 }
             }
 
+            fatJar {
+                classifier 'fat'
+                manifest {
+                    attributes 'Main-Class': mainTestClassName
+                }
+            }
+            
+            fatJarPrepareFiles.dependsOn jar
+            
             launch4j {
                 outfile = 'test.exe'
-                copyConfigurable = project.tasks.shadowJar.outputs.files
-                jar = "lib/" + project.tasks.shadowJar.archiveName
+                mainClassName = mainTestClassName
+                copyConfigurable = project.tasks.fatJar.outputs.files
+                jar = "lib/" + project.tasks.fatJar.archiveName
             }
         """
 
@@ -97,11 +78,12 @@ class Issue47Test extends FunctionalSpecification {
         """
 
         when:
-        def result = build('createExe')
+        def result =  createAndConfigureGradleRunner('createExe').withGradleVersion('4.10.2').build()
 
         then:
-        !result.task(':jar')
-        result.task(':shadowJar').outcome == SUCCESS
+        result.task(':jar') // the task is added as fatJar dependency
+        !result.task(':shadowJar')
+        result.task(':fatJar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
     }
 }
