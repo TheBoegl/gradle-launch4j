@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2018 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.gradle.api.tasks.TaskAction
 class CreateLaunch4jXMLTask extends DefaultTask {
 
     @TaskAction
-    void writeXmlConfig() {
+    def void writeXmlConfig() {
         new CreateXML(project).execute(project.getExtensions().getByName('launch4j') as Launch4jPluginExtension)
     }
 

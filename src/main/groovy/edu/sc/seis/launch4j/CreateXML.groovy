@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2018 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class CreateXML {
             }
         }
         def jar = config.dontWrapJar ? outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.jar))) : config.jar
-        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"))
+        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
         xml.launch4jConfig() {
@@ -83,7 +83,7 @@ class CreateXML {
                 xml.path(config.bundledJrePath != null ? config.bundledJrePath : "")
                 xml.bundledJre64Bit(config.bundledJre64Bit)
                 xml.bundledJreAsFallback(config.bundledJreAsFallback)
-                xml.minVersion(config.jreMinVersion == null && config.bundledJrePath != null ? "" : config.internalJreMinVersion())
+                xml.minVersion(config.internalJreMinVersion())
                 xml.maxVersion(config.jreMaxVersion != null ? config.jreMaxVersion : "")
                 xml.jdkPreference(config.jdkPreference)
                 xml.runtimeBits(config.jreRuntimeBits)

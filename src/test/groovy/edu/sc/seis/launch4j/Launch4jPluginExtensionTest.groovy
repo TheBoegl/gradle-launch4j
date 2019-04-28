@@ -86,7 +86,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 case "${testOutput.absolutePath}/lib":
                 case "${testOutput.absolutePath}/lib/testProject.jar":
                 case "${testOutput.absolutePath}/Test.exe":
-                    break
+                    break;
                 default:
                     !it.exists()
             }

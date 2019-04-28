@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2018 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
         createExecutableFolder()
         if (GradleVersion.current() < GradleVersion.version('3.0')) {
             System.setProperty('javax.xml.parsers.DocumentBuilderFactory', 'com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl')
-            System.setProperty('javax.xml.parsers.SAXParserFactory', 'com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl')
+            System.setProperty('javax.xml.parsers.SAXParserFactory','com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl')
         }
         createXML(copyLibraries())
         File xml = getXmlFile()

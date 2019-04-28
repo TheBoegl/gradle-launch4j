@@ -44,7 +44,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
                     def task = project.tasks.getByName(taskName)
                     dependsOn.add(task)
                     inputs.files(task.outputs.files)
-                    break
+                    break;
                 }
             }
         }
@@ -514,12 +514,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String jreMinVersion
 
     @Override
-    String getJreMinVersion() {
-        if (jreMinVersion != null) {
-            return jreMinVersion
-        }
-        return config.jreMinVersion
-    }
+    String getJreMinVersion() { jreMinVersion ? internalJreMinVersion() : config.internalJreMinVersion() }
 
     @Override
     String internalJreMinVersion() {
@@ -552,16 +547,16 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         jreMaxVersion ?: config.jreMaxVersion
     }
 
-/**
- * Optional, defaults to preferJre; Allows you to specify a preference for a public JRE or a private JDK runtime. Valid values are:
- * <ul>
- *     <li><strong>jreOnly</strong><br>Always use a public JRE (equivalent to the old option dontUsePrivateJres=true)</li>
- *     <li><strong><u>preferJre</u></strong><br>Prefer a public JRE, but use a JDK private runtime if it is newer than the public JRE (equivalent to the old option dontUsePrivateJres=false)</li>
- *     <li><strong>preferJdk</strong><br>Prefer a JDK private runtime, but use a public JRE if it is newer than the JDK </li>
- *     <li><strong>jdkOnly</strong><br>Always use a private JDK runtime (fails if there is no JDK installed)</li>
- * </ul>
- *
- */
+    /**
+     * Optional, defaults to preferJre; Allows you to specify a preference for a public JRE or a private JDK runtime. Valid values are:
+     * <ul>
+     *     <li><strong>jreOnly</strong><br>Always use a public JRE (equivalent to the old option dontUsePrivateJres=true)</li>
+     *     <li><strong><u>preferJre</u></strong><br>Prefer a public JRE, but use a JDK private runtime if it is newer than the public JRE (equivalent to the old option dontUsePrivateJres=false)</li>
+     *     <li><strong>preferJdk</strong><br>Prefer a JDK private runtime, but use a public JRE if it is newer than the JDK </li>
+     *     <li><strong>jdkOnly</strong><br>Always use a private JDK runtime (fails if there is no JDK installed)</li>
+     * </ul>
+     *
+     */
     @Input
     @Optional
     String jdkPreference
@@ -571,16 +566,16 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         jdkPreference ?: config.jdkPreference
     }
 
-/**
- * Optional, defaults to 64/32; Allows to select between 64-bit and 32-bit runtimes. Valid values are:
- * <ul>
- *     <li><strong>64</strong><br>Use only 64-bit runtimes</li>
- *     <li><strong><u>64/32</u></strong><br>Use 64-bit runtimes if available, otherwise use 32-bit</li>
- *     <li><strong>32/64</strong><br>Use 32-bit runtimes if available, otherwise use 64-bit</li>
- *     <li><strong>32</strong><br>Use only 32-bit runtimes</li>
- * </ul>
- *
- */
+    /**
+     * Optional, defaults to 64/32; Allows to select between 64-bit and 32-bit runtimes. Valid values are:
+     * <ul>
+     *     <li><strong>64</strong><br>Use only 64-bit runtimes</li>
+     *     <li><strong><u>64/32</u></strong><br>Use 64-bit runtimes if available, otherwise use 32-bit</li>
+     *     <li><strong>32/64</strong><br>Use 32-bit runtimes if available, otherwise use 64-bit</li>
+     *     <li><strong>32</strong><br>Use only 32-bit runtimes</li>
+     * </ul>
+     *
+     */
     @Input
     @Optional
     String jreRuntimeBits
@@ -589,9 +584,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getJreRuntimeBits() {
         jreRuntimeBits ?: config.jreRuntimeBits
     }
-/**
- * Unique mutex name that will identify the application.
- */
+    /**
+     * Unique mutex name that will identify the application.
+     */
     @Input
     @Optional
     String mutexName
@@ -601,9 +596,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         mutexName ?: config.mutexName
     }
 
-/**
- * Optional, recognized by GUI header only. Title or title part of a window to bring up instead of running a new instance.
- */
+    /**
+     * Optional, recognized by GUI header only. Title or title part of a window to bring up instead of running a new instance.
+     */
     @Input
     @Optional
     String windowTitle
@@ -612,7 +607,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getWindowTitle() {
         windowTitle ?: config.windowTitle
     }
-
     @Input
     @Optional
     String messagesStartupError
@@ -621,7 +615,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getMessagesStartupError() {
         messagesStartupError ?: config.messagesStartupError
     }
-
     @Input
     @Optional
     String messagesBundledJreError
@@ -639,7 +632,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getMessagesJreVersionError() {
         messagesJreVersionError ?: config.messagesJreVersionError
     }
-
     @Input
     @Optional
     String messagesLauncherError
@@ -658,15 +650,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         messagesInstanceAlreadyExists ?: config.messagesInstanceAlreadyExists
     }
 
-/**
- * Optional, initial heap size in MB.<br>
- *
- * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
- *
- * @see DefaultLaunch4jTask#initialHeapPercent
- * @see DefaultLaunch4jTask#maxHeapSize
- * @see DefaultLaunch4jTask#maxHeapPercent
- */
+    /**
+     * Optional, initial heap size in MB.<br>
+     *
+     * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
+     *
+     * @see DefaultLaunch4jTask#initialHeapPercent
+     * @see DefaultLaunch4jTask#maxHeapSize
+     * @see DefaultLaunch4jTask#maxHeapPercent
+     */
     @Input
     @Optional
     Integer initialHeapSize
@@ -676,15 +668,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         initialHeapSize ?: config.initialHeapSize
     }
 
-/**
- * Optional, initial heap size in % of available memory.<br>
- *
- * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
- *
- * @see DefaultLaunch4jTask#initialHeapSize
- * @see DefaultLaunch4jTask#maxHeapSize
- * @see DefaultLaunch4jTask#maxHeapPercent
- */
+    /**
+     * Optional, initial heap size in % of available memory.<br>
+     *
+     * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
+     *
+     * @see DefaultLaunch4jTask#initialHeapSize
+     * @see DefaultLaunch4jTask#maxHeapSize
+     * @see DefaultLaunch4jTask#maxHeapPercent
+     */
     @Input
     @Optional
     Integer initialHeapPercent
@@ -694,15 +686,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         initialHeapPercent ?: config.initialHeapPercent
     }
 
-/**
- * Optional, max heap size in MB.<br>
- *
- * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
- *
- * @see DefaultLaunch4jTask#initialHeapSize
- * @see DefaultLaunch4jTask#initialHeapPercent
- * @see DefaultLaunch4jTask#maxHeapPercent
- */
+    /**
+     * Optional, max heap size in MB.<br>
+     *
+     * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
+     *
+     * @see DefaultLaunch4jTask#initialHeapSize
+     * @see DefaultLaunch4jTask#initialHeapPercent
+     * @see DefaultLaunch4jTask#maxHeapPercent
+     */
     @Input
     @Optional
     Integer maxHeapSize
@@ -712,15 +704,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         maxHeapSize ?: config.maxHeapSize
     }
 
-/**
- * Optional, max heap size in % of available memory.<br>
- *
- * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
- *
- * @see DefaultLaunch4jTask#initialHeapSize
- * @see DefaultLaunch4jTask#initialHeapPercent
- * @see DefaultLaunch4jTask#maxHeapSize
- */
+    /**
+     * Optional, max heap size in % of available memory.<br>
+     *
+     * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
+     *
+     * @see DefaultLaunch4jTask#initialHeapSize
+     * @see DefaultLaunch4jTask#initialHeapPercent
+     * @see DefaultLaunch4jTask#maxHeapSize
+     */
     @Input
     @Optional
     Integer maxHeapPercent
@@ -729,9 +721,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     Integer getMaxHeapPercent() {
         maxHeapPercent ?: config.maxHeapPercent
     }
-/**
- * Splash screen image in BMP format.
- */
+    /**
+     * Splash screen image in BMP format.
+     */
     @Input
     @Optional
     String splashFileName
@@ -741,9 +733,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         splashFileName ?: config.splashFileName
     }
 
-/**
- * Optional, defaults to <u>true</u>. Close the splash screen when an application window or Java error message box appears. If set to false, the splash screen will be closed on timeout.
- */
+    /**
+     * Optional, defaults to <u>true</u>. Close the splash screen when an application window or Java error message box appears. If set to false, the splash screen will be closed on timeout.
+     */
     @Input
     @Optional
     Boolean splashWaitForWindows
@@ -756,9 +748,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         return splashWaitForWindows
     }
 
-/**
- * Optional, defaults to <u>60</u>. Number of seconds after which the splash screen must be closed. Splash timeout may cause an error depending on {@link #splashTimeoutError}.
- */
+    /**
+     * Optional, defaults to <u>60</u>. Number of seconds after which the splash screen must be closed. Splash timeout may cause an error depending on {@link #splashTimeoutError}.
+     */
     @Input
     @Optional
     Integer splashTimeout
@@ -768,9 +760,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         splashTimeout ?: config.splashTimeout
     }
 
-/**
- * Optional, defaults to <u>true</u>. True signals an error on splash timeout, false closes the splash screen quietly.
- */
+    /**
+     * Optional, defaults to <u>true</u>. True signals an error on splash timeout, false closes the splash screen quietly.
+     */
     @Input
     @Optional
     Boolean splashTimeoutError
@@ -811,5 +803,4 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     protected void createExecutableFolder() {
         getDest().parentFile?.mkdirs()
     }
-
 }
