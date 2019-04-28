@@ -1,12 +1,12 @@
 cache:
   - '%HOMEDRIVE%%HOMEPATH%\.gradle\caches'
-  - '%HOMEDRIVE%%HOMEPATH%\.gradle\wrapper\dists'
 
 build_script:
   - gradlew assemble
 
 test_script:
-  - gradlew check backwardsCompatibiltyTest
+  - gradlew check
+  - gradlew backwardsCompatibiltyTest
 
 after_test:
   - ps: |
