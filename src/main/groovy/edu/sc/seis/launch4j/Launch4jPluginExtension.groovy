@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     @Deprecated
     void setOpt(String opt) {
         if (!opt) return // null check
-        this.jvmOptions = [ opt ] as Set
+        this.jvmOptions = [opt] as Set
         project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
     }
 

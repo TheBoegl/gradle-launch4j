@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class Launch4jPlugin implements Plugin<Project> {
     private FileOperations fileOperations
 
     @Inject
-    public Launch4jPlugin(FileOperations fileOperations) {
+    Launch4jPlugin(FileOperations fileOperations) {
         this.fileOperations = fileOperations
     }
 
@@ -99,7 +99,7 @@ class Launch4jPlugin implements Plugin<Project> {
         if (os.isWindows()) {
             return 'workdir-win32'
         } else if (os.isMacOsX()) {
-            if(isBelowMacOsX108()) {
+            if (isBelowMacOsX108()) {
                 throw new GradleException('Mac OS X below version 10.8 (Mountain Lion) is not supported by launch4j version 3.11 and later. Please use an earlier version of this plugin, e.g. 2.3.0.')
             }
             return 'workdir-mac'
