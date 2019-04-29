@@ -52,7 +52,8 @@ class CopyLibraries {
             } else if (project.plugins.hasPlugin('java')) {
                 with {
                     from(project.tasks[JavaPlugin.JAR_TASK_NAME])
-                    from(project.configurations.runtime)
+                    from(project.configurations.findByName('runtimeClasspath') ?
+                        project.configurations.runtimeClasspath : project.configurations.runtime)
                 }
             }
             into { libraryDir }
