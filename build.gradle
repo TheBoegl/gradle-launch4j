@@ -18,13 +18,13 @@
  */
 
 plugins {
+    id "com.gradle.plugin-publish" version "0.10.1"
+    id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
     id 'eclipse'
     id 'idea'
-    id 'signing'
     id 'maven-publish'
-    id "com.gradle.plugin-publish" version "0.9.7"
     id "com.jfrog.bintray" version "1.7.3"
     id "nu.studer.plugindev" version "1.0.6"
     id "com.jfrog.artifactory" version "4.4.12"
@@ -60,10 +60,10 @@ testSets {
 }
 
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    compile 'com.thoughtworks.xstream:xstream:1.4.10'
-    compile ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.thoughtworks.xstream:xstream:1.4.10'
+    implementation ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
 //        exclude(group: 'dsol')
         exclude(group: 'org.apache.batik', module: '*')
         exclude(group: 'org.apache.ant', module: '*')
@@ -82,12 +82,6 @@ dependencies {
 
     // Add the classpath file to the test runtime classpath.
     testRuntime files(createClasspathManifest)
-}
-
-configurations.all {
-    resolutionStrategy {
-        force "org.codehaus.groovy:groovy-all:${groovy_version}"
-    }
 }
 
 group "edu.sc.seis.gradle"
@@ -140,6 +134,15 @@ plugindev {
     done() // do not omit this
 }
 
+gradlePlugin {
+    plugins {
+        launch4j {
+            id = 'edu.sc.seis.launch4j'
+            implementationClass = 'edu.sc.seis.launch4j.Launch4jPlugin'
+        }
+    }
+}
+
 pluginBundle {
     website = 'https://github.com/TheBoegl/gradle-launch4j'
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
@@ -148,7 +151,6 @@ pluginBundle {
 
     plugins {
         launch4j {
-            id = 'edu.sc.seis.launch4j'
             displayName = 'launch4j gradle plugin'
         }
     }
@@ -183,27 +185,6 @@ artifactory {
         }
     }
 }
-
-signing {
-    if (System.console()) {
-        sign configurations.archives
-    }
-}
-
-gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.allTasks.any { it instanceof Sign }) {
-        // Use Java 6's console to read from the console (no good for a CI environment)
-        Console console = System.console()
-        console.printf "\n\nWe have to sign some things in this build.\n\nPlease enter your signing details.\n\n"
-
-        def password = console.readPassword("PGP Private Key Password: ")
-
-        allprojects { ext."signing.password" = password }
-
-        console.printf "\nThanks.\n\n"
-    }
-}
-
 //createReleaseTag.dependsOn publish
 
 wrapper {

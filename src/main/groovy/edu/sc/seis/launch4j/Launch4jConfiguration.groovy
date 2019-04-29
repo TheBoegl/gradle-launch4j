@@ -18,6 +18,8 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.CompileStatic
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 
 @CompileStatic
 interface Launch4jConfiguration {
@@ -28,8 +30,10 @@ interface Launch4jConfiguration {
 
     String getOutfile()
 
+    @OutputFile
     File getDest()
 
+    @Internal("usually the xml file is deleted anyways")
     File getXmlFile()
 
     String getLibraryDir()

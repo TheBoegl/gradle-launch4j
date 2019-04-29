@@ -105,6 +105,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         libraryDir ?: config.libraryDir
     }
 
+    @OutputDirectory
     File getLibraryDirectory() {
         project.file("${getOutputDirectory()}/${libraryDir ?: config.libraryDir}")
     }
