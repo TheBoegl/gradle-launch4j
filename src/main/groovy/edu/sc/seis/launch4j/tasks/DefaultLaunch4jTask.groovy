@@ -44,7 +44,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
                     def task = project.tasks.getByName(taskName)
                     dependsOn.add(task)
                     inputs.files(task.outputs.files)
-                    break;
+                    break
                 }
             }
         }
@@ -105,6 +105,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         libraryDir ?: config.libraryDir
     }
 
+    @OutputDirectory
     File getLibraryDirectory() {
         project.file("${getOutputDirectory()}/${libraryDir ?: config.libraryDir}")
     }
@@ -514,7 +515,12 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String jreMinVersion
 
     @Override
-    String getJreMinVersion() { jreMinVersion ? internalJreMinVersion() : config.internalJreMinVersion() }
+    String getJreMinVersion() {
+        if (jreMinVersion != null) {
+            return jreMinVersion
+        }
+        return config.jreMinVersion
+    }
 
     @Override
     String internalJreMinVersion() {
@@ -607,6 +613,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getWindowTitle() {
         windowTitle ?: config.windowTitle
     }
+
     @Input
     @Optional
     String messagesStartupError
@@ -615,6 +622,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getMessagesStartupError() {
         messagesStartupError ?: config.messagesStartupError
     }
+
     @Input
     @Optional
     String messagesBundledJreError
@@ -632,6 +640,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String getMessagesJreVersionError() {
         messagesJreVersionError ?: config.messagesJreVersionError
     }
+
     @Input
     @Optional
     String messagesLauncherError
@@ -803,4 +812,5 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     protected void createExecutableFolder() {
         getDest().parentFile?.mkdirs()
     }
+
 }

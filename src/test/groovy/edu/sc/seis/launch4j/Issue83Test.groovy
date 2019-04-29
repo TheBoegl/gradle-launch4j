@@ -14,56 +14,58 @@
  * limitations under the License.
  *
  */
+
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
-/**
- * Test case to check that the variables are settable.
- */
-class Issue59Test extends FunctionalSpecification {
 
+class Issue83Test extends FunctionalSpecification {
 
-    def 'Check that the variables are set and retrieved correctly'() {
+    def 'setting only the path is possible'() {
         given:
+        def jrePath = System.getProperties().getProperty("java.home").replace("\\", "/")
         buildFile << """
             launch4j {
+                bundledJrePath = '$jrePath'
                 mainClassName = 'com.test.app.Main'
-                outfile = 'test.exe'
-                variables = ['a=21', 'b=42']
+                outfile = 'Test.exe'
             }
         """
-
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
-        sourceFile << """
+        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
-            
-            import java.util.Locale;
 
             public class Main {
                 public static void main(String[] args) {
-                    System.out.println("a is " + System.getenv("a") + ", b is " + System.getenv("b") + " and c is " + System.getenv("c"));
+                    System.out.println("Hello World!");
                 }
             }
         """
+        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
 
         when:
-        def result = build('createExe')
+        def result = build('createExe', '-Pl4j-debug') // use debug flag to export xml
 
         then:
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
         when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
+        def outfile = new File(projectDir, 'build/launch4j/Test.exe')
+        def xml = new File(projectDir, 'build/tmp/createExe/createExe.xml')
+
+
         then:
         outfile.exists()
+        xml.exists()
+        def xmlText = xml.text
+        xmlText.contains("<path>$jrePath</path>")
+        xmlText.contains('<minVersion></minVersion')
+        xmlText.contains('<maxVersion></maxVersion')
 
-        when:
         def process = outfile.path.execute()
         then:
         process.waitFor() == 0
-        process.in.text.trim() == 'a is 21, b is 42 and c is null'
     }
 }

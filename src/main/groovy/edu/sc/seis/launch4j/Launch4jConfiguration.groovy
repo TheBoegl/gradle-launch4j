@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.CompileStatic
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 
 @CompileStatic
 interface Launch4jConfiguration {
@@ -28,8 +30,10 @@ interface Launch4jConfiguration {
 
     String getOutfile()
 
+    @OutputFile
     File getDest()
 
+    @Internal("usually the xml file is deleted anyways")
     File getXmlFile()
 
     String getLibraryDir()

@@ -1,3 +1,8 @@
+## Version [2.4.6](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.6)
+- **FIX** [#78](https://github.com/TheBoegl/gradle-launch4j/issues/78): Allow to use implementation configuration
+- **FIX** [#83](https://github.com/TheBoegl/gradle-launch4j/issues/83): Allow to set only set bundledJrePath.
+- **ISSUE** [#82](https://github.com/TheBoegl/gradle-launch4j/issues/82): Use newest xsteam library.
+
 ## Version [2.4.5](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.5)
 - **FIX** [#77](https://github.com/TheBoegl/gradle-launch4j/issues/77): Do not initialize boolean properties to simplify setting it to another value than the default one.
 - **FIX** [#79](https://github.com/TheBoegl/gradle-launch4j/issues/79): Allow to set chdir to an empty value.
@@ -11,7 +16,7 @@
 
 ## Version [2.4.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.2)
 - **FIX** [#62](https://github.com/TheBoegl/gradle-launch4j/issues/62): Correctly read `restartOnCrash` from the configuration. ([Jacob Ilsø Christensen](//github.com/jacobilsoe))
-- *INTERNAL* [#61](https://github.com/TheBoegl/gradle-launch4j/issues/61): Ignore gradle task name cache. ([Oliver](h//github.com/obearn))
+- *INTERNAL* [#61](https://github.com/TheBoegl/gradle-launch4j/issues/61): Ignore gradle task name cache. ([Oliver](https://github.com/obearn))
 
 ## Version [2.4.1](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.1)
 - **FIX** [#60](https://github.com/TheBoegl/gradle-launch4j/issues/60): Add work around for [gradle/#2650](https://github.com/gradle/gradle/issues/2650)

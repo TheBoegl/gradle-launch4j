@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,8 @@ class CopyLibraries {
             } else if (project.plugins.hasPlugin('java')) {
                 with {
                     from(project.tasks[JavaPlugin.JAR_TASK_NAME])
-                    from(project.configurations.runtime)
+                    from(project.configurations.findByName('runtimeClasspath') ?
+                        project.configurations.runtimeClasspath : project.configurations.runtime)
                 }
             }
             into { libraryDir }

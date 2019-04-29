@@ -14,56 +14,47 @@
  * limitations under the License.
  *
  */
+
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
+import org.gradle.util.GradleVersion
+import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
-/**
- * Test case to check that the variables are settable.
- */
-class Issue59Test extends FunctionalSpecification {
 
 
-    def 'Check that the variables are set and retrieved correctly'() {
+class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
+
+    @Unroll
+    def 'Running the task to create the executable with gradle #gradleVersion succeeds'() {
         given:
         buildFile << """
             launch4j {
                 mainClassName = 'com.test.app.Main'
-                outfile = 'test.exe'
-                variables = ['a=21', 'b=42']
             }
         """
 
         File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
-            import java.util.Locale;
 
             public class Main {
                 public static void main(String[] args) {
-                    System.out.println("a is " + System.getenv("a") + ", b is " + System.getenv("b") + " and c is " + System.getenv("c"));
+                    System.out.println("Hello World!");
                 }
             }
         """
 
         when:
-        def result = build('createExe')
+        def result = createAndConfigureGradleRunner('createExe').withGradleVersion(gradleVersion).build()
 
         then:
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == 'a is 21, b is 42 and c is null'
+        where:
+        // versions prior 2.8 will not allow the classpath injection
+        gradleVersion << ['2.14', '2.14.1', '3.0', '3.2.1', '3.3', '3.4.1', '4.10.2', GradleVersion.current().getVersion()]
     }
 }

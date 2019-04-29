@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Sebastian Boegl
+ * Copyright (c) 2019 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,8 @@ class CreateXML {
                 xml.path(config.bundledJrePath != null ? config.bundledJrePath : "")
                 xml.bundledJre64Bit(config.bundledJre64Bit)
                 xml.bundledJreAsFallback(config.bundledJreAsFallback)
-                xml.minVersion(config.internalJreMinVersion())
+                def minVersion = config.jreMinVersion == null && config.bundledJrePath != null ? "" : config.jreMinVersion ? config.jreMinVersion : config.internalJreMinVersion()
+                xml.minVersion(minVersion)
                 xml.maxVersion(config.jreMaxVersion != null ? config.jreMaxVersion : "")
                 xml.jdkPreference(config.jdkPreference)
                 xml.runtimeBits(config.jreRuntimeBits)

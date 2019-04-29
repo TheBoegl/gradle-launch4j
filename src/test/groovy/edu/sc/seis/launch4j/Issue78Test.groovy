@@ -14,50 +14,50 @@
  * limitations under the License.
  *
  */
+
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
-/**
- * Test case to check that the variables are settable.
- */
-class Issue72Test extends FunctionalSpecification {
 
+class Issue78Test extends FunctionalSpecification {
 
-    def 'Check that JRE 10 is allowed in maxVersion'() {
+    def 'Check that implementation dependencies work as expected'() {
         given:
         buildFile << """
+            dependencies {
+                implementation 'com.squareup.moshi:moshi:1.8.0'
+            }
+            
             launch4j {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'test.exe'
-                jreMinVersion = "1.8.0"
-                jreMaxVersion = '1.10.999'
             }
         """
 
         File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-
+            
             public class Main {
                 public static void main(String[] args) {
-                
                 }
             }
         """
 
         when:
         def result = build('createExe')
-
         then:
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
         when:
         def outfile = new File(projectDir, 'build/launch4j/test.exe')
+        def implementationLibFile = new File(projectDir, 'build/launch4j/lib/moshi-1.8.0.jar')
         then:
         outfile.exists()
+        implementationLibFile.exists()
 
         when:
         def process = outfile.path.execute()
@@ -65,42 +65,4 @@ class Issue72Test extends FunctionalSpecification {
         process.waitFor() == 0
     }
 
-    def 'Check that JRE 9 is allowed in minVersion'() {
-        given:
-        buildFile << """
-            launch4j {
-                mainClassName = 'com.test.app.Main'
-                outfile = 'test.exe'
-                jreMinVersion = "1.9.0"
-            }
-        """
-
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
-        sourceFile << """
-            package com.test.app;
-
-            public class Main {
-                public static void main(String[] args) {
-                
-                }
-            }
-        """
-
-        when:
-        def result = build('createExe')
-
-        then:
-        result.task(':jar').outcome == SUCCESS
-        result.task(':createExe').outcome == SUCCESS
-
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-    }
 }
