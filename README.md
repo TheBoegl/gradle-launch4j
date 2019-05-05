@@ -10,6 +10,7 @@
 * [Configuration](#configuration)
 * [Launch4jLibraryTask](#launch4jlibrarytask)
 * [Launch4jExternalTask](#launch4jexternaltask)
+* [Kotlin](#kotlin)
 * [Contributors](#contributors)
 * [Version](#version) (see [VERSION.md](VERSION.md))
 
@@ -221,6 +222,30 @@ In order to use a launch4j instance named 'launch4j-test' located in the PATH cr
         launch4jCmd = 'launch4j-test'
         outfile = 'MyApp.exe'
     }
+
+# Kotlin
+
+To get started using this plugin from a kotlin build script the above example from [the section Launch4jLibraryTask](#launch4jlibrarytask) would be written as:
+```kotlin
+
+tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
+    outfile = "${appName}.exe"
+    mainClassName = mainClass
+    icon = "$projectDir/icons/myApp.ico"
+    productName = "My App"
+}
+
+tasks.register<edu.sc.seis.launch4j.tasks.Launch4jLibraryTask>("createFastStart") {
+    outfile = "FastMyApp.exe"
+    mainClassName = "com.example.myapp.FastStart"
+    icon = "$projectDir/icons/myAppFast.ico"
+    fileDescription = "The lightning fast implementation"
+}
+tasks.register<edu.sc.seis.launch4j.tasks.Launch4jLibraryTask>("MyApp-memory") {
+    fileDescription = "The default implementation with increased heap size"
+    maxHeapPercent = 50
+}
+```
 
 # Debugging
 To get insight into the launch4j creation process start a launch4j task, e.g. `createExe`, `createExecutables` or your custom task, with the script parameter `-Pl4j-debug`. This will copy the created xml into `${buildDir}/tmp/${task.name}`.
