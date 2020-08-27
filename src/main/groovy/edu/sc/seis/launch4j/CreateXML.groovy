@@ -53,7 +53,14 @@ class CreateXML {
                 // relativize paths relative to outfile
             }
         }
-        def jar = config.dontWrapJar ? outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.jar))) : config.jar
+        def jarTaskOutput = config.jarTask?.outputs?.files?.singleFile
+        def jar
+        if (config.dontWrapJar) {
+            def jarPath = jarTaskOutput ? Paths.get(config.libraryDir, jarTaskOutput.name) : Paths.get(config.jar)
+            jar = outFilePath.relativize(outputDir.toPath().resolve(jarPath))
+        } else {
+            jar = jarTaskOutput?.path ?: config.jar
+        }
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")

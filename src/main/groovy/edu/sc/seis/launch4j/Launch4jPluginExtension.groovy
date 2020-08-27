@@ -21,6 +21,7 @@ import groovy.transform.AutoClone
 import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Input
@@ -39,7 +40,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     }
 
     String mainClassName
+    @Deprecated
     String jar
+    Task jarTask
 
     @Input
     String outputDir = 'launch4j'
@@ -149,6 +152,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         project.file("${getOutputDirectory()}/${xmlFileName}")
     }
 
+    @Deprecated
     String internalJar() {
         if (!jar) {
             if (project.plugins.hasPlugin('java')) {
@@ -159,6 +163,13 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             }
         }
         jar
+    }
+
+    Task internalJarTask() {
+        if (!jarTask && project.plugins.hasPlugin('java')) {
+            jarTask = project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
+        }
+        jarTask
     }
 
     Set<String> classpath = []

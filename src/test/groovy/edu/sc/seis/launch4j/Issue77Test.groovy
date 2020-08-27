@@ -32,14 +32,12 @@ class Issue77Test extends FunctionalSpecification {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'notWrapped.exe'
                 dontWrapJar = true
-                jar = "lib/${projectDir.name}.jar"
             }
-            
             
             task usingOverriddenLaunch4j(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
                 dontWrapJar = false
                 outfile = 'wrapped.exe'
-                jar = "lib/${projectDir.name}.jar"
+                outputDir = 'launch4jWrapped'
             }
 
         """
@@ -64,7 +62,7 @@ class Issue77Test extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         when:
-        def outfile = new File(projectDir, 'build/launch4j/wrapped.exe')
+        def outfile = new File(projectDir, 'build/launch4jWrapped/wrapped.exe')
         def jarfile = new File(projectDir, "build/launch4j/lib/${projectDir.name}.jar")
         then:
         outfile.exists()
@@ -87,7 +85,6 @@ class Issue77Test extends FunctionalSpecification {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'notWrapped.exe'
                 dontWrapJar = true
-                jar = "lib/${projectDir.name}.jar"
             }
         """
 

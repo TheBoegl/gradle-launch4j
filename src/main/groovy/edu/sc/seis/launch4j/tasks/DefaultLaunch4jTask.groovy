@@ -20,12 +20,12 @@ package edu.sc.seis.launch4j.tasks
 import edu.sc.seis.launch4j.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
+import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
-import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.model.ReplacedBy
 import org.gradle.api.tasks.*
-import org.gradle.api.tasks.bundling.Jar
 
 //@CompileStatic // bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
@@ -34,18 +34,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     protected DefaultLaunch4jTask() {
         config = project.getConvention().getByType(Launch4jPluginExtension.class)
-        evaluateTaskDependencyIfAvailable('shadowJar', 'fatJar', 'jar')
+        evaluateTaskDependencyIfAvailable()
     }
 
-    private void evaluateTaskDependencyIfAvailable(String... taskNames) {
+    private void evaluateTaskDependencyIfAvailable() {
         project.afterEvaluate {
-            for (String taskName : taskNames) {
-                if (project.hasProperty(taskName)) {
-                    def task = project.tasks.getByName(taskName)
-                    dependsOn.add(task)
-                    inputs.files(task.outputs.files)
-                    break
-                }
+            def jarTask = getJarTask()
+            if (jarTask) {
+                dependsOn.add(jarTask)
+                inputs.files(jarTask.outputs.files)
             }
         }
     }
@@ -142,7 +139,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     FileCollection copyLibraries() {
-        new CopyLibraries(project, config.fileOperations).execute(getLibraryDirectory(), getCopyConfigurable())
+        def jarPath = getDontWrapJar() ? getJarTask()?.outputs?.files?.singleFile : null
+        new CopyLibraries(project, config.fileOperations).execute(getLibraryDirectory(), getCopyConfigurable(), jarPath)
     }
 
     /**
@@ -163,12 +161,24 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      * For example, if the executable launcher and the application jar named <i>calc.exe</i> and <i>calc.jar</i> are in the same directory then you would use {@code jar = calc.jar} and {@code dontWrapJar = true}.
      */
     @Input
+    @Deprecated
     @Optional
     String jar
 
     @Override
+    @Deprecated
+    @ReplacedBy("getJarTask")
     String getJar() {
-        jar ? internalJar() : config.internalJar()
+        jar ?: config.internalJar()
+    }
+
+    @Nested
+    @Optional
+    Task jarTask
+
+    @Override
+    Task getJarTask() {
+        jarTask ?: config.internalJarTask()
     }
 
     /**
@@ -785,18 +795,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         return splashTimeoutError
     }
 
-    String internalJar() {
-        if (!jar) {
-            if (project.plugins.hasPlugin('java')) {
-                def jarTask = project.tasks[JavaPlugin.JAR_TASK_NAME] as Jar
-                jar = "${libraryDir}/${jarTask.archiveName}"
-            } else {
-                jar = ""
-            }
-        }
-        jar
-    }
-
     @Input
     @Optional
     Set<String> classpath = []
@@ -813,5 +811,4 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     protected void createExecutableFolder() {
         getDest().parentFile?.mkdirs()
     }
-
 }
