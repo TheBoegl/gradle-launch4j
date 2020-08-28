@@ -83,8 +83,8 @@ The values configurable within the launch4j extension along with their defaults 
 |---------------|---------------|---------|
 | String outputDir | "launch4j" | This is the plugin's working path relative to `$buildDir`. Use the distribution plugin or a custom implementation to copy necessary files to an output location instead of adjusting this property.|
 | String libraryDir | "lib" | |
-| Object copyConfigurable | | |
-| Set&lt;String&gt; classpath| [] | Use this property to override the classpath or configure it on you own if the `copyConfigurable` does not provide the results you want |
+| Object copyConfigurable | null | User-redefined set of files to be copied into `libraryDir` (if not set the default logic of copying will be executed) |
+| Set&lt;String&gt; classpath| [] | User-redefined classpath property (if not set the default logic based on the set of copied to `libraryDir` files will be used) |
 | String xmlFileName | "launch4j.xml" | |
 | String mainClassName | | |
 | boolean dontWrapJar | false | |
@@ -150,12 +150,9 @@ The following example shows how to use this plugin hand in hand with the shadow 
     launch4j {
         outfile = 'TestMain.exe'
         mainClassName = project.mainClassName
-        copyConfigurable = project.tasks.shadowJar.outputs.files
+        copyConfigurable = []
         jar = "lib/${project.tasks.shadowJar.archiveName}"
     }
-
-The `outputDir` will contain the _lib_ folder even if the shadow plugin creates only one shadowed jar.
-Use the distribution plugin or a custom implementation to copy necessary files to an output location.
 
 If you use the outdated fatJar plugin the following configuration correctly wires the execution graph:
 
@@ -172,7 +169,7 @@ If you use the outdated fatJar plugin the following configuration correctly wire
     launch4j {
         outfile = 'TestMain.exe'
         mainClassName = project.mainClassName
-        copyConfigurable = project.tasks.fatJar.outputs.files
+        copyConfigurable = []
         jar = "lib/${project.tasks.fatJar.archiveName}"
     }
 

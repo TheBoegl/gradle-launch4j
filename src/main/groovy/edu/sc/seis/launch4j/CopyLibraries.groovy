@@ -41,7 +41,7 @@ class CopyLibraries {
     FileCollection execute(File libraryDir, Object copyConfigurable) {
         def files = []
         def distSpec = {
-            if (copyConfigurable) {
+            if (copyConfigurable != null) {
                 if (copyConfigurable instanceof CopySpec) {
                     with(copyConfigurable)
                 } else {
