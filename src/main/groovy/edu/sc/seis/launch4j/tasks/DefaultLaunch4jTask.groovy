@@ -137,7 +137,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         }
     }
 
-    private Object getCopyConfigurable() {
+    Object getCopyConfigurable() {
         copyConfigurable ?: config.copyConfigurable
     }
 
