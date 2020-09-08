@@ -28,7 +28,7 @@ plugins {
     id "com.jfrog.bintray" version "1.7.3"
     id "nu.studer.plugindev" version "1.0.6"
     id "com.jfrog.artifactory" version "4.4.12"
-    id 'org.unbroken-dome.test-sets' version '2.1.1'
+    id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
 // Write the plugin's classpath to a file to share with the tests.
