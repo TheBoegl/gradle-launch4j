@@ -48,7 +48,10 @@ class CreateXML {
                 outFilePath.relativize(it.toPath()).toString()
             }
         } else {
-            classpath = (copySpec ?: (project.plugins.hasPlugin('java') ? project.configurations.runtime : [])).collect {
+            classpath = (copySpec ?:
+                (project.plugins.hasPlugin('java') ?
+                    (project.configurations.findByName('runtimeClasspath') ?
+                        project.configurations.runtimeClasspath : project.configurations.runtime) : [])).collect {
                 outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString()
                 // relativize paths relative to outfile
             }
