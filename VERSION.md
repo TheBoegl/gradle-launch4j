@@ -1,3 +1,7 @@
+## Version [2.4.8](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.8)
+- **FIX** [#96](https://github.com/TheBoegl/gradle-launch4j/pull/96): look for `runtimeClasspath` configuration instead of deprecated `runtime` configuration ([naftalmm](https://github.com/naftalmm)) 
+- **INTERNAL** [#95](https://github.com/TheBoegl/gradle-launch4j/pull/95): update dependency to fix deprecation warnings ([naftalmm](https://github.com/naftalmm))
+
 ## Version [2.4.7](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.7)
 - **FIX** [#68](https://github.com/TheBoegl/gradle-launch4j/issues/68) and [#94](https://github.com/TheBoegl/gradle-launch4j/pull/94): Improve plugin configuration with `copyConfigurable` to avoid the creation of the `libraryDir` folder ([naftalmm](https://github.com/naftalmm))
 - **IMPROVEMENT**: Allow convenient access to `copyConfigurable` from Kotlin ([naftalmm](https://github.com/naftalmm))
