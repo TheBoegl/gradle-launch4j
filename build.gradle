@@ -18,7 +18,7 @@
  */
 
 plugins {
-    id "com.gradle.plugin-publish" version "0.10.1"
+    id "com.gradle.plugin-publish" version "0.12.0"
     id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
@@ -84,7 +84,7 @@ dependencies {
     testRuntime files(createClasspathManifest)
 }
 
-group "edu.sc.seis.gradle"
+group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
 version "2.4.8"
 
