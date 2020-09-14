@@ -138,7 +138,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     Object getCopyConfigurable() {
-        copyConfigurable ?: config.copyConfigurable
+        copyConfigurable == null ? config.copyConfigurable : copyConfigurable
     }
 
     FileCollection copyLibraries() {
