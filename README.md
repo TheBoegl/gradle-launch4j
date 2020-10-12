@@ -37,6 +37,18 @@ value is the `mainClassName`.
 ## How to include
 An example configuration within your `build.gradle` for use in all Gradle versions might look like:
 
+    plugins {
+      id 'java'
+      id 'edu.sc.seis.launch4j' version '2.4.8'
+    }
+
+    launch4j {
+      mainClassName = 'com.example.myapp.Start'
+      icon = "${projectDir}/icons/myApp.ico"
+    }
+
+The same script snippet for using [legacy plugin application](https://docs.gradle.org/current/userguide/plugins.html#sec:old_plugin_application):
+
     buildscript {
       repositories {
         jcenter()
@@ -57,19 +69,6 @@ An example configuration within your `build.gradle` for use in all Gradle versio
       mainClassName = 'com.example.myapp.Start'
       icon = "${projectDir}/icons/myApp.ico"
     }
-
-The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
-
-    plugins {
-      id 'java'
-      id 'edu.sc.seis.launch4j' version '2.4.8'
-    }
-
-    launch4j {
-      mainClassName = 'com.example.myapp.Start'
-      icon = "${projectDir}/icons/myApp.ico"
-    }
-
 
 If no repository is configured before applying this plugin the *Maven central* repository will be added to the project.
 
