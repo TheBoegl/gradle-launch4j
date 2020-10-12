@@ -11,7 +11,7 @@
 * [Launch4jLibraryTask](#launch4jlibrarytask)
 * [Launch4jExternalTask](#launch4jexternaltask)
 * [Kotlin](#kotlin)
-* [Contributors](#contributors)
+* [Contributors](#contributors) (see [Contributors](graphs/contributors))
 * [Version](#version) (see [VERSION.md](VERSION.md))
 
 # Introduction
@@ -271,8 +271,8 @@ apply plugin: 'edu.sc.seis.launch4j'
 
 * [Sebastian Bögl](https://github.com/TheBoegl) (Maintainer)
 * [Philip Crotwell](https://github.com/crotwell) (Creator)
-* [Sebastian Schuberth](https://github.com/sschuberth)
-* [FourtyTwo](https://github.com/FFourtyTwo)
+
+See [contributors](graphs/contributors) for a complete list. 
 
 # Version
 
