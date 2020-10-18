@@ -43,7 +43,9 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
         Builder b = new Builder(new GradleLogger(project.logger), new File(project.buildDir, Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY))
         b.build()
         if (project.hasProperty("l4j-debug")) {
-            new File(temporaryDir, xml.name).text = xml.text
+            def debugXmlFile = new File(temporaryDir, xml.name)
+            project.logger.lifecycle("creating debug xml file {}", debugXmlFile)
+            debugXmlFile.text = xml.text
         }
         project.delete(xml)
     }
