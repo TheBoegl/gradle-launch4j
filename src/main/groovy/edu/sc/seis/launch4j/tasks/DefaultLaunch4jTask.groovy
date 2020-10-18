@@ -50,7 +50,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         }
     }
 
-    @OutputDirectory
+    @Input
     @Optional
     String outputDir
 
@@ -70,7 +70,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      *
      * Defaults to this task's name appended with '.exe'
      */
-    @OutputFile
+    @Optional
+    @Input
     String outfile = "${name}.exe"
 
     @Override
@@ -79,6 +80,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     @Override
+    @OutputFile
     File getDest() {
         project.file("${getOutputDirectory()}/${getOutfile()}")
     }
