@@ -25,9 +25,8 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.7.3"
-    id "nu.studer.plugindev" version "1.0.6"
-    id "com.jfrog.artifactory" version "4.4.12"
+    id "com.jfrog.bintray" version "1.8.5"
+    id "com.jfrog.artifactory" version "4.17.2"
     id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
@@ -81,7 +80,7 @@ dependencies {
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 
     // Add the classpath file to the test runtime classpath.
-    testRuntime files(createClasspathManifest)
+    testRuntimeOnly files(createClasspathManifest)
 }
 
 group "edu.sc.seis.launch4j"
@@ -90,49 +89,6 @@ version "2.4.8"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
-
-plugindev {
-    pluginId 'edu.sc.seis.launch4j'
-    pluginName 'gradle-launch4j'
-    pluginImplementationClass 'edu.sc.seis.launch4j.Launch4jPlugin'
-    pluginDescription 'A gradle-plugin that uses launch4j to create windows .exe files for java applications.'
-    pluginLicenses 'Apache-2.0'
-    pluginTags 'gradle', 'launch4j', 'executable', 'wrapper'
-    authorId 'theboegl'
-    authorName 'Sebastian Bögl'
-    authorEmail 'info@sebastianboegl.de'
-    projectUrl 'https://github.com/TheBoegl/gradle-launch4j'
-    projectInceptionYear '2012'
-    pomConfiguration {
-        name project.name
-        description 'A gradle-plugin that uses launch4j to create windows .exe files for java applications.'
-        url 'https://github.com/TheBoegl/gradle-launch4j/'
-        scm {
-            url 'https://github.com/TheBoegl/gradle-launch4j/'
-            connection 'scm:git:git://github.com/TheBoegl/gradle-launch4j.git'
-            developerConnection 'scm:git:git@github.com:TheBoegl/gradle-launch4j.git'
-        }
-        licenses {
-            license {
-                name 'Apache License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
-            }
-        }
-        developers {
-            developer {
-                id 'theboegl'
-                name 'Sebastian Bögl'
-                email 'info@sebastianboegl.de'
-            }
-        }
-        issueManagement {
-            system 'github'
-            url 'https://github.com/TheBoegl/gradle-launch4j/issues'
-        }
-    }
-    done() // do not omit this
-}
 
 gradlePlugin {
     plugins {
@@ -188,7 +144,7 @@ artifactory {
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '5.4.1'
+    gradleVersion = '6.7'
     distributionType = Wrapper.DistributionType.ALL
 }
 
