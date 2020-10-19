@@ -7,7 +7,7 @@ cache: '%HOMEDRIVE%%HOMEPATH%\.gradle\caches'
 build_script:
 - cmd: gradlew.bat assemble
 before_test:
-- cmd: gradlew.bat check&&gradlew.bat backwardsCompatibiltyTest
+- cmd: gradlew.bat check&&gradlew.bat backwardsCompatibiltyTest&&gradlew.bat --stop
 after_test:
 - ps: >-
     $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
