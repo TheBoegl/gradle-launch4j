@@ -94,6 +94,8 @@ gradlePlugin {
     plugins {
         launch4j {
             id = 'edu.sc.seis.launch4j'
+            displayName = 'launch4j gradle plugin'
+            description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
             implementationClass = 'edu.sc.seis.launch4j.Launch4jPlugin'
         }
     }
