@@ -11,12 +11,12 @@
 * [Launch4jLibraryTask](#launch4jlibrarytask)
 * [Launch4jExternalTask](#launch4jexternaltask)
 * [Kotlin](#kotlin)
-* [Contributors](#contributors)
+* [Contributors](#contributors) (see [Contributors](graphs/contributors))
 * [Version](#version) (see [VERSION.md](VERSION.md))
 
 # Introduction
 
-The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) to create windows .exe files for java applications.
+The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.12](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
 This plugin is compatible with the Gradle versions 2 and later.
 
 # Tasks
@@ -37,12 +37,24 @@ value is the `mainClassName`.
 ## How to include
 An example configuration within your `build.gradle` for use in all Gradle versions might look like:
 
+    plugins {
+      id 'java'
+      id 'edu.sc.seis.launch4j' version '2.4.9'
+    }
+
+    launch4j {
+      mainClassName = 'com.example.myapp.Start'
+      icon = "${projectDir}/icons/myApp.ico"
+    }
+
+The same script snippet for using [legacy plugin application](https://docs.gradle.org/current/userguide/plugins.html#sec:old_plugin_application):
+
     buildscript {
       repositories {
         jcenter()
       }
       dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.4.8'
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.9'
       }
     }
 
@@ -57,19 +69,6 @@ An example configuration within your `build.gradle` for use in all Gradle versio
       mainClassName = 'com.example.myapp.Start'
       icon = "${projectDir}/icons/myApp.ico"
     }
-
-The same script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
-
-    plugins {
-      id 'java'
-      id 'edu.sc.seis.launch4j' version '2.4.8'
-    }
-
-    launch4j {
-      mainClassName = 'com.example.myapp.Start'
-      icon = "${projectDir}/icons/myApp.ico"
-    }
-
 
 If no repository is configured before applying this plugin the *Maven central* repository will be added to the project.
 
@@ -271,8 +270,8 @@ apply plugin: 'edu.sc.seis.launch4j'
 
 * [Sebastian Bögl](https://github.com/TheBoegl) (Maintainer)
 * [Philip Crotwell](https://github.com/crotwell) (Creator)
-* [Sebastian Schuberth](https://github.com/sschuberth)
-* [FourtyTwo](https://github.com/FFourtyTwo)
+
+See [contributors](graphs/contributors) for a complete list. 
 
 # Version
 

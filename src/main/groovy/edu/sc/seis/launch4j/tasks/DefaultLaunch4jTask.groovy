@@ -50,7 +50,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         }
     }
 
-    @OutputDirectory
+    @Input
     @Optional
     String outputDir
 
@@ -70,7 +70,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      *
      * Defaults to this task's name appended with '.exe'
      */
-    @OutputFile
+    @Optional
+    @Input
     String outfile = "${name}.exe"
 
     @Override
@@ -79,6 +80,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     @Override
+    @OutputFile
     File getDest() {
         project.file("${getOutputDirectory()}/${getOutfile()}")
     }
@@ -105,6 +107,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         libraryDir ?: config.libraryDir
     }
 
+    @Internal
     File getLibraryDirectory() {
         project.file("${getOutputDirectory()}/${libraryDir ?: config.libraryDir}")
     }
@@ -138,7 +141,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     Object getCopyConfigurable() {
-        copyConfigurable ?: config.copyConfigurable
+        copyConfigurable == null ? config.copyConfigurable : copyConfigurable
     }
 
     FileCollection copyLibraries() {
