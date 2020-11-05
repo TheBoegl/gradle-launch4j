@@ -178,8 +178,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         jar ?: config.jar
     }
 
-    @Nested
-    @Optional
+    @Internal
     Task jarTask
 
     @Override
