@@ -48,7 +48,7 @@ repositories {
 }
 
 ext {
-    ARTIFACT_VERSION = '3.12'
+    ARTIFACT_VERSION = '3.14'
     groovy_version = '2.4.15'
     spock_version = '1.1-groovy-2.4'
 }
@@ -85,10 +85,10 @@ dependencies {
 
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
-version "2.4.9"
+version "2.4.10"
 
-sourceCompatibility = JavaVersion.VERSION_1_6
-targetCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 gradlePlugin {
     plugins {
