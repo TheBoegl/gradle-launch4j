@@ -41,7 +41,6 @@ class Issue47Gradle4Test extends FunctionalSpecification {
                 mainTestClassName = 'com.test.app.Main'
             }
 
-            
             jar {
                 manifest {
                     attributes 'Main-Class': mainTestClassName
@@ -55,14 +54,14 @@ class Issue47Gradle4Test extends FunctionalSpecification {
                     attributes 'Main-Class': mainTestClassName
                 }
             }
-            
+
             fatJarPrepareFiles.dependsOn jar
-            
+
             launch4j {
                 outfile = 'test.exe'
                 mainClassName = mainTestClassName
                 copyConfigurable = project.tasks.fatJar.outputs.files
-                jar = "lib/" + project.tasks.fatJar.archiveName
+                jarTask = project.tasks.fatJar
             }
         """
 
@@ -78,7 +77,7 @@ class Issue47Gradle4Test extends FunctionalSpecification {
         """
 
         when:
-        def result =  createAndConfigureGradleRunner('createExe').withGradleVersion('4.10.2').build()
+        def result = createAndConfigureGradleRunner('createExe').withGradleVersion('4.10.2').build()
 
         then:
         result.task(':jar') // the task is added as fatJar dependency

@@ -88,7 +88,8 @@ The values configurable within the launch4j extension along with their defaults 
 | String mainClassName | | |
 | boolean dontWrapJar | false | |
 | String headerType | "gui" | |
-| String jar | "lib/"+project.tasks[jar].archiveName or<br> "", if the JavaPlugin is not loaded | |
+| ~~String jar~~ | "lib/"+project.tasks[jar].archiveName or<br> "", if the JavaPlugin is not loaded | deprecated use `jarTask` instead |
+| Task jarTask | tasks[jar], if the JavaPlugin is loaded | Task, producing jar |
 | String outfile | project.name+'.exe' | |
 | String errTitle | "" | |
 | String cmdLine | "" | |
@@ -150,7 +151,7 @@ The following example shows how to use this plugin hand in hand with the shadow 
         outfile = 'TestMain.exe'
         mainClassName = project.mainClassName
         copyConfigurable = []
-        jar = "lib/${project.tasks.shadowJar.archiveName}"
+        jarTask = project.tasks.shadowJar
     }
 
 If you use the outdated fatJar plugin the following configuration correctly wires the execution graph:
@@ -169,7 +170,7 @@ If you use the outdated fatJar plugin the following configuration correctly wire
         outfile = 'TestMain.exe'
         mainClassName = project.mainClassName
         copyConfigurable = []
-        jar = "lib/${project.tasks.fatJar.archiveName}"
+        jarTask = project.tasks.fatJar
     }
 
 # Launch4jLibraryTask
