@@ -16,7 +16,7 @@
 
 # Introduction
 
-The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.12](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
+The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.14](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
 This plugin is compatible with the Gradle versions 2 and later.
 
 # Tasks
