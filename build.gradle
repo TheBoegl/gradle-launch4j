@@ -61,7 +61,6 @@ testSets {
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation 'com.thoughtworks.xstream:xstream:1.4.11.1'
     implementation ("net.sf.launch4j:launch4j:${ARTIFACT_VERSION}:core") {
 //        exclude(group: 'dsol')
         exclude(group: 'org.apache.batik', module: '*')
@@ -69,7 +68,6 @@ dependencies {
         exclude(group: 'net.java.abeille', module: '*')
         exclude(group: 'com.jgoodies', module: '*')
         exclude(group: 'foxtrot', module: '*')
-        exclude(group: 'com.thoughtworks.xstream', module: 'xstream')
     }
 
     testImplementation gradleTestKit()
