@@ -49,8 +49,7 @@ repositories {
 
 ext {
     ARTIFACT_VERSION = '3.14'
-    groovy_version = '2.4.15'
-    spock_version = '1.1-groovy-2.4'
+    spock_version = '1.2-groovy-2.5'
 }
 
 
