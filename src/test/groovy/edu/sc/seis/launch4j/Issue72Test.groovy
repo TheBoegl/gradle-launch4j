@@ -17,6 +17,7 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
+import spock.lang.Ignore
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 /**
@@ -42,7 +43,7 @@ class Issue72Test extends FunctionalSpecification {
 
             public class Main {
                 public static void main(String[] args) {
-                
+
                 }
             }
         """
@@ -65,6 +66,7 @@ class Issue72Test extends FunctionalSpecification {
         process.waitFor() == 0
     }
 
+    @Ignore("must fail if running with java 8")
     def 'Check that JRE 9 is allowed in minVersion'() {
         given:
         buildFile << """
@@ -81,7 +83,7 @@ class Issue72Test extends FunctionalSpecification {
 
             public class Main {
                 public static void main(String[] args) {
-                
+
                 }
             }
         """
