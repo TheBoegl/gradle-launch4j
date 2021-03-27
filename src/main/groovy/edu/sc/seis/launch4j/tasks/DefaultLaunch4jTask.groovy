@@ -163,9 +163,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      * To launch a jar without wrapping it enter the runtime path of the jar relative to the executable and set {@link #dontWrapJar} to true.
      * For example, if the executable launcher and the application jar named <i>calc.exe</i> and <i>calc.jar</i> are in the same directory then you would use {@code jar = calc.jar} and {@code dontWrapJar = true}.
      */
-    @Input
     @Deprecated
-    @Optional
     String jar
 
     @Override
