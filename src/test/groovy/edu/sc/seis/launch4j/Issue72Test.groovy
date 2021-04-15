@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2021 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class Issue72Test extends FunctionalSpecification {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'test.exe'
                 jreMinVersion = "1.8.0"
-                jreMaxVersion = '1.10.999'
+                jreMaxVersion = '10.999'
             }
         """
 
@@ -42,46 +42,7 @@ class Issue72Test extends FunctionalSpecification {
 
             public class Main {
                 public static void main(String[] args) {
-                
-                }
-            }
-        """
 
-        when:
-        def result = build('createExe')
-
-        then:
-        result.task(':jar').outcome == SUCCESS
-        result.task(':createExe').outcome == SUCCESS
-
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-    }
-
-    def 'Check that JRE 9 is allowed in minVersion'() {
-        given:
-        buildFile << """
-            launch4j {
-                mainClassName = 'com.test.app.Main'
-                outfile = 'test.exe'
-                jreMinVersion = "1.9.0"
-            }
-        """
-
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
-        sourceFile << """
-            package com.test.app;
-
-            public class Main {
-                public static void main(String[] args) {
-                
                 }
             }
         """

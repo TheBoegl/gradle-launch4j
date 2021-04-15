@@ -1,4 +1,6 @@
-[ ![Get automatic notifications about new "gradle-launch4j" versions](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j?source=watch) [ ![Download](https://api.bintray.com/packages/theboegl/gradle-plugins/gradle-launch4j/images/download.svg) ](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j/_latestVersion) 
+[ ![Get automatic notifications about new "gradle-launch4j" versions](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j?source=watch)
+[ ![Download](https://api.bintray.com/packages/theboegl/gradle-plugins/gradle-launch4j/images/download.svg) ](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j/_latestVersion)
+[ ![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?colorB=007ec6&label=gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fedu%2Fsc%2Fseis%2Flaunch4j%2Fedu.sc.seis.launch4j.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/edu.sc.seis.launch4j)
 
 **Build status**:
 [ ![Build status master](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true&passingText=master%20-%20OK&failingText=master%20-%20Fails&pendingText=master%20-%20pending)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
@@ -16,8 +18,11 @@
 
 # Introduction
 
-The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.12](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
+The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.14](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
 This plugin is compatible with the Gradle versions 2 and later.
+
+Since **version 2.5** this plugin requires **Java 8*, as launch4j in version 3.14 requires that as well.
+If you are still forced to work with Java 6, use the latest version 2.4.
 
 # Tasks
 
@@ -39,7 +44,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     plugins {
       id 'java'
-      id 'edu.sc.seis.launch4j' version '2.4.9'
+      id 'edu.sc.seis.launch4j' version '2.5.0'
     }
 
     launch4j {
@@ -54,7 +59,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
         jcenter()
       }
       dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.4.9'
+        classpath 'edu.sc.seis.gradle:launch4j:2.5.0'
       }
     }
 
@@ -88,7 +93,8 @@ The values configurable within the launch4j extension along with their defaults 
 | String mainClassName | | |
 | boolean dontWrapJar | false | |
 | String headerType | "gui" | |
-| String jar | "lib/"+project.tasks[jar].archiveName or<br> "", if the JavaPlugin is not loaded | |
+| ~~String jar~~ | "lib/"+project.tasks[jar].archiveName or<br> "", if the JavaPlugin is not loaded | deprecated use `jarTask` instead |
+| Task jarTask | tasks[jar], if the JavaPlugin is loaded | Task, producing jar |
 | String outfile | project.name+'.exe' | |
 | String errTitle | "" | |
 | String cmdLine | "" | |
@@ -150,7 +156,7 @@ The following example shows how to use this plugin hand in hand with the shadow 
         outfile = 'TestMain.exe'
         mainClassName = project.mainClassName
         copyConfigurable = []
-        jar = "lib/${project.tasks.shadowJar.archiveName}"
+        jarTask = project.tasks.shadowJar
     }
 
 If you use the outdated fatJar plugin the following configuration correctly wires the execution graph:
@@ -169,7 +175,7 @@ If you use the outdated fatJar plugin the following configuration correctly wire
         outfile = 'TestMain.exe'
         mainClassName = project.mainClassName
         copyConfigurable = []
-        jar = "lib/${project.tasks.fatJar.archiveName}"
+        jarTask = project.tasks.fatJar
     }
 
 # Launch4jLibraryTask

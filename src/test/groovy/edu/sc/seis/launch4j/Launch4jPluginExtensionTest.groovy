@@ -79,7 +79,6 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         def testOutput = new File(projectDir, 'testOutput')
         testOutput.exists()
         new File(projectDir, "testOutput/Test.exe").exists()
-        new File(projectDir, "testOutput/lib/testProject.jar").exists()
 
         testOutput.traverse {
             switch (it.absolutePath){
@@ -122,7 +121,6 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         new File(projectDir, 'build/launch4j/Test.exe').exists()
-        new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
 
         when:
         def resultTwo = build('cleanCreateExe')
@@ -131,7 +129,6 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         resultTwo.task(':cleanCreateExe').outcome == SUCCESS
 
         !new File(projectDir, 'build/launch4j/Test.exe').exists()
-        !new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
         !new File(projectDir, 'build/launch4j').exists()
     }
 
@@ -164,7 +161,6 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         new File(projectDir, 'build/launch4j/Test.exe').exists()
-        new File(projectDir, 'build/launch4j/lib/testProject.jar').exists()
 
         when:
         def resultTwo = build('createExe')
@@ -667,7 +663,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             launch4j {
                 outfile = 'test.exe'
                 copyConfigurable = project.tasks.shadowJar.outputs.files
-                jar = "lib/" + project.tasks.shadowJar.archiveName
+                jarTask = project.tasks.shadowJar
             }
         """
 
@@ -734,7 +730,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             launch4j {
                 outfile = 'test.exe'
                 copyConfigurable = project.tasks.shadowJar.outputs.files
-                jar = "lib/" + project.tasks.shadowJar.archiveName
+                jarTask = project.tasks.shadowJar
             }
         """
 
@@ -776,6 +772,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             launch4j {
+                dontWrapJar = true
                 mainClassName = 'com.test.app.Main'
                 outfile = 'Test.exe'
             }

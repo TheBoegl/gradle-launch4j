@@ -18,6 +18,8 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Task
+import org.gradle.api.model.ReplacedBy
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 
@@ -40,7 +42,11 @@ interface Launch4jConfiguration {
 
     String getMainClassName()
 
+    @Deprecated
+    @ReplacedBy("getJarTask")
     String getJar()
+
+    Task getJarTask()
 
     Boolean getDontWrapJar()
 

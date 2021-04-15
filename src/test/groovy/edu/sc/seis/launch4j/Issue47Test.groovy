@@ -25,7 +25,6 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
  */
 class Issue47Test extends FunctionalSpecification {
 
-
     def 'Check that the shadowJar task is not present on a normal build succeeds'() {
         given:
         buildFile << """
@@ -38,7 +37,7 @@ class Issue47Test extends FunctionalSpecification {
         File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             public class Main {
                 public static void main(String[] args) {
                     System.out.println("Hello World!");
@@ -81,7 +80,7 @@ class Issue47Test extends FunctionalSpecification {
             launch4j {
                 outfile = 'test.exe'
                 copyConfigurable = project.tasks.shadowJar.outputs.files
-                jar = "lib/" + project.tasks.shadowJar.archiveName
+                jarTask = project.tasks.shadowJar
             }
         """
 
