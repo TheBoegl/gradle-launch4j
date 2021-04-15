@@ -15,8 +15,11 @@ plugins {
 task createClasspathManifest {
     def outputDir = file("$buildDir/$name")
 
-    inputs.files sourceSets.main.runtimeClasspath
-    outputs.dir outputDir
+    inputs.files(sourceSets.main.runtimeClasspath)
+        .withPropertyName("runtimeClasspath")
+        .withNormalizer(ClasspathNormalizer)
+    outputs.dir(outputDir)
+        .withPropertyName("outputDir")
 
     doLast {
         outputDir.mkdirs()
@@ -30,9 +33,8 @@ repositories {
 
 ext {
     ARTIFACT_VERSION = '3.14'
-    spock_version = '1.2-groovy-2.5'
+    spock_version = '1.3-groovy-2.5'
 }
-
 
 testSets {
     backwardsCompatibiltyTest
@@ -50,8 +52,7 @@ dependencies {
 
     testImplementation gradleTestKit()
     testImplementation ("org.spockframework:spock-core:${spock_version}") {
-        exclude module: 'junit-dep'
-        exclude module: 'groovy-all'
+        exclude group: 'org.codehaus.groovy'
     }
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 
