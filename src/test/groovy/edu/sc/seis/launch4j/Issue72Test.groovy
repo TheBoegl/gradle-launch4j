@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2021 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import spock.lang.Ignore
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 /**
@@ -33,7 +32,7 @@ class Issue72Test extends FunctionalSpecification {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'test.exe'
                 jreMinVersion = "1.8.0"
-                jreMaxVersion = '1.10.999'
+                jreMaxVersion = '10.999'
             }
         """
 
