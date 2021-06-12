@@ -26,6 +26,7 @@ import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.bundling.Jar
+import java.nio.file.Path
 
 @CompileStatic
 @AutoClone
@@ -152,22 +153,23 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         project.file("${getOutputDirectory()}/${xmlFileName}")
     }
 
-    @Deprecated
-    String internalJar() {
-        if (!jar) {
-            if (project.plugins.hasPlugin('java')) {
-                def jarTask = project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
-                jar = "${libraryDir}/${jarTask.archiveName}"
-            } else {
-                jar = ""
-            }
+    @Override
+    Path getJarTaskOutputPath() {
+        return jarTask?.outputs?.files?.singleFile?.toPath()
+    }
+
+    @Override
+    Path getJarTaskDefaultOutputPath() {
+        if (project.plugins.hasPlugin('java')) {
+            def task = project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
+            return task?.outputs?.files?.singleFile?.toPath()
         }
-        jar
+        return null
     }
 
     Task internalJarTask() {
         if (!jarTask && project.plugins.hasPlugin('java')) {
-            jarTask = project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
+            return project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
         }
         jarTask
     }
