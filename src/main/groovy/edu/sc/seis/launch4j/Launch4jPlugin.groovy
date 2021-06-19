@@ -117,7 +117,7 @@ class Launch4jPlugin implements Plugin<Project> {
     static boolean isBelowMacOsX108() {
         def version = System.getProperty("os.version").split('\\.')
         def major = version[0] as int
-        def minor = version[0] as int
+        def minor = version[1] as int
         return major < 10 || (major == 10 && minor < 8)
     }
 }
