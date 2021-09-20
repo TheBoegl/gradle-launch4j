@@ -42,7 +42,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     plugins {
       id 'java'
-      id 'edu.sc.seis.launch4j' version '2.5.0'
+      id 'edu.sc.seis.launch4j' version '2.5.1'
     }
 
     launch4j {
@@ -57,7 +57,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
         jcenter()
       }
       dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.5.0'
+        classpath 'edu.sc.seis.gradle:launch4j:2.5.1'
       }
     }
 

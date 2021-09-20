@@ -1,3 +1,6 @@
+## Version [2.5.1](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.1)
+- **FIX** [#109](https://github.com/TheBoegl/gradle-launch4j/issues/109): Version 2.5.0 introduced a backwards incompatible change as the jar property was ignored. Fixed in PR [#111](https://github.com/TheBoegl/gradle-launch4j/pull/111) ([naftalmm](https://github.com/naftalmm))
+
 ## Version [2.5.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.0)
 - **UPDATE** [#103](https://github.com/TheBoegl/gradle-launch4j/issues/103): Update launch4j to version _3.14_. ([Ronaldo Spido](https://github.com/rspido))
 
