@@ -1,5 +1,3 @@
-[ ![Get automatic notifications about new "gradle-launch4j" versions](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j?source=watch)
-[ ![Download](https://api.bintray.com/packages/theboegl/gradle-plugins/gradle-launch4j/images/download.svg) ](https://bintray.com/theboegl/gradle-plugins/gradle-launch4j/_latestVersion)
 [ ![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?colorB=007ec6&label=gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fedu%2Fsc%2Fseis%2Flaunch4j%2Fedu.sc.seis.launch4j.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/edu.sc.seis.launch4j)
 
 **Build status**:
@@ -44,7 +42,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     plugins {
       id 'java'
-      id 'edu.sc.seis.launch4j' version '2.5.0'
+      id 'edu.sc.seis.launch4j' version '2.5.1'
     }
 
     launch4j {
@@ -59,7 +57,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
         jcenter()
       }
       dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.5.0'
+        classpath 'edu.sc.seis.gradle:launch4j:2.5.1'
       }
     }
 

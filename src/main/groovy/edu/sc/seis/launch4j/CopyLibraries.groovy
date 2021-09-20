@@ -19,11 +19,11 @@ package edu.sc.seis.launch4j
 
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.internal.file.FileOperations
+import java.nio.file.Path
 
 class CopyLibraries {
     Project project
@@ -38,7 +38,7 @@ class CopyLibraries {
      * Copies the project dependency jars to the configured library directory
      * @param libraryDir
      */
-    FileCollection execute(File libraryDir, Object copyConfigurable, File jarPath) {
+    FileCollection execute(File libraryDir, Object copyConfigurable, Path jarPath) {
         def files = []
         def distSpec = {
             if (copyConfigurable != null) {

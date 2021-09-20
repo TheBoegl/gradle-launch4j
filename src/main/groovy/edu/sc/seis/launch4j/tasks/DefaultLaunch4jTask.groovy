@@ -24,8 +24,9 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
-import org.gradle.api.model.ReplacedBy
 import org.gradle.api.tasks.*
+
+import java.nio.file.Path
 
 //@CompileStatic // bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
@@ -59,7 +60,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     @OutputDirectory
     File getOutputDirectory() {
-        project.file("${project.buildDir}/${outputDir ?: config.outputDir}")
+        project.file("${project.buildDir}/${getOutputDir()}")
     }
 
     /**
@@ -142,7 +143,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     FileCollection copyLibraries() {
-        def jarPath = getDontWrapJar() ? getJarTask()?.outputs?.files?.singleFile : null
+        def jarPath = getDontWrapJar() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
         new CopyLibraries(project, config.fileOperations).execute(getLibraryDirectory(), getCopyConfigurable(), jarPath)
     }
 
@@ -166,20 +167,35 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Deprecated
     String jar
 
+    /**
+     * Use libraryDir and jarTask instead
+     */
     @Override
     @Deprecated
-    @ReplacedBy("getJarTask")
+    @Input
+    @Optional
     String getJar() {
-        jar ?: config.internalJar()
+        jar ?: config.jar
     }
 
-    @Nested
-    @Optional
+    @Internal
     Task jarTask
 
     @Override
     Task getJarTask() {
         jarTask ?: config.internalJarTask()
+    }
+
+    @Internal
+    @Override
+    Path getJarTaskOutputPath() {
+        (jarTask ?: config.jarTask)?.outputs?.files?.singleFile?.toPath()
+    }
+
+    @Internal
+    @Override
+    Path getJarTaskDefaultOutputPath() {
+        config.getJarTaskDefaultOutputPath()
     }
 
     /**

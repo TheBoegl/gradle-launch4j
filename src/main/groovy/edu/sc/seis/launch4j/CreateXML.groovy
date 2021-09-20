@@ -56,13 +56,37 @@ class CreateXML {
                 // relativize paths relative to outfile
             }
         }
-        def jarTaskOutput = config.jarTask?.outputs?.files?.singleFile
+        def jarTaskOutputPath = config.getJarTaskOutputPath()
         def jar
         if (config.dontWrapJar) {
-            def jarPath = jarTaskOutput ? Paths.get(config.libraryDir, jarTaskOutput.name) : Paths.get(config.jar)
-            jar = outFilePath.relativize(outputDir.toPath().resolve(jarPath))
+            /**
+             * Priority of sources for path to jar:
+             * 1. `jarTask` (output file resolved against libraryDirectory), if not set then:
+             * 2. `jar` (resolved against outputDirectory), if not set then:
+             * 3. `jarTask` default fallback if Java plugin was applied (tasks[jar]) (output file resolved against libraryDirectory)
+             * 4. null
+             */
+            def jarPath
+            if (jarTaskOutputPath) {
+                jarPath = config.getLibraryDirectory().toPath().resolve(jarTaskOutputPath.fileName)
+            } else if (config.getJar()) {
+                jarPath = outputDir.toPath().resolve(config.getJar())
+            } else if (config.getJarTaskDefaultOutputPath()) {
+                jarPath = config.getLibraryDirectory().toPath().resolve(config.getJarTaskDefaultOutputPath().fileName)
+            } else {
+                jarPath = null
+            }
+
+            jar = jarPath ? outFilePath.relativize(jarPath) : ""
         } else {
-            jar = jarTaskOutput?.path ?: config.jar
+            /**
+             * Priority of sources for path to jar:
+             * 1. `jarTask`, if not set then:
+             * 2. `jar`, if not set then:
+             * 3. `jarTask` default fallback if Java plugin was applied (tasks[jar])
+             * 4. null
+             */
+            jar = jarTaskOutputPath ?: (config.getJar() ? outputDir.toPath().resolve(config.getJar()) : config.getJarTaskDefaultOutputPath()) ?: ""
         }
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
         def xml = new MarkupBuilder(writer)
