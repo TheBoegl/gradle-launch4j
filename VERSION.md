@@ -29,7 +29,7 @@
 - **FIX** [#69](https://github.com/TheBoegl/gradle-launch4j/issues/69), [#68](https://github.com/TheBoegl/gradle-launch4j/issues/68) and, [#51](https://github.com/TheBoegl/gradle-launch4j/issues/51): Improve documentation.
 
 ## Version [2.4.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.2)
-- **FIX** [#62](https://github.com/TheBoegl/gradle-launch4j/issues/62): Correctly read `restartOnCrash` from the configuration. ([Jacob Ilsø Christensen](//github.com/jacobilsoe))
+- **FIX** [#62](https://github.com/TheBoegl/gradle-launch4j/issues/62): Correctly read `restartOnCrash` from the configuration. ([Jacob Ilsø Christensen](https://github.com/jacobilsoe))
 - *INTERNAL* [#61](https://github.com/TheBoegl/gradle-launch4j/issues/61): Ignore gradle task name cache. ([Oliver](https://github.com/obearn))
 
 ## Version [2.4.1](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.1)
@@ -87,4 +87,4 @@ Add these properties:
 
 ## Version [1.6](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v1.6)
 - **NEW**: Add property `libraryDir` to change the classpath folder for the dependencies 
-([FFourtyTwo](//github.com/FFourtyTwo))
+([FFourtyTwo](https://github.com/FFourtyTwo))
