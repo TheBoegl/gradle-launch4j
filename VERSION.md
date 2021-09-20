@@ -1,3 +1,6 @@
+## Version [2.5.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.0)
+- **UPDATE** [#103](https://github.com/TheBoegl/gradle-launch4j/issues/103): Update launch4j to version _3.14_. ([Ronaldo Spido](https://github.com/rspido))
+
 ## Version [2.4.9](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.4.9)
 - **ISSUE** [#100](https://github.com/TheBoegl/gradle-launch4j/issues/100): Improve logging while creating debug config.xml 
 
