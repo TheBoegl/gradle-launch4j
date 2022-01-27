@@ -28,7 +28,7 @@ task createClasspathManifest {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 ext {
