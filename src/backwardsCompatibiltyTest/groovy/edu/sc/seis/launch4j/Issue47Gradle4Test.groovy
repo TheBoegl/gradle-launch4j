@@ -34,7 +34,7 @@ class Issue47Gradle4Test extends FunctionalSpecification {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             ext {

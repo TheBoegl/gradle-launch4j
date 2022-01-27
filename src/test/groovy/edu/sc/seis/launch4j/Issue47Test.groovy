@@ -63,7 +63,7 @@ class Issue47Test extends FunctionalSpecification {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             ext {
