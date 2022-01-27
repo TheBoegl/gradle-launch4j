@@ -48,12 +48,16 @@ dependencies {
         exclude(group: 'net.java.abeille', module: '*')
         exclude(group: 'com.jgoodies', module: '*')
         exclude(group: 'foxtrot', module: '*')
+        exclude(group: 'com.thoughtworks.xstream')
     }
+    implementation 'com.thoughtworks.xstream:xstream:1.4.18'
 
     testImplementation gradleTestKit()
     testImplementation ("org.spockframework:spock-core:${spock_version}") {
         exclude group: 'org.codehaus.groovy'
+        exclude group: 'junit'
     }
+    testImplementation 'junit:junit:4.13.2'
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 
     // Add the classpath file to the test runtime classpath.
