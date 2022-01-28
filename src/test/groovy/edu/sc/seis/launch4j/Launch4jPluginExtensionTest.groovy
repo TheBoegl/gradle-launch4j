@@ -52,6 +52,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
 
             task copyLaunch4j(type: Copy) {
                 from createExe.outputs
+                duplicatesStrategy 'exclude'
                 into 'testOutput'
             }
         """
@@ -321,8 +322,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             launch4j {
@@ -368,8 +369,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             launch4j {
@@ -416,8 +417,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             launch4j {
@@ -464,8 +465,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             launch4j {
@@ -517,8 +518,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
 
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             ext {
@@ -579,8 +580,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
 
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             ext {
@@ -590,7 +591,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             jar {
                 manifest {
                     attributes 'Main-Class': mainTestClassName
-                    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+                    attributes 'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
                 }
             }
 
@@ -645,8 +646,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
 
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             ext {
@@ -656,7 +657,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             jar {
                 manifest {
                     attributes 'Main-Class': mainTestClassName
-                    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+                    attributes 'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
                 }
             }
 
@@ -712,8 +713,8 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
 
             dependencies {
-                compile 'org.slf4j:slf4j-api:1.7.12'
-                runtime 'org.slf4j:slf4j-simple:1.7.12'
+                implementation 'org.slf4j:slf4j-api:1.7.12'
+                runtimeOnly 'org.slf4j:slf4j-simple:1.7.12'
             }
 
             ext {
@@ -723,7 +724,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             jar {
                 manifest {
                     attributes 'Main-Class': mainTestClassName
-                    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+                    attributes 'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
                 }
             }
 
