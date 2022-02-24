@@ -6,7 +6,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.artifactory" version "4.26.3"
+    id "com.jfrog.artifactory" version "4.27.0"
     id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
@@ -95,21 +95,19 @@ pluginBundle {
 
 publishPlugins.dependsOn build
 
-if (!project.hasProperty("artifactory_ojo_user")) {
-    ext.artifactory_ojo_user = "user"
-    ext.artifactory_ojo_password = "password"
+if (!project.hasProperty("artifactory_platform_user")) {
+    ext.artifactory_platform_user = "user"
+    ext.artifactory_platform_password = "password"
 }
 
 artifactory {
-    contextUrl = "https://oss.jfrog.org/artifactory"
+    contextUrl = "https://boegl.jfrog.io/artifactory"
     publish {
         repository {
-            repoKey = 'oss-snapshot-local'
-            username = "${artifactory_ojo_user}"
-            password = "${artifactory_ojo_password}"
-        }
-        defaults {
-            publications 'plugin'
+            repoKey = 'snapshots-gradle-dev-local'
+            username = "${artifactory_platform_user}"
+            password = "${artifactory_platform_password}"
+            maven = true
         }
     }
 }
