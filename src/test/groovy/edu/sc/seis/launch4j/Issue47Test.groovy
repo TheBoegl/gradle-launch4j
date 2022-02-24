@@ -63,7 +63,7 @@ class Issue47Test extends FunctionalSpecification {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             ext {
@@ -73,7 +73,7 @@ class Issue47Test extends FunctionalSpecification {
             jar {
                 manifest {
                     attributes 'Main-Class': mainTestClassName
-                    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+                    attributes 'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
                 }
             }
 

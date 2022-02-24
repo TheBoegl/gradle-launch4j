@@ -40,15 +40,15 @@ project(':test3') {
     apply plugin: 'java'
     apply plugin: 'application'
     mainClassName = 'com.test.app.Main'
-    
-    dependencies { 
-        compile project(':test2')
+
+    dependencies {
+        implementation project(':test2')
     }
 }
 
 dependencies {
-    compile project(':test1')
-    compile project(':test3')
+    implementation project(':test1')
+    implementation project(':test3')
 }
             launch4j {
                 mainClassName = 'com.test.app.Main'

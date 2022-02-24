@@ -57,7 +57,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
         jcenter()
       }
       dependencies {
-        classpath 'edu.sc.seis.gradle:launch4j:2.5.1'
+        classpath 'edu.sc.seis.launch4j:launch4j:2.5.1'
       }
     }
 

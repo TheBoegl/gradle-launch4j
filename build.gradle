@@ -1,14 +1,13 @@
 plugins {
-    id "com.gradle.plugin-publish" version "0.14.0"
+    id "com.gradle.plugin-publish" version "0.20.0"
     id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.8.5"
-    id "com.jfrog.artifactory" version "4.21.0"
-    id 'org.unbroken-dome.test-sets' version '3.0.1'
+    id "com.jfrog.artifactory" version "4.27.1"
+    id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
 // Write the plugin's classpath to a file to share with the tests.
@@ -28,12 +27,11 @@ task createClasspathManifest {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 ext {
     ARTIFACT_VERSION = '3.14'
-    spock_version = '1.3-groovy-2.5'
 }
 
 testSets {
@@ -48,12 +46,16 @@ dependencies {
         exclude(group: 'net.java.abeille', module: '*')
         exclude(group: 'com.jgoodies', module: '*')
         exclude(group: 'foxtrot', module: '*')
+        exclude(group: 'com.thoughtworks.xstream')
     }
+    implementation 'com.thoughtworks.xstream:xstream:1.4.19'
 
     testImplementation gradleTestKit()
-    testImplementation ("org.spockframework:spock-core:${spock_version}") {
+    testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0") {
         exclude group: 'org.codehaus.groovy'
     }
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-junit4'
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 
     // Add the classpath file to the test runtime classpath.
@@ -62,7 +64,7 @@ dependencies {
 
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
-version "2.5.1"
+version "2.5.2"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -91,52 +93,44 @@ pluginBundle {
     }
 }
 
-bintray {
-    pkg {
-        repo = 'gradle-plugins'
-        version {
-            vcsTag = "v${project.version}"
-        }
-    }
-}
-
 publishPlugins.dependsOn build
 
-if (!project.hasProperty("artifactory_ojo_user")) {
-    ext.artifactory_ojo_user = "user"
-    ext.artifactory_ojo_password = "password"
+if (!project.hasProperty("artifactory_platform_user")) {
+    ext.artifactory_platform_user = "user"
+    ext.artifactory_platform_password = "password"
 }
 
 artifactory {
-    contextUrl = "https://oss.jfrog.org/artifactory"
+    contextUrl = "https://boegl.jfrog.io/artifactory"
     publish {
         repository {
-            repoKey = 'oss-snapshot-local'
-            username = "${artifactory_ojo_user}"
-            password = "${artifactory_ojo_password}"
-        }
-        defaults {
-            publications 'plugin'
+            repoKey = 'snapshots-gradle-dev-local'
+            username = "${artifactory_platform_user}"
+            password = "${artifactory_platform_password}"
+            maven = true
         }
     }
 }
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '6.8.3'
+    gradleVersion = '7.3.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 tasks.withType(Test) {
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
-
-jacocoTestReport {
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
-    }
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
-check.dependsOn jacocoTestReport
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
