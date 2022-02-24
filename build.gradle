@@ -64,7 +64,7 @@ dependencies {
 
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
-version "2.5.1"
+version "2.5.2"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
