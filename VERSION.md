@@ -1,3 +1,12 @@
+## Version [2.5.3](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.3)
+- **FIX** [#118](https://github.com/TheBoegl/gradle-launch4j/issues/118): Version 2.5.2 updated to gradle 7 that ships with groovy 3. The released version was not compatible with gradle 6.
+
+## Version [2.5.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.2)
+- **FIX** [#115](https://github.com/TheBoegl/gradle-launch4j/pull/115): Correct documentation for legacy usage. ([Norbert Wagner](https://github.com/streuspeicher))
+- **FIX**: use MavenCentral as jCenter shut down
+- **UPDATE**: update plugins and libraries and use latest xstream that fixes [CVE-2021-43859](https://www.opencve.io/cve/CVE-2021-43859).
+- **UPDATE**: use latest gradle release (7.3.3)
+
 ## Version [2.5.1](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.1)
 - **FIX** [#109](https://github.com/TheBoegl/gradle-launch4j/issues/109): Version 2.5.0 introduced a backwards incompatible change as the jar property was ignored. Fixed in PR [#111](https://github.com/TheBoegl/gradle-launch4j/pull/111) ([naftalmm](https://github.com/naftalmm))
 

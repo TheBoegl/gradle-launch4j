@@ -1,5 +1,5 @@
 plugins {
-    id "com.gradle.plugin-publish" version "0.20.0"
+    id "com.gradle.plugin-publish" version "0.21.0"
     id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
@@ -32,6 +32,7 @@ repositories {
 
 ext {
     ARTIFACT_VERSION = '3.14'
+    spock_version = '1.3-groovy-2.5'
 }
 
 testSets {
@@ -51,11 +52,11 @@ dependencies {
     implementation 'com.thoughtworks.xstream:xstream:1.4.19'
 
     testImplementation gradleTestKit()
-    testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0") {
+    testImplementation ("org.spockframework:spock-core:${spock_version}") {
         exclude group: 'org.codehaus.groovy'
+        exclude group: 'junit'
     }
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-junit4'
+    testImplementation 'junit:junit:4.13.2'
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 
     // Add the classpath file to the test runtime classpath.
@@ -64,7 +65,7 @@ dependencies {
 
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
-version "2.5.2"
+version "2.5.3"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -85,12 +86,6 @@ pluginBundle {
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
     description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
     tags = ['launch4j', 'executable', 'wrapper']
-
-    plugins {
-        launch4j {
-            displayName = 'launch4j gradle plugin'
-        }
-    }
 }
 
 publishPlugins.dependsOn build
@@ -109,28 +104,31 @@ artifactory {
             password = "${artifactory_platform_password}"
             maven = true
         }
+
+        defaults {
+            publications("pluginMaven")
+            publishArtifacts = true
+            publishPom = true
+        }
     }
 }
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '7.3.3'
+    gradleVersion = '6.9.2'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 tasks.withType(Test) {
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
-tasks.withType(Test).configureEach {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
-}
 
 jacocoTestReport {
-    dependsOn test
     reports {
-        xml.required = false
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
     }
 }
+
+check.dependsOn jacocoTestReport
