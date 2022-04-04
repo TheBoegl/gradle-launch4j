@@ -104,6 +104,12 @@ artifactory {
             password = "${artifactory_platform_password}"
             maven = true
         }
+
+        defaults {
+            publications("pluginMaven")
+            publishArtifacts = true
+            publishPom = true
+        }
     }
 }
 //createReleaseTag.dependsOn publish
