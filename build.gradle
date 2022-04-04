@@ -1,5 +1,5 @@
 plugins {
-    id "com.gradle.plugin-publish" version "0.20.0"
+    id "com.gradle.plugin-publish" version "0.21.0"
     id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
@@ -86,12 +86,6 @@ pluginBundle {
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
     description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
     tags = ['launch4j', 'executable', 'wrapper']
-
-    plugins {
-        launch4j {
-            displayName = 'launch4j gradle plugin'
-        }
-    }
 }
 
 publishPlugins.dependsOn build
