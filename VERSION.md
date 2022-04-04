@@ -1,3 +1,6 @@
+## Version [2.5.3](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.3)
+- **FIX** [#118](https://github.com/TheBoegl/gradle-launch4j/issues/118): Version 2.5.2 updated to gradle 7 that ships with groovy 3. The released version was not compatible with gradle 6.
+
 ## Version [2.5.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.2)
 - **FIX** [#115](https://github.com/TheBoegl/gradle-launch4j/pull/115): Correct documentation for legacy usage. ([Norbert Wagner](https://github.com/streuspeicher))
 - **FIX**: use MavenCentral as jCenter shut down
