@@ -32,6 +32,7 @@ repositories {
 
 ext {
     ARTIFACT_VERSION = '3.14'
+    spock_version = '1.3-groovy-2.5'
 }
 
 testSets {
@@ -51,11 +52,11 @@ dependencies {
     implementation 'com.thoughtworks.xstream:xstream:1.4.19'
 
     testImplementation gradleTestKit()
-    testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0") {
+    testImplementation ("org.spockframework:spock-core:${spock_version}") {
         exclude group: 'org.codehaus.groovy'
+        exclude group: 'junit'
     }
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-junit4'
+    testImplementation 'junit:junit:4.13.2'
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 
     // Add the classpath file to the test runtime classpath.
@@ -93,6 +94,15 @@ pluginBundle {
     }
 }
 
+bintray {
+    pkg {
+        repo = 'gradle-plugins'
+        version {
+            vcsTag = "v${project.version}"
+        }
+    }
+}
+
 publishPlugins.dependsOn build
 
 if (!project.hasProperty("artifactory_platform_user")) {
@@ -114,23 +124,20 @@ artifactory {
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '7.3.3'
+    gradleVersion = '6.8.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 tasks.withType(Test) {
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
-tasks.withType(Test).configureEach {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
-}
 
 jacocoTestReport {
-    dependsOn test
     reports {
-        xml.required = false
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
     }
 }
+
+check.dependsOn jacocoTestReport
