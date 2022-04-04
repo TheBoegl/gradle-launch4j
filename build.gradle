@@ -94,15 +94,6 @@ pluginBundle {
     }
 }
 
-bintray {
-    pkg {
-        repo = 'gradle-plugins'
-        version {
-            vcsTag = "v${project.version}"
-        }
-    }
-}
-
 publishPlugins.dependsOn build
 
 if (!project.hasProperty("artifactory_platform_user")) {
