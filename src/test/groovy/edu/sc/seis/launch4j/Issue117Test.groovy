@@ -18,7 +18,7 @@ class Issue117Test extends FunctionalSpecification {
         """
 
         when:
-        def result = createAndConfigureGradleRunner('createExe').withGradleVersion(gradleVersion).build()
+        def result = createAndConfigureGradleRunner('createExe').withGradleVersion('7.5.1').build()
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -33,9 +33,5 @@ class Issue117Test extends FunctionalSpecification {
         def process = outfile.path.execute()
         then:
         process.waitFor() == 0
-
-        where:
-        // versions prior 2.8 will not allow the classpath injection
-        gradleVersion << ['7.5.1']
     }
 }
