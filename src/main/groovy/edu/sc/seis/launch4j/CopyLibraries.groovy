@@ -29,10 +29,12 @@ import java.nio.file.Path
 class CopyLibraries {
     Project project
     FileOperations fileOperations
+    DuplicatesStrategy duplicatesStrategy
 
-    CopyLibraries(Project project, FileOperations fileOperations) {
+    CopyLibraries(Project project, FileOperations fileOperations, DuplicatesStrategy duplicatesStrategy) {
         this.project = project
         this.fileOperations = fileOperations
+        this.duplicatesStrategy = duplicatesStrategy
     }
 
     /**
@@ -71,7 +73,7 @@ class CopyLibraries {
 
         fileOperations.sync(new Action<CopySpec>() {
             void execute(CopySpec t) {
-                t.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                t.duplicatesStrategy = duplicatesStrategy
                 project.configure(t, distSpec)
             }
         })

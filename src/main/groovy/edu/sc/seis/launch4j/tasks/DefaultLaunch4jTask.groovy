@@ -21,6 +21,7 @@ import edu.sc.seis.launch4j.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Task
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
@@ -144,7 +145,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     FileCollection copyLibraries() {
         def jarPath = getDontWrapJar() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
-        new CopyLibraries(project, config.fileOperations).execute(getLibraryDirectory(), getCopyConfigurable(), jarPath)
+        new CopyLibraries(project, config.fileOperations, duplicatesStrategy).execute(getLibraryDirectory(), getCopyConfigurable(), jarPath)
     }
 
     /**
@@ -317,6 +318,21 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             return config.stayAlive
         }
         return stayAlive
+    }
+
+    /**
+     * The main class to start if {@link #jar} is not set.
+     */
+    @Input
+    @Optional
+    DuplicatesStrategy duplicatesStrategy
+
+    @Override
+    DuplicatesStrategy getDuplicatesStrategy(){
+        if (duplicatesStrategy == null){
+            return config.duplicatesStrategy
+        }
+        return duplicatesStrategy
     }
 
     /**

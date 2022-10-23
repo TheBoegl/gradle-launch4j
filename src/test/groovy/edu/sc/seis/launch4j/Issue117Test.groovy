@@ -14,6 +14,7 @@ class Issue117Test extends FunctionalSpecification {
             }
             launch4j {
                 outfile = 'test.exe'
+                duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             }
         """
 

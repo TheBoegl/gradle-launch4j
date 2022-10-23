@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Input
@@ -70,6 +71,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String supportUrl = ''
     Boolean stayAlive = false
     Boolean restartOnCrash = false
+    DuplicatesStrategy duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     String manifest = ''
     String icon = ''
     String version = "${project.version}"
