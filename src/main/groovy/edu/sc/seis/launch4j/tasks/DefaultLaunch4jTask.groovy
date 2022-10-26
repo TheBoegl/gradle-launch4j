@@ -321,7 +321,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     /**
-     * The main class to start if {@link #jar} is not set.
+     * The duplication Strategy to use if duplicates are found.
+     *
+     * Defaults to DuplicatesStrategy.EXCLUDE
      */
     @Input
     @Optional

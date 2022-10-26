@@ -139,6 +139,7 @@ The values configurable within the launch4j extension along with their defaults 
 | boolean splashWaitForWindows | true | |
 | Integer splashTimeout | 60 | |
 | boolean splashTimeoutError | true | |
+| DuplicatesStrategy duplicatesStrategy | DuplicatesStrategy.EXCLUDE | The duplication Strategy to use if duplicates are found. See also [here](https://docs.gradle.org/current/javadoc/org/gradle/api/file/DuplicatesStrategy.html). <br> Defaults to DuplicatesStrategy.EXCLUDE |
 
 | Removed properties | Default Value|Description |
 |---|---|---|
