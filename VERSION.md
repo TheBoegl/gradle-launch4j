@@ -1,3 +1,6 @@
+## Version [2.5.4](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.4)
+- **FIX** [#117](https://github.com/TheBoegl/gradle-launch4j/issues/117): Set default duplicate handling strategy and make property configurable. ([Felix Schnabel](https://github.com/Shadow-Devil))
+
 ## Version [2.5.3](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.3)
 - **FIX** [#118](https://github.com/TheBoegl/gradle-launch4j/issues/118): Version 2.5.2 updated to gradle 7 that ships with groovy 3. The released version was not compatible with gradle 6.
 
