@@ -20,6 +20,7 @@ package edu.sc.seis.launch4j
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.internal.file.FileOperations
@@ -28,10 +29,12 @@ import java.nio.file.Path
 class CopyLibraries {
     Project project
     FileOperations fileOperations
+    DuplicatesStrategy duplicatesStrategy
 
-    CopyLibraries(Project project, FileOperations fileOperations) {
+    CopyLibraries(Project project, FileOperations fileOperations, DuplicatesStrategy duplicatesStrategy) {
         this.project = project
         this.fileOperations = fileOperations
+        this.duplicatesStrategy = duplicatesStrategy
     }
 
     /**
@@ -70,6 +73,7 @@ class CopyLibraries {
 
         fileOperations.sync(new Action<CopySpec>() {
             void execute(CopySpec t) {
+                t.duplicatesStrategy = duplicatesStrategy
                 project.configure(t, distSpec)
             }
         })

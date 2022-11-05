@@ -1,12 +1,12 @@
 plugins {
-    id "com.gradle.plugin-publish" version "0.21.0"
+    id "com.gradle.plugin-publish" version "1.0.0"
     id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.artifactory" version "4.27.1"
+    id "com.jfrog.artifactory" version "4.29.2"
     id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
@@ -65,7 +65,7 @@ dependencies {
 
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
-version "2.5.3"
+version "2.5.4"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -115,7 +115,7 @@ artifactory {
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '6.9.2'
+    gradleVersion = '6.9.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 
