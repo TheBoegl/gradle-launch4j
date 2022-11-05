@@ -26,11 +26,6 @@ jobs:
           distribution: 'temurin'
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
-
       - name: Publish to Artifactory
         uses: gradle/gradle-build-action@v2
         with:
