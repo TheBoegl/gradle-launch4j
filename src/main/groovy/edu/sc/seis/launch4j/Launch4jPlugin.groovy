@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2022 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ class Launch4jPlugin implements Plugin<Project> {
 //    static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
-    static final String TASK_LAUNCH4J_NAME = 'launch4j'
     static final String ARTIFACT_VERSION = '3.14'
     static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/bin-launch4j-${ARTIFACT_VERSION}"
 
@@ -65,12 +64,6 @@ class Launch4jPlugin implements Plugin<Project> {
         def runLibTask = project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
         def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')
         createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
-
-        def l4jPlaceholderTask = project.task(TASK_LAUNCH4J_NAME, group: LAUNCH4J_GROUP, description: 'Deprecated placeholder task to run launch4j to generate an .exe file')
-        l4jPlaceholderTask.dependsOn runLibTask
-        l4jPlaceholderTask.doFirst {
-            project.logger.warn("The `${TASK_LAUNCH4J_NAME}` task is deprecated. Use the `${TASK_RUN_NAME}` task instead")
-        }
     }
 
     private ModuleDependency addDependency(Configuration configuration, String notation) {
