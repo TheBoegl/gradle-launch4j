@@ -6,7 +6,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.artifactory" version "4.29.4"
+    id "com.jfrog.artifactory" version "4.30.1"
     id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
