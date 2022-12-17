@@ -44,12 +44,6 @@ class Launch4jExternalTask extends DefaultLaunch4jTask {
         if (execResult.exitValue != 0) {
             throw new GradleException("Launch4J finished with non-zero exit value ${execResult.exitValue}\n${stdOut.toString()}")
         }
-//        else {
-//            //return value not set in launch4j 3.8.0, so test the outcome by iterating over the expected output files
-//            if (!getDest().exists()) {
-//                throw new GradleException("${outfile.name} not created:\n\t${stdOut.toString()}")
-//            }
-//        }
     }
 
 }

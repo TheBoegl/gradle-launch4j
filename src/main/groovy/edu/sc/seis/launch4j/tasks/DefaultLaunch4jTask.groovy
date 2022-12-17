@@ -29,7 +29,7 @@ import org.gradle.api.tasks.*
 
 import java.nio.file.Path
 
-//@CompileStatic // bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
+// bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
     private Launch4jPluginExtension config

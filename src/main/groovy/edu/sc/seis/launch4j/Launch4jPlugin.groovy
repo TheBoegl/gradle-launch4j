@@ -37,7 +37,6 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String LAUNCH4J_GROUP = LAUNCH4J_PLUGIN_NAME
 
     static final String LAUNCH4J_EXTENSION_NAME = LAUNCH4J_PLUGIN_NAME
-//    static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
     static final String ARTIFACT_VERSION = '3.14'
@@ -47,7 +46,7 @@ class Launch4jPlugin implements Plugin<Project> {
     private FileOperations fileOperations
 
     @Inject
-    public Launch4jPlugin(FileOperations fileOperations) {
+    Launch4jPlugin(FileOperations fileOperations) {
         this.fileOperations = fileOperations
     }
 
@@ -60,8 +59,8 @@ class Launch4jPlugin implements Plugin<Project> {
         applyTasks(project)
     }
 
-    void applyTasks(final Project project) {
-        def runLibTask = project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
+    static void applyTasks(final Project project) {
+        project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
         def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')
         createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
     }
@@ -98,7 +97,7 @@ class Launch4jPlugin implements Plugin<Project> {
             return 'workdir-mac'
         } else if (os.isLinux() || os.isUnix()) { // isUnix will also match MacOs, hence, call it as last resort
             String arch = System.getProperty("os.arch")
-            if ("amd64".equals(arch) || "x86_64".equals(arch)) {
+            if ("amd64" == arch || "x86_64" == arch) {
                 return 'workdir-linux64'
             } else {
                 return 'workdir-linux'
