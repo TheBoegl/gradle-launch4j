@@ -33,6 +33,35 @@ class Issue88Test extends FunctionalSpecification {
         xml.contains('<minVersion>1.7.0</minVersion>')
     }
 
+    def 'verify source compatibility in java plugin is used as minimum version'() {
+        given:
+        buildFile << """
+            java {
+                sourceCompatibility = JavaVersion.VERSION_17
+            }
+            launch4j {
+                outfile = 'test.exe'
+            }
+        """
+
+        when:
+        def result = createAndConfigureGradleRunner('createExe', '-Pl4j-debug').build()
+
+        then:
+        result.task(':jar').outcome == SUCCESS
+        result.task(':createExe').outcome == SUCCESS
+
+        when:
+        def xmlFile = new File(projectDir, 'build/tmp/createExe/createExe.xml')
+        then:
+        xmlFile.exists()
+
+        when:
+        def xml = xmlFile.text
+        then:
+        xml.contains('<minVersion>17.0.0</minVersion>')
+    }
+
     def 'verify minimum version works as expected'() {
         given:
         buildFile << """
