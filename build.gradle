@@ -49,7 +49,7 @@ dependencies {
         exclude(group: 'foxtrot', module: '*')
         exclude(group: 'com.thoughtworks.xstream')
     }
-    implementation 'com.thoughtworks.xstream:xstream:1.4.19'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.20'
 
     testImplementation gradleTestKit()
     testImplementation ("org.spockframework:spock-core:${spock_version}") {
