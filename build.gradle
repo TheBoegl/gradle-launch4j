@@ -23,10 +23,6 @@ testSets {
     backwardsCompatibiltyTest
 }
 
-test {
-    useJUnitPlatform()
-}
-
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
@@ -40,13 +36,9 @@ dependencies {
     implementation 'com.thoughtworks.xstream:xstream:1.4.19'
 
     testImplementation gradleTestKit()
-    testImplementation ("org.spockframework:spock-core:${spock_version}") {
-        exclude group: 'org.codehaus.groovy'
-        exclude group: 'junit'
-    }
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+    testImplementation platform("org.spockframework:spock-bom:${spock_version}")
+    testImplementation 'org.spockframework:spock-core'
+
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 }
 
@@ -102,20 +94,20 @@ artifactory {
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '6.9.3'
+    gradleVersion = '7.6'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 tasks.withType(Test).configureEach {
-    useJUnit()
+    useJUnitPlatform()
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
+        xml.required = false
+        csv.required = false
+        html.required = true
     }
 }
 
