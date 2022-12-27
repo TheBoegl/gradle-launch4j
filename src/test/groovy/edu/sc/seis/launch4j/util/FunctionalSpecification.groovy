@@ -20,16 +20,16 @@ package edu.sc.seis.launch4j.util
 import groovy.transform.CompileStatic
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir;
+import java.nio.file.Path;
 import spock.lang.Specification
 
 @CompileStatic
 class FunctionalSpecification extends Specification {
     private final static boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")
 
-    @Rule
-    final TemporaryFolder testProjectDir = new TemporaryFolder()
+    @TempDir
+    Path testProjectDir;
 
     File projectDir
     File buildFile
@@ -37,8 +37,8 @@ class FunctionalSpecification extends Specification {
     List<File> pluginClasspath
 
     def setup() {
-        projectDir = testProjectDir.root
-        buildFile = testProjectDir.newFile('build.gradle')
+        projectDir = testProjectDir.root.toFile()
+        buildFile = testProjectDir.resolve('build.gradle').toFile()
 
         def pluginClasspathResource = (FunctionalSpecification.class.classLoader).getResourceAsStream('plugin-classpath.txt')
         if (pluginClasspathResource == null) {
