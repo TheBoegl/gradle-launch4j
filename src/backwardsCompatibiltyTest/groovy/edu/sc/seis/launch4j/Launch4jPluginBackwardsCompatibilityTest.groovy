@@ -23,7 +23,6 @@ import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-
 class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
 
     @Unroll
@@ -47,7 +46,7 @@ class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
         """
 
         when:
-        def result = createAndConfigureGradleRunner('createExe').withGradleVersion(gradleVersion).build()
+        def result = createAndConfigureGradleRunner('createExe').withDebug(false).withGradleVersion(gradleVersion).build()
 
         then:
         result.task(':jar').outcome == SUCCESS
