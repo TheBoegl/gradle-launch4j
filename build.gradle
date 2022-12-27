@@ -16,7 +16,7 @@ repositories {
 
 ext {
     ARTIFACT_VERSION = '3.14'
-    spock_version = '2.0-groovy-3.0'
+    spock_version = '2.3-groovy-3.0'
 }
 
 testSets {
