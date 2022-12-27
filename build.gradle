@@ -10,22 +10,6 @@ plugins {
     id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
-// Write the plugin's classpath to a file to share with the tests.
-task createClasspathManifest {
-    def outputDir = file("$buildDir/$name")
-
-    inputs.files(sourceSets.main.runtimeClasspath)
-        .withPropertyName("runtimeClasspath")
-        .withNormalizer(ClasspathNormalizer)
-    outputs.dir(outputDir)
-        .withPropertyName("outputDir")
-
-    doLast {
-        outputDir.mkdirs()
-        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
-    }
-}
-
 repositories {
     mavenCentral()
 }
@@ -58,9 +42,6 @@ dependencies {
     }
     testImplementation 'junit:junit:4.13.2'
     backwardsCompatibiltyTestImplementation sourceSets.test.output
-
-    // Add the classpath file to the test runtime classpath.
-    testRuntimeOnly files(createClasspathManifest)
 }
 
 group "edu.sc.seis.launch4j"

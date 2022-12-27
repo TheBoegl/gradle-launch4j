@@ -34,18 +34,9 @@ class FunctionalSpecification extends Specification {
     File projectDir
     File buildFile
 
-    List<File> pluginClasspath
-
     def setup() {
         projectDir = testProjectDir.root
         buildFile = testProjectDir.newFile('build.gradle')
-
-        def pluginClasspathResource = (FunctionalSpecification.class.classLoader).getResourceAsStream('plugin-classpath.txt')
-        if (pluginClasspathResource == null) {
-            throw new IllegalStateException('Plugin classpath resource file not found. Run the "testClasses" task.')
-        }
-
-        pluginClasspath = pluginClasspathResource.readLines().collect { new File(it) }
 
         buildFile << """
             plugins {
@@ -63,7 +54,7 @@ class FunctionalSpecification extends Specification {
         GradleRunner.create()
             .withProjectDir(projectDir)
             .withDebug(DEBUG)
-            .withPluginClasspath(pluginClasspath)
+            .withPluginClasspath()
             .withArguments(arguments)
     }
 }
