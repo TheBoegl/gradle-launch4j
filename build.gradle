@@ -119,7 +119,8 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
+    useJUnit()
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
 
