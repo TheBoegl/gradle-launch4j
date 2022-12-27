@@ -20,9 +20,12 @@ package edu.sc.seis.launch4j.util
 import groovy.transform.CompileStatic
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.jupiter.api.io.TempDir;
-import java.nio.file.Path;
 import spock.lang.Specification
+import spock.lang.TempDir
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 @CompileStatic
 class FunctionalSpecification extends Specification {
@@ -35,7 +38,7 @@ class FunctionalSpecification extends Specification {
     File buildFile
 
     def setup() {
-        projectDir = testProjectDir.root.toFile()
+        projectDir = testProjectDir.toFile()
         buildFile = testProjectDir.resolve('build.gradle').toFile()
 
         buildFile << """
@@ -56,5 +59,15 @@ class FunctionalSpecification extends Specification {
             .withDebug(DEBUG)
             .withPluginClasspath()
             .withArguments(arguments)
+    }
+
+    protected File newFolder(String first, String... more) {
+        def path = testProjectDir.resolve(Paths.get(first, more))
+        Files.createDirectories(path)
+        return path.toFile()
+    }
+
+    protected File newFile(String fileName) {
+        return testProjectDir.resolve(fileName).toFile()
     }
 }

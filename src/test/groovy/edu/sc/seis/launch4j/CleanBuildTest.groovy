@@ -21,7 +21,7 @@ import edu.sc.seis.launch4j.util.FunctionalSpecification
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 /**
- * Test case to check jar task is not in the task graph if shadowjar is called.
+ * Test case to check jar task is not in the task graph if shadow jar is called.
  */
 class CleanBuildTest extends FunctionalSpecification {
 
@@ -35,10 +35,10 @@ class CleanBuildTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             public class Main {
                 public static void main(String[] args) {
                     System.out.println("Hello World!");

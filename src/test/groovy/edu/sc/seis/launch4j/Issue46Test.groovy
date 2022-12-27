@@ -37,10 +37,10 @@ class Issue46Test extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             import java.util.Locale;
 
             public class Main {
@@ -92,10 +92,10 @@ class Issue46Test extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             import java.util.Locale;
 
             public class Main {
@@ -145,10 +145,10 @@ class Issue46Test extends FunctionalSpecification {
             }
         '''
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             public class Main {
                 public static void main(String[] args) {
                     System.out.println("Hello World!");

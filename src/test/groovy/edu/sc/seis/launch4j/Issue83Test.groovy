@@ -33,7 +33,7 @@ class Issue83Test extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
+        new File(newFolder('src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
 
             public class Main {
@@ -42,7 +42,7 @@ class Issue83Test extends FunctionalSpecification {
                 }
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        newFile('settings.gradle').text = "rootProject.name = 'testProject'"
 
         when:
         def result = build('createExe', '-Pl4j-debug') // use debug flag to export xml

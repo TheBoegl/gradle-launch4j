@@ -29,17 +29,17 @@ class Issue78Test extends FunctionalSpecification {
             dependencies {
                 implementation 'com.squareup.moshi:moshi:1.8.0'
             }
-            
+
             launch4j {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'test.exe'
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             public class Main {
                 public static void main(String[] args) {
                 }

@@ -56,9 +56,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 into 'testOutput'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        newFile('settings.gradle').text = "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -103,9 +103,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        newFile('settings.gradle').text = "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -143,9 +143,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        newFile('settings.gradle').text = "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -185,7 +185,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -225,7 +225,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -263,7 +263,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -294,7 +294,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -334,7 +334,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -382,7 +382,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -430,7 +430,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -479,7 +479,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -541,7 +541,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -603,7 +603,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -670,7 +670,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -737,7 +737,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -780,9 +780,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        newFile('settings.gradle').text = "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 

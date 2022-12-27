@@ -158,7 +158,9 @@ class CreateXML {
                 xml.txtProductVersion(config.textVersion)
                 xml.productName(config.productName)
                 xml.companyName(config.companyName)
-                xml.internalName(config.internalName)
+                def internalName = config.internalName
+                // spock tests fail for more than 50 characters
+                xml.internalName(internalName.substring(0, Math.min(50, internalName.size())))
                 xml.originalFilename(config.outfile)
                 xml.trademarks(config.trademarks)
                 xml.language(config.language)

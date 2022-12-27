@@ -33,7 +33,7 @@ class Issue77Test extends FunctionalSpecification {
                 outfile = 'notWrapped.exe'
                 dontWrapJar = true
             }
-            
+
             task usingOverriddenLaunch4j(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
                 dontWrapJar = false
                 outfile = 'wrapped.exe'
@@ -42,7 +42,7 @@ class Issue77Test extends FunctionalSpecification {
 
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -88,7 +88,7 @@ class Issue77Test extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
