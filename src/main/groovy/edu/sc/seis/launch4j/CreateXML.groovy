@@ -88,7 +88,7 @@ class CreateXML {
              */
             jar = jarTaskOutputPath ?: (config.getJar() ? outputDir.toPath().resolve(config.getJar()) : config.getJarTaskDefaultOutputPath()) ?: ""
         }
-        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
+        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"))
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
         xml.launch4jConfig() {
