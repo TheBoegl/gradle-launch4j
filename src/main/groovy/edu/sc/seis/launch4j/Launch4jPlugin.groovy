@@ -27,6 +27,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.jvm.tasks.Jar
 
 import javax.inject.Inject
 
@@ -60,9 +61,20 @@ class Launch4jPlugin implements Plugin<Project> {
     }
 
     static void applyTasks(final Project project) {
-        project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
-        def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')
-        createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
+        project.tasks.register(TASK_RUN_NAME, Launch4jLibraryTask) {
+            it.group = LAUNCH4J_GROUP
+            it.description = 'Runs the launch4j jar to generate an .exe file'
+            Jar jarTask = project.tasks.named("jar", Jar).getOrNull()
+            if (jarTask != null) {
+                it.dependsOn.add(jarTask)
+                it.inputs.files(jarTask.outputs.files)
+            }
+        }
+        project.tasks.register("createAllExecutables") {
+            it.group = LAUNCH4J_GROUP
+            it.description = 'Runs all tasks that implements DefaultLaunch4jTask'
+            it.dependsOn project.tasks.withType(DefaultLaunch4jTask)
+        }
     }
 
     private ModuleDependency addDependency(Configuration configuration, String notation) {
