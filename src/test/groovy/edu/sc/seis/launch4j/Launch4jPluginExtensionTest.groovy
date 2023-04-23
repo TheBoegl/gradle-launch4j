@@ -29,7 +29,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         buildFile << """
             task printProperties {
                 doLast {
-                    println launch4j.outputDir
+                    println launch4j.outputDir.get()
                 }
             }
         """

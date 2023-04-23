@@ -19,7 +19,7 @@ package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask
 import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
-import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,10 +27,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.util.GradleVersion
 
 import javax.inject.Inject
-
-@CompileStatic
+//@CompileStatic
 class Launch4jPlugin implements Plugin<Project> {
 
     static final String LAUNCH4J_PLUGIN_NAME = "launch4j"
@@ -53,12 +53,25 @@ class Launch4jPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         this.project = project
-        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension, project, fileOperations)
+        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension.class, project, fileOperations)
 
         configureDependencies(project)
-        applyTasks(project)
+        if (GradleVersion.current() >= GradleVersion.version("4.0")) {
+            project.tasks.register(TASK_RUN_NAME, Launch4jLibraryTask.class) { task ->
+                task.group = LAUNCH4J_GROUP
+                task.description = 'Runs the launch4j jar to generate an .exe file'
+            }
+            project.tasks.register("createAllExecutables", DefaultTask.class) { task ->
+                task.group = LAUNCH4J_GROUP
+                task.description = 'Runs all tasks that implement DefaultLaunch4jTask'
+                task.dependsOn = project.tasks.withType(DefaultLaunch4jTask.class)
+            }
+        } else {
+            applyTasks(project)
+        }
     }
 
+    @SuppressWarnings('ConfigurationAvoidance')
     static void applyTasks(final Project project) {
         project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
         def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')

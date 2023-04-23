@@ -25,7 +25,9 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.util.GradleVersion
 
 import java.nio.file.Path
 
@@ -35,33 +37,33 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     private Launch4jPluginExtension config
 
     protected DefaultLaunch4jTask() {
-        config = project.getConvention().getByType(Launch4jPluginExtension.class)
-        evaluateTaskDependencyIfAvailable()
-    }
-
-    private void evaluateTaskDependencyIfAvailable() {
-        project.afterEvaluate {
-            def jarTask = getJarTask()
-            if (jarTask) {
-                dependsOn.add(jarTask)
-                inputs.files(jarTask.outputs.files)
+        config = project.getExtensions().getByType(Launch4jPluginExtension.class)
+        if (GradleVersion.current() >= GradleVersion.version("4.4")) {
+            jarTask = project.objects.property(Task)
+            outputDir = project.objects.property(String)
+            if (GradleVersion.current() >= GradleVersion.version("5.1")) {
+                jarTask.convention(config.jarTask)
+                outputDir.convention(config.outputDir)
+            } else {
+                // inputs do not set dependsOn
+                dependsOn(config.jarTask)
+                jarTask.set(config.jarTask)
+                outputDir.set(config.outputDir)
             }
+            inputs.files(jarTask.map {it.outputs.files})
+        } else {
+            throw new IllegalStateException("at least gradle 4.4 is required for this plugin to work and provide org.gradle.api.provider.Property")
         }
     }
 
     @Input
     @Optional
-    String outputDir
-
-    @Override
-    String getOutputDir() {
-        outputDir ?: config.outputDir
-    }
+    Property<String> outputDir
 
     @Override
     @OutputDirectory
     File getOutputDirectory() {
-        project.file("${project.buildDir}/${getOutputDir()}")
+        project.file("${project.buildDir}/${outputDir.get()}")
     }
 
     /**
@@ -180,17 +182,12 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     @Internal
-    Task jarTask
-
-    @Override
-    Task getJarTask() {
-        jarTask ?: config.internalJarTask()
-    }
+    final Property<Task> jarTask
 
     @Internal
     @Override
     Path getJarTaskOutputPath() {
-        (jarTask ?: config.jarTask)?.outputs?.files?.singleFile?.toPath()
+        jarTask.getOrNull()?.outputs?.files?.singleFile?.toPath()
     }
 
     @Internal

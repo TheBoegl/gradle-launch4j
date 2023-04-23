@@ -18,7 +18,6 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Task
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
@@ -26,8 +25,6 @@ import java.nio.file.Path
 
 @CompileStatic
 interface Launch4jConfiguration {
-
-    String getOutputDir()
 
     File getOutputDirectory()
 
@@ -45,8 +42,6 @@ interface Launch4jConfiguration {
 
     @Deprecated
     String getJar()
-
-    Task getJarTask()
 
     Path getJarTaskOutputPath()
 

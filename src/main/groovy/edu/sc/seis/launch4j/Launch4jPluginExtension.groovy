@@ -25,8 +25,11 @@ import org.gradle.api.Task
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.util.GradleVersion
+
 import java.nio.file.Path
 
 @CompileStatic
@@ -39,18 +42,32 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     Launch4jPluginExtension(Project project, FileOperations fileOperations) {
         this.project = project
         this.fileOperations = fileOperations
+        jarTask = project.objects.property(Task)
+        outputDir = project.objects.property(String)
+        // use named without class to be compatible with gradle 4.9
+        def javaJarTask = project.tasks.named(JavaPlugin.JAR_TASK_NAME)
+        def defaultOutputDir = 'launch4j'
+        def isPropertyConventionSupported = GradleVersion.current() >= GradleVersion.version("5.1")
+        if (isPropertyConventionSupported) {
+            jarTask.convention(javaJarTask)
+            outputDir.convention(defaultOutputDir)
+        } else {
+            jarTask.set(javaJarTask)
+            outputDir.set(defaultOutputDir)
+        }
     }
 
     String mainClassName
     @Deprecated
     String jar
-    Task jarTask
+    final Property<Task> jarTask
 
     @Input
-    String outputDir = 'launch4j'
+    final Property<String> outputDir
 
+    @Override
     File getOutputDirectory() {
-        project.file("${project.buildDir}/${outputDir}")
+        return project.file("${project.buildDir}/${outputDir.get()}")
     }
 
     String libraryDir = 'lib'
@@ -157,23 +174,26 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     @Override
     Path getJarTaskOutputPath() {
-        return jarTask?.outputs?.files?.singleFile?.toPath()
+        return jarTask.getOrNull().outputs?.files?.singleFile?.toPath()
     }
 
     @Override
     Path getJarTaskDefaultOutputPath() {
         if (project.plugins.hasPlugin('java')) {
-            def task = project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
-            return task?.outputs?.files?.singleFile?.toPath()
+            return javaJarTask()?.outputs?.files?.singleFile?.toPath()
         }
         return null
     }
 
     Task internalJarTask() {
         if (!jarTask && project.plugins.hasPlugin('java')) {
-            return project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
+            return javaJarTask()
         }
-        jarTask
+        jarTask.get()
+    }
+
+    private Jar javaJarTask() {
+        return project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
     }
 
     Set<String> classpath = []
