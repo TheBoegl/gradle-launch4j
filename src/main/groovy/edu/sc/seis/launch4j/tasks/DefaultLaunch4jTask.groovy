@@ -21,6 +21,7 @@ import edu.sc.seis.launch4j.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.copy.CopySpecInternal
@@ -31,7 +32,7 @@ import org.gradle.util.GradleVersion
 
 import java.nio.file.Path
 
-// bug #34: do not compile static because this will break the #getInputs() for gradle version < 3.
+// do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
     private Launch4jPluginExtension config
@@ -44,11 +45,14 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             if (GradleVersion.current() >= GradleVersion.version("5.1")) {
                 jarTask.convention(config.jarTask)
                 outputDir.convention(config.outputDir)
+                outputDirectory = project.objects.directoryProperty().convention(project.layout.buildDirectory.dir(outputDir))
             } else {
                 // inputs do not set dependsOn
                 dependsOn(config.jarTask)
                 jarTask.set(config.jarTask)
                 outputDir.set(config.outputDir)
+                outputDirectory = project.layout.directoryProperty()
+                outputDirectory.set(project.layout.buildDirectory.dir(outputDir))
             }
             inputs.files(jarTask.map {it.outputs.files})
         } else {
@@ -58,12 +62,13 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Input
     @Optional
-    Property<String> outputDir
+    final Property<String> outputDir
 
-    @Override
     @OutputDirectory
-    File getOutputDirectory() {
-        project.file("${project.buildDir}/${outputDir.get()}")
+    final DirectoryProperty outputDirectory
+
+    private File getOutputDirectoryAsFile() {
+        outputDirectory.get().getAsFile();
     }
 
     /**
@@ -83,7 +88,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Override
     @OutputFile
     File getDest() {
-        project.file("${getOutputDirectory()}/${getOutfile()}")
+        project.file("${getOutputDirectoryAsFile()}/${getOutfile()}")
     }
 
     @Input
@@ -91,7 +96,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Override
     File getXmlFile() {
-        project.file("${getOutputDirectory()}/${xmlFileName ?: config.xmlFileName}")
+        project.file("${getOutputDirectoryAsFile()}/${xmlFileName ?: config.xmlFileName}")
     }
 
     /**
@@ -110,7 +115,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Internal
     File getLibraryDirectory() {
-        project.file("${getOutputDirectory()}/${libraryDir ?: config.libraryDir}")
+        project.file("${getOutputDirectoryAsFile()}/${libraryDir ?: config.libraryDir}")
     }
 
     @Input

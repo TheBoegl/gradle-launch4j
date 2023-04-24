@@ -37,7 +37,7 @@ class CreateXML {
     }
 
     void execute(File xmlFile, Launch4jConfiguration config, FileCollection copySpec) {
-        def outputDir = config.getOutputDirectory()
+        def outputDir = config.getOutputDirectory().get().asFile
         outputDir.mkdirs()
         def outFilePath = config.getDest().parentFile.toPath()
         def classpath

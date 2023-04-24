@@ -18,10 +18,10 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.AutoClone
-import groovy.transform.CompileStatic
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.plugins.JavaPlugin
@@ -31,8 +31,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.GradleVersion
 
 import java.nio.file.Path
-
-@CompileStatic
+// do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
 @AutoClone
 class Launch4jPluginExtension implements Launch4jConfiguration {
 
@@ -51,9 +50,17 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         if (isPropertyConventionSupported) {
             jarTask.convention(javaJarTask)
             outputDir.convention(defaultOutputDir)
+            outputDirectory = project.objects.directoryProperty().convention(project.layout.buildDirectory.dir(outputDir))
         } else {
+            def hasLayoutsDirectoryProperty = GradleVersion.current() >= GradleVersion.version("4.3")
+            if (hasLayoutsDirectoryProperty) {
+                outputDirectory = project.layout.directoryProperty()
+            } else {
+                throw new IllegalStateException("at least gradle 4.3 is required for this plugin to work and provide org.gradle.api.provider.Property")
+            }
             jarTask.set(javaJarTask)
             outputDir.set(defaultOutputDir)
+            outputDirectory.set(project.layout.buildDirectory.dir(outputDir))
         }
     }
 
@@ -63,12 +70,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     final Property<Task> jarTask
 
     @Input
-    final Property<String> outputDir
+    Property<String> outputDir
 
-    @Override
-    File getOutputDirectory() {
-        return project.file("${project.buildDir}/${outputDir.get()}")
-    }
+    DirectoryProperty outputDirectory
 
     String libraryDir = 'lib'
     String xmlFileName = 'launch4j.xml'

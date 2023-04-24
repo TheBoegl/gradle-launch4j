@@ -18,15 +18,25 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
+
 import java.nio.file.Path
 
 @CompileStatic
 interface Launch4jConfiguration {
+    @Input
+    @Optional
+    Property<String> getOutputDir()
 
-    File getOutputDirectory()
+    @OutputDirectory
+    DirectoryProperty getOutputDirectory()
 
     String getOutfile()
 
