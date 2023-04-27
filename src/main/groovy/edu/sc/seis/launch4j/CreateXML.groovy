@@ -41,8 +41,8 @@ class CreateXML {
         outputDir.mkdirs()
         def outFilePath = config.getDest().parentFile.toPath()
         def classpath
-        if (config.classpath) {
-            classpath = config.classpath
+        if (config.classpath.isPresent()) {
+            classpath = config.classpath.get()
         } else if (copySpec instanceof FileCollection) {
             classpath = copySpec.collect {
                 outFilePath.relativize(it.toPath()).toString()
