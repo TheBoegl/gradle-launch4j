@@ -47,6 +47,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         if (GradleVersion.current() >= GradleVersion.version("4.4")) {
             ObjectFactory objectFactory = project.objects
             ProjectLayout layout = project.layout
+            mainClassName = objectFactory.property(String)
             jarTask = objectFactory.property(Task)
             outputDir = objectFactory.property(String)
             dontWrapJar = objectFactory.property(Boolean)
@@ -279,7 +280,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @InputFiles
     @Optional
     Object getCopyFiles() {
-        def copyConfigurable = copyConfigurable.get()
+        def copyConfigurable = copyConfigurable.getOrNull()
         if (copyConfigurable instanceof CopySpecInternal) {
             def specResolver = (copyConfigurable as CopySpecInternal).buildRootResolver()
             def files = specResolver.allSource.files
@@ -298,7 +299,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     FileCollection copyLibraries() {
         def jarPath = getDontWrapJar() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
-        new CopyLibraries(project, config.fileOperations, duplicatesStrategy).execute(getLibraryDirectory(), getCopyConfigurable(), jarPath)
+        new CopyLibraries(project, config.fileOperations, duplicatesStrategy.get()).execute(getLibraryDirectory(), getCopyConfigurable().getOrNull(), jarPath)
     }
 
     /**
@@ -391,7 +392,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    Property<Boolean> stayAlive
+    final Property<Boolean> stayAlive
 
     /**
      * The duplication Strategy to use if duplicates are found.
@@ -400,7 +401,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    Property<DuplicatesStrategy> duplicatesStrategy
+    final Property<DuplicatesStrategy> duplicatesStrategy
 
     /**
      * Optional, defaults to <u>false</u>.

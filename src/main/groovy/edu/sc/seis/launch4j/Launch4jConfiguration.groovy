@@ -18,6 +18,7 @@
 package edu.sc.seis.launch4j
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.provider.Property
@@ -46,6 +47,8 @@ interface Launch4jConfiguration {
     File getXmlFile()
 
     Property<String> getMainClassName()
+
+    Property<Task> getJarTask()
 
     Path getJarTaskOutputPath()
 

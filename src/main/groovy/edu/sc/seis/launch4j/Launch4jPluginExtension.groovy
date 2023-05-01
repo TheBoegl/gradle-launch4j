@@ -144,6 +144,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             splashWaitForWindows.convention(true)
             splashTimeout.convention(60)
             splashTimeoutError.convention(true)
+            copyConfigurable.convention(null)
             classpath.convention([])
         } else {
             def hasLayoutsDirectoryProperty = GradleVersion.current() >= GradleVersion.version("4.3")
@@ -190,6 +191,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             splashWaitForWindows.set(true)
             splashTimeout.set(60)
             splashTimeoutError.set(true)
+            copyConfigurable.set(null)
             classpath.set([])
         }
     }
@@ -198,7 +200,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     final Property<Task> jarTask
 
     @Input
-    Property<String> outputDir
+    final Property<String> outputDir
 
     DirectoryProperty outputDirectory
 
@@ -226,7 +228,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     final Property<String> version
     final Property<String> textVersion
     final Property<String> copyright
-
     final SetProperty<String> jvmOptions
     final Property<String> companyName
     final Property<String> fileDescription
