@@ -53,13 +53,13 @@ class CreateXML {
                 (project.plugins.hasPlugin('java') ?
                     (project.configurations.findByName('runtimeClasspath') ?
                         project.configurations.runtimeClasspath : project.configurations.runtime) : [])).collect {
-                outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString()
+                outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir.get(), it.name))).toString()
                 // relativize paths relative to outfile
             }
         }
         def jarTaskOutputPath = config.getJarTaskOutputPath()
         def jar
-        if (config.dontWrapJar) {
+        if (config.dontWrapJar.get()) {
             /**
              * Priority of sources for path to jar:
              * 1. `jarTask` (output file resolved against libraryDirectory), if not set then:

@@ -300,7 +300,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     FileCollection copyLibraries() {
-        def jarPath = getDontWrapJar() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
+        def jarPath = dontWrapJar.get() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
         new CopyLibraries(project, config.fileOperations, duplicatesStrategy.get()).execute(getLibraryDirectory(), getCopyConfigurable().getOrNull(), jarPath)
     }
 
