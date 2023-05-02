@@ -102,6 +102,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             copyConfigurable = objectFactory.property(Object)
             classpath = objectFactory.setProperty(String)
             if (GradleVersion.current() >= GradleVersion.version("5.1")) {
+                mainClassName.convention(config.mainClassName)
                 jarTask.convention(config.jarTask)
                 outputDir.convention(config.outputDir)
                 outputDirectory = objectFactory.directoryProperty().convention(layout.buildDirectory.dir(outputDir))
@@ -159,6 +160,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             } else {
                 // inputs do not set dependsOn
                 dependsOn(config.jarTask)
+                mainClassName.set(config.mainClassName)
                 jarTask.set(config.jarTask)
                 outputDir.set(config.outputDir)
                 outputDirectory = layout.directoryProperty()
