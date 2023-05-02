@@ -120,7 +120,7 @@ class CreateXML {
                 xml.path(config.bundledJrePath.getOrElse(""))
                 xml.bundledJre64Bit(config.bundledJre64Bit.get())
                 xml.bundledJreAsFallback(config.bundledJreAsFallback.get())
-                def minVersion = !config.jreMinVersion.isPresent() && config.bundledJrePath.isPresent() ? "" : config.jreMinVersion ? config.jreMinVersion : config.internalJreMinVersion()
+                def minVersion = !config.jreMinVersion.isPresent() && config.bundledJrePath.isPresent() ? "" : config.jreMinVersion.isPresent() ? config.jreMinVersion.get() : config.internalJreMinVersion()
                 xml.minVersion(minVersion instanceof Property ? minVersion.get() : minVersion)
                 xml.maxVersion(config.jreMaxVersion.getOrElse(""))
                 xml.jdkPreference(config.jdkPreference.get())

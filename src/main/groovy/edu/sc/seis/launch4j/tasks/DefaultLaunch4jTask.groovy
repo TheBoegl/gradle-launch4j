@@ -533,8 +533,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     String internalJreMinVersion() {
         if (!jreMinVersion.isPresent()) {
             config.internalJreMinVersion()
+        } else {
+            jreMinVersion.get()
         }
-        jreMinVersion
     }
 
     /**

@@ -26,7 +26,6 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
@@ -44,7 +43,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     Launch4jPluginExtension(Project project, FileOperations fileOperations) {
         this.project = project
-        def javaPluginExtension = project.extensions.getByType(JavaPluginExtension.class)
         this.fileOperations = fileOperations
         ObjectFactory objectFactory = project.objects
         mainClassName = objectFactory.property(String)
@@ -137,7 +135,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             language.convention('ENGLISH_US')
             bundledJre64Bit.convention(false)
             bundledJreAsFallback.convention(false)
-            jreMinVersion.convention(javaPluginExtension.getTargetCompatibility().toString())
+            // unable to get correct jreMinVersion here
             jdkPreference.convention('preferJre')
             jreRuntimeBits.convention('64/32')
             variables.convention([])
@@ -184,7 +182,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             language.set('ENGLISH_US')
             bundledJre64Bit.set(false)
             bundledJreAsFallback.set(false)
-            jreMinVersion.set(javaPluginExtension.getTargetCompatibility())
+            // unable to get correct jreMinVersion here
             jdkPreference.set('preferJre')
             jreRuntimeBits.set('64/32')
             variables.set([])
@@ -243,8 +241,13 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     @Override
     String internalJreMinVersion() {
-        if (jreMinVersion.isPresent()) {
-            String current = JavaVersion.current()
+        if (!jreMinVersion.isPresent()) {
+            String current
+            if (project.hasProperty('targetCompatibility')) {
+                current = project.property('targetCompatibility')
+            } else {
+                current = JavaVersion.current()
+            }
             while (current ==~ /\d+(\.\d+)?/) {
                 current = current + '.0'
             }
