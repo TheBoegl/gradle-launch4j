@@ -253,6 +253,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             String current
             if (project.hasProperty('targetCompatibility')) {
                 current = project.property('targetCompatibility')
+            } else if (project.hasProperty('sourceCompatibility')) {
+                // not hit in the tests as targetCompatibility is always set
+                current = project.property('sourceCompatibility')
             } else {
                 current = JavaVersion.current()
             }
