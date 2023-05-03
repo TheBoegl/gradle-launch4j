@@ -168,7 +168,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
                 dontWrapJar.set(config.dontWrapJar)
                 outfile.set(config.outfile)
                 libraryDir.set(config.libraryDir)
-                xmlFileName.set("${name}.xml")
+                xmlFileName.set(name + '.xml')
                 headerType.set(config.headerType)
                 errTitle.set(config.errTitle)
                 cmdLine.set(config.cmdLine)
@@ -271,11 +271,18 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         project.file("${getOutputDirectoryAsFile()}/${libraryDir.get()}")
     }
 
-    @Input
-    @Optional
     final Property<Object> copyConfigurable
 
-    /**
+    @Input
+    @Optional
+    def getCopyConfigurable() {
+        if(GradleVersion.current() < GradleVersion.version("5.0")) {
+            // cannot serialize copyConfigurable
+            getCopyFiles()
+        } else
+            return copyConfigurable
+    }
+/**
      * Try to get the inputs right.
      * @return the input files of the copyConfigurable
      */
@@ -301,7 +308,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     FileCollection copyLibraries() {
         def jarPath = dontWrapJar.get() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
-        new CopyLibraries(project, config.fileOperations, duplicatesStrategy.get()).execute(getLibraryDirectory(), getCopyConfigurable().getOrNull(), jarPath)
+        new CopyLibraries(project, config.fileOperations, duplicatesStrategy.get()).execute(getLibraryDirectory(), copyConfigurable.getOrNull(), jarPath)
     }
 
     /**
