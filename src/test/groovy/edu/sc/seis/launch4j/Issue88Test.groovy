@@ -12,6 +12,7 @@ class Issue88Test extends FunctionalSpecification {
             sourceCompatibility = 1.7
             launch4j {
                 outfile = 'test.exe'
+                bundledJrePath = 'jre'
             }
         """
 
@@ -43,6 +44,7 @@ class Issue88Test extends FunctionalSpecification {
             }
             launch4j {
                 outfile = 'test.exe'
+                bundledJrePath = 'jre'
             }
         """
 
@@ -73,6 +75,7 @@ class Issue88Test extends FunctionalSpecification {
             }
             launch4j {
                 outfile = 'test.exe'
+                bundledJrePath = 'jre'
             }
         """
 
@@ -100,6 +103,7 @@ class Issue88Test extends FunctionalSpecification {
             launch4j {
                 outfile = 'test.exe'
                 jreMinVersion = '1.8.281'
+                bundledJrePath = 'jre'
             }
         """
 
@@ -126,6 +130,7 @@ class Issue88Test extends FunctionalSpecification {
         buildFile << """
             launch4j {
                 outfile = 'test.exe'
+                bundledJrePath = 'jre'
             }
         """
 
