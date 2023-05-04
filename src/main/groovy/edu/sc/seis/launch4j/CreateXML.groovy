@@ -63,15 +63,12 @@ class CreateXML {
             /**
              * Priority of sources for path to jar:
              * 1. `jarTask` (output file resolved against libraryDirectory), if not set then:
-             * 2. `jar` (resolved against outputDirectory), if not set then:
-             * 3. `jarTask` default fallback if Java plugin was applied (tasks[jar]) (output file resolved against libraryDirectory)
-             * 4. null
+             * 2. `jarTask` default fallback if Java plugin was applied (tasks[jar]) (output file resolved against libraryDirectory)
+             * 3. null
              */
             def jarPath
             if (jarTaskOutputPath) {
                 jarPath = config.getLibraryDirectory().toPath().resolve(jarTaskOutputPath.fileName)
-            } else if (config.getJar()) {
-                jarPath = outputDir.toPath().resolve(config.getJar())
             } else if (config.getJarTaskDefaultOutputPath()) {
                 jarPath = config.getLibraryDirectory().toPath().resolve(config.getJarTaskDefaultOutputPath().fileName)
             } else {
@@ -83,11 +80,10 @@ class CreateXML {
             /**
              * Priority of sources for path to jar:
              * 1. `jarTask`, if not set then:
-             * 2. `jar`, if not set then:
-             * 3. `jarTask` default fallback if Java plugin was applied (tasks[jar])
-             * 4. null
+             * 2. `jarTask` default fallback if Java plugin was applied (tasks[jar])
+             * 3. null
              */
-            jar = jarTaskOutputPath ?: (config.getJar() ? outputDir.toPath().resolve(config.getJar()) : config.getJarTaskDefaultOutputPath()) ?: ""
+            jar = jarTaskOutputPath ?: config.getJarTaskDefaultOutputPath() ?: ""
         }
         def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"))
         def xml = new MarkupBuilder(writer)
