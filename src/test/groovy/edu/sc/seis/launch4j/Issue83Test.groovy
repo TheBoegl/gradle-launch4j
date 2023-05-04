@@ -18,6 +18,7 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
+import org.gradle.api.JavaVersion
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -61,7 +62,7 @@ class Issue83Test extends FunctionalSpecification {
         xml.exists()
         def xmlText = xml.text
         xmlText.contains("<path>$jrePath</path>")
-        xmlText.contains('<minVersion></minVersion')
+        xmlText.contains("<minVersion>${JavaVersion.current()}.0</minVersion")
         xmlText.contains('<maxVersion></maxVersion')
 
         def process = outfile.path.execute()
