@@ -21,7 +21,9 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -41,10 +43,12 @@ interface Launch4jConfiguration {
     DirectoryProperty getOutputDirectory()
 
     @OutputFile
-    File getDest()
+    Provider<RegularFile> getDest()
 
     @Internal("usually the xml file is deleted anyways")
-    File getXmlFile()
+    Provider<RegularFile> getXmlFile()
+    @Internal
+    Provider<RegularFile> getLibraryDirectory()
 
     Property<String> getMainClassName()
 

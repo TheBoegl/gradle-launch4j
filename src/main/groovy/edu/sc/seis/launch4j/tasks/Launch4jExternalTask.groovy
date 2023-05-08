@@ -34,7 +34,7 @@ class Launch4jExternalTask extends DefaultLaunch4jTask {
         createExecutableFolder()
         def stdOut = new ByteArrayOutputStream()
         def execResult = project.exec {
-            commandLine "${launch4jCmd}", "${getXmlFile()}"
+            commandLine "${launch4jCmd}", "${xmlFile.get().asFile}"
             workingDir getOutputDirectory()
             standardOutput = stdOut
             errorOutput = stdOut

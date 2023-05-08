@@ -28,22 +28,29 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.util.GradleVersion
 
 import java.nio.file.Path
+
 // do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
     private Launch4jPluginExtension config
+    private FileCollection runtimeClassFiles
 
     protected DefaultLaunch4jTask() {
         config = project.extensions.getByType(Launch4jPluginExtension.class)
+        runtimeClassFiles = project.plugins.hasPlugin('java') ?
+            (project.configurations.findByName('runtimeClasspath') ?
+                project.configurations.runtimeClasspath : project.configurations.runtime) : project.files()
         if (GradleVersion.current() >= GradleVersion.version("4.4")) {
             ObjectFactory objectFactory = project.objects
             ProjectLayout layout = project.layout
@@ -218,6 +225,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
                 classpath.set([])
             }
             inputs.files(jarTask.map {it.outputs.files})
+            dest = outputDirectory.file(outfile)
+            xmlFile = outputDirectory.file(xmlFileName)
+            libraryDirectory = outputDirectory.file(libraryDir)
         } else {
             throw new IllegalStateException("at least gradle 4.4 is required for this plugin to work and provide org.gradle.api.provider.Property")
         }
@@ -243,19 +253,13 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Input
     final Property<String> outfile
 
-    @Override
     @OutputFile
-    File getDest() {
-        project.file("${getOutputDirectoryAsFile()}/${outfile.get()}")
-    }
+    final Provider<RegularFile> dest
 
     @Input
     final Property<String> xmlFileName
 
-    @Override
-    File getXmlFile() {
-        project.file("${getOutputDirectoryAsFile()}/${xmlFileName.get()}")
-    }
+    final Provider<RegularFile> xmlFile
 
     /**
      * The name where the dependency jars should be copied to.<br>
@@ -267,9 +271,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     final Property<String> libraryDir
 
     @Internal
-    File getLibraryDirectory() {
-        project.file("${getOutputDirectoryAsFile()}/${libraryDir.get()}")
-    }
+    final Provider<RegularFile> libraryDirectory
 
     final Property<Object> copyConfigurable
 
@@ -308,7 +310,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     FileCollection copyLibraries() {
         def jarPath = dontWrapJar.get() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
-        new CopyLibraries(project, config.fileOperations, duplicatesStrategy.get()).execute(getLibraryDirectory(), copyConfigurable.getOrNull(), jarPath)
+        new CopyLibraries(config.objectFactory, config.fileOperations, duplicatesStrategy.get()).execute(libraryDirectory.get().asFile, copyConfigurable.getOrNull(), jarPath, runtimeClassFiles)
     }
 
     /**
@@ -716,10 +718,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     final SetProperty<String> classpath
 
     protected void createXML(FileCollection copySpec) {
-        new CreateXML(project).execute(getXmlFile(), this, copySpec)
+        new CreateXML().execute(xmlFile.get().asFile, this, copySpec, runtimeClassFiles)
     }
 
     protected void createExecutableFolder() {
-        getDest().parentFile?.mkdirs()
+        dest.get().asFile.parentFile?.mkdirs()
     }
 }

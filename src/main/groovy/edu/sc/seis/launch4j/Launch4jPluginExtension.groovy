@@ -23,15 +23,19 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.GradleVersion
 
+import javax.inject.Inject
 import java.nio.file.Path
 
 // do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
@@ -40,11 +44,13 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     private final Project project
     final FileOperations fileOperations
+    final ObjectFactory objectFactory
 
-    Launch4jPluginExtension(Project project, FileOperations fileOperations) {
+    @Inject
+    Launch4jPluginExtension(Project project, FileOperations fileOperations, ObjectFactory objectFactory) {
         this.project = project
         this.fileOperations = fileOperations
-        ObjectFactory objectFactory = project.objects
+        this.objectFactory = objectFactory
         mainClassName = objectFactory.property(String)
         jarTask = objectFactory.property(Task)
         outputDir = objectFactory.property(String)
@@ -200,6 +206,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             copyConfigurable.set(null)
             classpath.set([])
         }
+        dest = outputDirectory.file(outfile)
+        xmlFile = outputDirectory.file(xmlFileName)
+        libraryDirectory = outputDirectory.file(libraryDir)
     }
 
     final Property<String> mainClassName
@@ -211,15 +220,14 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     DirectoryProperty outputDirectory
 
     final Property<String> libraryDir
+    @Internal
+    final Provider<RegularFile> libraryDirectory
     final Property<String> xmlFileName
     final Property<Boolean> dontWrapJar
     final Property<String> headerType
 
     final Property<String> outfile
-
-    File getDest() {
-        project.file("${getOutputDirectory()}/${outfile}")
-    }
+    final Provider<RegularFile> dest
     final Property<String> errTitle
     final Property<String> cmdLine
     final Property<String> chdir
@@ -292,9 +300,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     transient final Property<Object> copyConfigurable
 
-    File getXmlFile() {
-        project.file("${getOutputDirectory()}/${xmlFileName.get()}")
-    }
+    final Provider<RegularFile> xmlFile
 
     @Override
     Path getJarTaskOutputPath() {
@@ -307,13 +313,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             return javaJarTask()?.outputs?.files?.singleFile?.toPath()
         }
         return null
-    }
-
-    Task internalJarTask() {
-        if (!jarTask.isPresent() && project.plugins.hasPlugin('java')) {
-            return javaJarTask()
-        }
-        jarTask.get()
     }
 
     private Jar javaJarTask() {

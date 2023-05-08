@@ -38,7 +38,7 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
             System.setProperty('javax.xml.parsers.SAXParserFactory', 'com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl')
         }
         createXML(copyLibraries())
-        File xml = getXmlFile()
+        File xml = xmlFile.get().asFile
         ConfigPersister.getInstance().load(xml)
         Builder b = new Builder(new GradleLogger(project.logger), new File(project.buildDir, Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY))
         b.build()
