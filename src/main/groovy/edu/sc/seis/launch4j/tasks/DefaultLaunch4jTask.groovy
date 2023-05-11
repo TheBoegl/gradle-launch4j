@@ -17,13 +17,14 @@
 
 package edu.sc.seis.launch4j.tasks
 
-
 import edu.sc.seis.launch4j.CopyLibraries
 import edu.sc.seis.launch4j.CreateXML
 import edu.sc.seis.launch4j.Launch4jConfiguration
 import edu.sc.seis.launch4j.Launch4jPluginExtension
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
@@ -39,7 +40,6 @@ import org.gradle.api.tasks.*
 import org.gradle.util.GradleVersion
 
 import java.nio.file.Path
-
 // do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
@@ -307,7 +307,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     FileCollection copyLibraries() {
         def jarPath = dontWrapJar.get() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
-        new CopyLibraries(config.objectFactory, config.fileOperations, duplicatesStrategy.get()).execute(libraryDirectory.get().asFile, copyConfigurable.getOrNull(), jarPath, runtimeClassFiles)
+        new CopyLibraries(config.objectFactory, config.fileOperations, duplicatesStrategy.get()).execute(libraryDirectory.get().asFile, copyConfigurable.getOrNull(), jarPath, runtimeClassFiles, configurableFileCollection(project))
+    }
+
+    static ConfigurableFileCollection configurableFileCollection(Project project) {
+        if (GradleVersion.current() >= GradleVersion.version("5.3")) {
+            project.objects.fileCollection()
+        } else {
+            project.files()
+        }
     }
 
     /**

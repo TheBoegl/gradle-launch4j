@@ -42,7 +42,6 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String ARTIFACT_VERSION = '3.14'
     static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/bin-launch4j-${ARTIFACT_VERSION}"
 
-    private Project project
     private FileOperations fileOperations
 
     @Inject
@@ -55,8 +54,7 @@ class Launch4jPlugin implements Plugin<Project> {
         if (GradleVersion.current() < GradleVersion.version("4.9")) {
             throw new GradleException("this plugin version requires gradle 4.9 and newer.\nUse the latest version 2.x release or update gradle.")
         }
-        this.project = project
-        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension.class, project, fileOperations)
+        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension.class, project, fileOperations, project.objects, project.providers)
 
         configureDependencies(project)
         project.tasks.register(TASK_RUN_NAME, Launch4jLibraryTask.class) { task ->
@@ -70,13 +68,13 @@ class Launch4jPlugin implements Plugin<Project> {
         }
     }
 
-    private ModuleDependency addDependency(Configuration configuration, String notation) {
+    private static ModuleDependency addDependency(Project project, Configuration configuration, String notation) {
         ModuleDependency dependency = project.dependencies.create(notation) as ModuleDependency
         configuration.dependencies.add(dependency)
         dependency
     }
 
-    void configureDependencies(final Project project) {
+    static void configureDependencies(final Project project) {
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
             .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
 
@@ -87,7 +85,7 @@ class Launch4jPlugin implements Plugin<Project> {
         }
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
         project.dependencies {
-            addDependency(binaryConfig, "${l4jArtifact}:${workdir()}")
+            addDependency(project, binaryConfig, "${l4jArtifact}:${workdir()}")
         }
     }
 

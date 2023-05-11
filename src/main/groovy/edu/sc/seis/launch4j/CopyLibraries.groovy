@@ -18,6 +18,7 @@
 package edu.sc.seis.launch4j
 
 import org.gradle.api.Action
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
@@ -43,7 +44,7 @@ class CopyLibraries {
      * Copies the project dependency jars to the configured library directory
      * @param libraryDir
      */
-    FileCollection execute(File libraryDir, Object copyConfigurable, Path jarPath, FileCollection runtimeClasspath) {
+    FileCollection execute(File libraryDir, Object copyConfigurable, Path jarPath, FileCollection runtimeClasspath, ConfigurableFileCollection configurableFileCollection) {
         def files = []
         def distSpec = {
             if (copyConfigurable != null) {
@@ -106,6 +107,6 @@ class CopyLibraries {
             }
         })
 
-        objectFactory.fileCollection().from(files)
+        configurableFileCollection.from(files)
     }
 }

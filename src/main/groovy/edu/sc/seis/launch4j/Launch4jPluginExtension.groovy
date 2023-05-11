@@ -23,34 +23,43 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.GradleVersion
 
 import javax.inject.Inject
 import java.nio.file.Path
+import java.util.concurrent.Callable
 
 // do not compile static because this will break the layout#directoryProperty() for gradle version 4.9 to 5.1.
 @AutoClone
 class Launch4jPluginExtension implements Launch4jConfiguration {
 
-    private final Project project
     final FileOperations fileOperations
     final ObjectFactory objectFactory
+    @Internal
+    final Provider<String> targetCompatibility
+    @Internal
+    final Provider<String> sourceCompatibility
+    @Internal
+    final Provider<FileCollection> jarFileCollection
 
     @Inject
-    Launch4jPluginExtension(Project project, FileOperations fileOperations, ObjectFactory objectFactory) {
-        this.project = project
+    Launch4jPluginExtension(Project project, FileOperations fileOperations, ObjectFactory objectFactory, ProviderFactory providerFactory) {
         this.fileOperations = fileOperations
         this.objectFactory = objectFactory
+        targetCompatibility = asGradleProperty(project, providerFactory, 'targetCompatibility')
+        sourceCompatibility = asGradleProperty(project, providerFactory, 'sourceCompatibility')
+        jarFileCollection = project.tasks.named(JavaPlugin.JAR_TASK_NAME).map {it?.outputs?.files?: null }
         mainClassName = objectFactory.property(String)
         jarTask = objectFactory.property(Task)
         outputDir = objectFactory.property(String)
@@ -206,6 +215,21 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         libraryDirectory = outputDirectory.file(libraryDir)
     }
 
+    private static Provider<String> asGradleProperty(Project project, ProviderFactory providerFactory, String propertyName) {
+//        providerFactory.gradleProperty(propertyName) // should be working as of gradle 6.2, but the value is not available.
+        def provider = providerFactory.provider(new Callable<String>() {
+            @Override
+            String call() throws Exception {
+                return project.hasProperty(propertyName) ? project.property(propertyName) : null
+            }
+        })
+        if (GradleVersion.current() >= GradleVersion.version("6.5") && GradleVersion.current() <= GradleVersion.version("7.4")) {
+            provider.forUseAtConfigurationTime()
+        } else {
+            provider
+        }
+    }
+
     final Property<String> mainClassName
     final Property<Task> jarTask
 
@@ -254,11 +278,11 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     String internalJreMinVersion() {
         if (!jreMinVersion.isPresent()) {
             String current
-            if (project.hasProperty('targetCompatibility')) {
-                current = project.property('targetCompatibility')
-            } else if (project.hasProperty('sourceCompatibility')) {
+            if (targetCompatibility.isPresent()) {
+                current = targetCompatibility.get()
+            } else if (sourceCompatibility.isPresent()) {
                 // not hit in the tests as targetCompatibility is always set
-                current = project.property('sourceCompatibility')
+                current = sourceCompatibility.get()
             } else {
                 current = JavaVersion.current()
             }
@@ -304,14 +328,10 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     @Override
     Path getJarTaskDefaultOutputPath() {
-        if (project.plugins.hasPlugin('java')) {
-            return javaJarTask()?.outputs?.files?.singleFile?.toPath()
+        if(jarFileCollection.isPresent() && jarFileCollection.get()) {
+            jarFileCollection.get().singleFile.toPath()
         }
         return null
-    }
-
-    private Jar javaJarTask() {
-        return project.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
     }
 
     final SetProperty<String> classpath
