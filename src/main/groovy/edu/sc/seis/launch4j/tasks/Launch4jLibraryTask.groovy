@@ -25,7 +25,6 @@ import net.sf.launch4j.Log
 import net.sf.launch4j.config.ConfigPersister
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskAction
-import org.gradle.util.GradleVersion
 
 class Launch4jLibraryTask extends DefaultLaunch4jTask {
 
@@ -33,10 +32,6 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
     def run() {
         Extract.binaries(project)
         createExecutableFolder()
-        if (GradleVersion.current() < GradleVersion.version('3.0')) {
-            System.setProperty('javax.xml.parsers.DocumentBuilderFactory', 'com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl')
-            System.setProperty('javax.xml.parsers.SAXParserFactory', 'com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl')
-        }
         createXML(copyLibraries())
         File xml = xmlFile.get().asFile
         ConfigPersister.getInstance().load(xml)

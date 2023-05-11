@@ -38,7 +38,7 @@ import org.gradle.util.GradleVersion
 import javax.inject.Inject
 import java.nio.file.Path
 
-// do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
+// do not compile static because this will break the layout#directoryProperty() for gradle version 4.9 to 5.1.
 @AutoClone
 class Launch4jPluginExtension implements Launch4jConfiguration {
 
@@ -155,12 +155,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             copyConfigurable.convention(null)
             classpath.convention([])
         } else {
-            def hasLayoutsDirectoryProperty = GradleVersion.current() >= GradleVersion.version("4.3")
-            if (hasLayoutsDirectoryProperty) {
-                outputDirectory = project.layout.directoryProperty()
-            } else {
-                throw new IllegalStateException("at least gradle 4.3 is required for this plugin to work and provide org.gradle.api.provider.Property")
-            }
+            outputDirectory = project.layout.directoryProperty()
             jarTask.set(javaJarTask)
             outputDir.set(defaultOutputDir)
             outputDirectory.set(project.layout.buildDirectory.dir(outputDir))

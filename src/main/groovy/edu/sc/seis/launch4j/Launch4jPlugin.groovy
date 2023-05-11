@@ -52,30 +52,22 @@ class Launch4jPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        if (GradleVersion.current() < GradleVersion.version("4.9")) {
+            throw new GradleException("this plugin version requires gradle 4.9 and newer.\nUse the latest version 2.x release or update gradle.")
+        }
         this.project = project
         project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension.class, project, fileOperations)
 
         configureDependencies(project)
-        if (GradleVersion.current() >= GradleVersion.version("4.0")) {
-            project.tasks.register(TASK_RUN_NAME, Launch4jLibraryTask.class) { task ->
-                task.group = LAUNCH4J_GROUP
-                task.description = 'Runs the launch4j jar to generate an .exe file'
-            }
-            project.tasks.register("createAllExecutables", DefaultTask.class) { task ->
-                task.group = LAUNCH4J_GROUP
-                task.description = 'Runs all tasks that implement DefaultLaunch4jTask'
-                task.dependsOn = project.tasks.withType(DefaultLaunch4jTask.class)
-            }
-        } else {
-            applyTasks(project)
+        project.tasks.register(TASK_RUN_NAME, Launch4jLibraryTask.class) { task ->
+            task.group = LAUNCH4J_GROUP
+            task.description = 'Runs the launch4j jar to generate an .exe file'
         }
-    }
-
-    @SuppressWarnings('ConfigurationAvoidance')
-    static void applyTasks(final Project project) {
-        project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
-        def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')
-        createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
+        project.tasks.register("createAllExecutables", DefaultTask.class) { task ->
+            task.group = LAUNCH4J_GROUP
+            task.description = 'Runs all tasks that implement DefaultLaunch4jTask'
+            task.dependsOn = project.tasks.withType(DefaultLaunch4jTask.class)
+        }
     }
 
     private ModuleDependency addDependency(Configuration configuration, String notation) {
