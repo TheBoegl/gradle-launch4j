@@ -18,7 +18,6 @@
 package edu.sc.seis.launch4j
 
 import groovy.xml.MarkupBuilder
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 
@@ -27,20 +26,14 @@ import java.nio.file.Paths
 
 class CreateXML {
 
-    private final Project project
-
-    CreateXML(Project project) {
-        this.project = project
+    void execute(Launch4jPluginExtension l4j, FileCollection runtimeClasspath) {
+        execute(l4j.xmlFile.get().asFile, l4j, null, runtimeClasspath)
     }
 
-    void execute(Launch4jPluginExtension l4j) {
-        execute(l4j.getXmlFile(), l4j, null)
-    }
-
-    void execute(File xmlFile, Launch4jConfiguration config, FileCollection copySpec) {
+    void execute(File xmlFile, Launch4jConfiguration config, FileCollection copySpec, FileCollection runtimeClassFiles) {
         def outputDir = config.getOutputDirectory().get().asFile
         outputDir.mkdirs()
-        def outFilePath = config.getDest().parentFile.toPath()
+        def outFilePath = config.dest.get().asFile.parentFile.toPath()
         def classpath
         if (config.classpath.isPresent() && config.classpath.get()) {
             classpath = config.classpath.get()
@@ -50,9 +43,7 @@ class CreateXML {
             }
         } else {
             classpath = (copySpec ?:
-                (project.plugins.hasPlugin('java') ?
-                    (project.configurations.findByName('runtimeClasspath') ?
-                        project.configurations.runtimeClasspath : project.configurations.runtime) : [])).collect {
+                runtimeClassFiles ?: []).collect {
                 outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir.get(), it.name))).toString()
                 // relativize paths relative to outfile
             }
@@ -68,14 +59,14 @@ class CreateXML {
              */
             def jarPath
             if (jarTaskOutputPath) {
-                jarPath = config.getLibraryDirectory().toPath().resolve(jarTaskOutputPath.fileName)
+                jarPath = config.getLibraryDirectory().get().asFile.toPath().resolve(jarTaskOutputPath.fileName)
             } else if (config.getJarTaskDefaultOutputPath()) {
-                jarPath = config.getLibraryDirectory().toPath().resolve(config.getJarTaskDefaultOutputPath().fileName)
+                jarPath = config.getLibraryDirectory().get().asFile.toPath().resolve(config.getJarTaskDefaultOutputPath().fileName)
             } else {
                 jarPath = null
             }
 
-            jar = jarPath ? outFilePath.relativize(jarPath) : ""
+            jar = jarPath ? outFilePath.toAbsolutePath().relativize(jarPath.toAbsolutePath()) : ""
         } else {
             /**
              * Priority of sources for path to jar:
