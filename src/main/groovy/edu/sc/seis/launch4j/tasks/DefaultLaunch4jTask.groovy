@@ -237,10 +237,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @OutputDirectory
     final DirectoryProperty outputDirectory
 
-    private File getOutputDirectoryAsFile() {
-        outputDirectory.get().getAsFile();
-    }
-
     /**
      * Output executable file<br>
      *
