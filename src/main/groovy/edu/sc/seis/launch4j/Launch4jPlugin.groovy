@@ -24,7 +24,9 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.GradleVersion
@@ -40,7 +42,7 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
     static final String ARTIFACT_VERSION = '3.14'
-    static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/bin-launch4j-${ARTIFACT_VERSION}"
+    static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/"
 
     private FileOperations fileOperations
 
@@ -56,7 +58,7 @@ class Launch4jPlugin implements Plugin<Project> {
         }
         project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension.class, project, fileOperations, project.objects, project.providers)
 
-        configureDependencies(project)
+        def l4jConfig = configureDependencies(project)
         project.tasks.register(TASK_RUN_NAME, Launch4jLibraryTask.class) { task ->
             task.group = LAUNCH4J_GROUP
             task.description = 'Runs the launch4j jar to generate an .exe file'
@@ -66,6 +68,7 @@ class Launch4jPlugin implements Plugin<Project> {
             task.description = 'Runs all tasks that implement DefaultLaunch4jTask'
             task.dependsOn = project.tasks.withType(DefaultLaunch4jTask.class)
         }
+        project.tasks.withType(DefaultLaunch4jTask.class).configureEach {it.launch4jBinaryFiles.from(l4jConfig)}
     }
 
     private static ModuleDependency addDependency(Project project, Configuration configuration, String notation) {
@@ -74,19 +77,27 @@ class Launch4jPlugin implements Plugin<Project> {
         dependency
     }
 
-    static void configureDependencies(final Project project) {
+    static Configuration configureDependencies(final Project project) {
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
             .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
+        binaryConfig.setCanBeConsumed(false)
+        binaryConfig.setCanBeResolved(true)
 
 
         if (project.repositories.isEmpty()) {
             project.logger.debug("Adding the mavenCentral repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
             project.repositories.mavenCentral()
         }
-        def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
-        project.dependencies {
-            addDependency(project, binaryConfig, "${l4jArtifact}:${workdir()}")
+        binaryConfig.resolutionStrategy.dependencySubstitution{
+            all { DependencySubstitution dependency ->
+                if (dependency.requested instanceof ModuleComponentSelector && dependency.requested.group == 'net.sf.launch4j' && dependency.requested.module == 'launch4j') {
+                    // does not work to add the classifier here, so the user must supply it.
+                    dependency.useTarget "net.sf.launch4j:launch4j:${dependency.requested.version}:${workdir()}"
+                }
+            }
         }
+        def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
+        binaryConfig.defaultDependencies {it.add(project.dependencies.create("${l4jArtifact}:${workdir()}"))}
     }
 
     static String workdir() {

@@ -224,7 +224,12 @@ In order to use a launch4j instance named 'launch4j-test' located in the PATH cr
         launch4jCmd = 'launch4j-test'
         outfile = 'MyApp.exe'
     }
+# Using another launch4j binary
+To use a different launch4j binary instead of the default one, you can provide it as follows. Use your desired version instead of 4.50.
 
+    dependencies {
+        launch4jBin 'net.sf.launch4j:launch4j:3.50:workdir-win32'
+    }
 # Kotlin
 
 To get started using this plugin from a kotlin build script the above example from [the section Launch4jLibraryTask](#launch4jlibrarytask) would be written as:

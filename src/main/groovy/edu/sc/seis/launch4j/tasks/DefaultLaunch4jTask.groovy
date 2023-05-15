@@ -20,10 +20,12 @@ package edu.sc.seis.launch4j.tasks
 import edu.sc.seis.launch4j.CopyLibraries
 import edu.sc.seis.launch4j.CreateXML
 import edu.sc.seis.launch4j.Launch4jConfiguration
+import edu.sc.seis.launch4j.Launch4jPlugin
 import edu.sc.seis.launch4j.Launch4jPluginExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
@@ -45,14 +47,25 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     private Launch4jPluginExtension config
     private FileCollection runtimeClassFiles
+    @Internal
+    @Input
+    final Provider<Configuration> launch4jDependency
+    @Internal
+    final Provider<RegularFile> launch4jBinaryDirectory
+
+    @InputFiles
+    final ConfigurableFileCollection launch4jBinaryFiles
 
     protected DefaultLaunch4jTask() {
         config = project.extensions.getByType(Launch4jPluginExtension.class)
+        launch4jDependency = project.configurations.named(Launch4jPlugin.LAUNCH4J_CONFIGURATION_NAME_BINARY)
         runtimeClassFiles = project.plugins.hasPlugin('java') ?
             (project.configurations.findByName('runtimeClasspath') ?
                 project.configurations.runtimeClasspath : project.configurations.runtime) : project.files()
         ObjectFactory objectFactory = project.objects
         ProjectLayout layout = project.layout
+        launch4jBinaryFiles = configurableFileCollection(project)
+        launch4jBinaryDirectory = layout.buildDirectory.map {it.file(Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY)}
         mainClassName = objectFactory.property(String)
         jarTask = objectFactory.property(Task)
         outputDir = objectFactory.property(String)
@@ -228,6 +241,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         dest = outputDirectory.file(outfile)
         xmlFile = outputDirectory.file(xmlFileName)
         libraryDirectory = outputDirectory.file(libraryDir)
+        copyLibraryFileCollection = configurableFileCollection(project)
     }
 
     @Input
@@ -288,7 +302,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         if (copyConfigurable instanceof CopySpecInternal) {
             def specResolver = (copyConfigurable as CopySpecInternal).buildRootResolver()
             def files = specResolver.allSource.files
-            def rootResolverDestination = specResolver.destPath.getFile(getLibraryDirectory())
+            def rootResolverDestination = specResolver.destPath.getFile(getLibraryDirectory().get().asFile)
             files + rootResolverDestination
             files.addAll((copyConfigurable as DefaultCopySpec).getChildren().collect { CopySpecInternal cpi ->
                 cpi.buildRootResolver().destPath.getFile(rootResolverDestination)
@@ -301,9 +315,11 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         }
     }
 
+    private final ConfigurableFileCollection copyLibraryFileCollection
+
     FileCollection copyLibraries() {
         def jarPath = dontWrapJar.get() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
-        new CopyLibraries(config.objectFactory, config.fileOperations, duplicatesStrategy.get()).execute(libraryDirectory.get().asFile, copyConfigurable.getOrNull(), jarPath, runtimeClassFiles, configurableFileCollection(project))
+        new CopyLibraries(config.objectFactory, config.fileOperations, duplicatesStrategy.get()).execute(libraryDirectory.get().asFile, copyConfigurable.getOrNull(), jarPath, runtimeClassFiles, copyLibraryFileCollection)
     }
 
     static ConfigurableFileCollection configurableFileCollection(Project project) {

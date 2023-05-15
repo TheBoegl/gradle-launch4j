@@ -29,7 +29,7 @@ class Launch4jExternalTask extends DefaultLaunch4jTask {
 
     @TaskAction
     def run() {
-        Extract.binaries(project)
+        Extract.binaries(project, launch4jBinaryFiles, launch4jBinaryDirectory.get().asFile)
         createXML(copyLibraries())
         createExecutableFolder()
         def stdOut = new ByteArrayOutputStream()

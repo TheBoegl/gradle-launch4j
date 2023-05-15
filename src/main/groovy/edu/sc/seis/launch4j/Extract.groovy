@@ -18,25 +18,26 @@
 package edu.sc.seis.launch4j
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.RelativePath
 
+import java.nio.file.Files
+
 class Extract {
 
-    static binaries(Project project) {
-        binaries(project, project.configurations.getByName(Launch4jPlugin.LAUNCH4J_CONFIGURATION_NAME_BINARY))
-    }
-
-    static binaries(Project project, Configuration configuration) {
+    static File binaries(Project project, FileCollection configuration, File destinationParentFolder) {
         def workingDirName = Launch4jPlugin.workdir()
-        def destination = new File(project.buildDir, Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY)
-        def jarName = "launch4j-${Launch4jPlugin.ARTIFACT_VERSION}-${workingDirName}"
+        def jarName = "launch4j-(\\d{1,2}\\.\\d{1,2})-${workingDirName}"
         def workingJar = configuration.find { File file -> file.name =~ /${jarName}.jar/ }
         if (!workingJar) {
-            throw new Exception("workingdir jar file not found!")
+            throw new Exception("launch4j binary jar ${workingDirName} file not found! Expected ${workingDirName}.jar but got ${configuration.files.collect {it.name}}. Use the correct classifier for this platform.")
         }
-        def lockFile = new File(destination, "created")
+        def m = workingJar.name =~ /launch4j-(\d{1,2}\.\d{1,2})/
+        def version = m? m[0][1] : workingJar.name
+        def destination = destinationParentFolder.toPath().resolve(version)
+        Files.createDirectories(destination)
+        def lockFile = destination.resolve("created").toFile()
         if (!lockFile.exists()) {
             def copyOptions = {
                 from { project.zipTree(workingJar) }
@@ -44,7 +45,7 @@ class Extract {
                 into { destination }
                 eachFile { FileCopyDetails fcp ->
                     // only extract the binaries
-                    if (fcp.relativePath.pathString.startsWith(jarName)) {
+                    if (fcp.relativePath.pathString.startsWith("launch4j-")) {
                         // remap the file to the root
                         def segments = fcp.relativePath.segments
                         def pathSegments = segments[1..-1] as String[]
@@ -57,7 +58,10 @@ class Extract {
             }
             if (project.copy(copyOptions).didWork) {
                 lockFile.text = new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone("UTC"))
+            } else {
+                throw new Exception("the unpacking of launch4j $version failed")
             }
         }
+        destination.toFile()
     }
 }
