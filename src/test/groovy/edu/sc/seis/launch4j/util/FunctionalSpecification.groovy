@@ -46,6 +46,22 @@ class FunctionalSpecification extends Specification {
         """
     }
 
+    def cleanup() {
+        deleteDirectory(new File(projectDir, "build"))
+    }
+
+    def deleteDirectory(File folder) {
+        File[] allContents = folder.listFiles()
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file)
+            }
+        }
+        if(!folder.delete()) {
+            folder.deleteOnExit()
+        }
+    }
+
     protected BuildResult build(String... arguments) {
         createAndConfigureGradleRunner(arguments).build()
     }
