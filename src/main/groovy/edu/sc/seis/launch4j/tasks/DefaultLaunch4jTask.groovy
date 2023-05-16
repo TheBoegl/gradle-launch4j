@@ -48,7 +48,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     private Launch4jPluginExtension config
     private FileCollection runtimeClassFiles
     @Internal
-    @Input
     final Provider<Configuration> launch4jDependency
     @Internal
     final Provider<RegularFile> launch4jBinaryDirectory
