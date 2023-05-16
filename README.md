@@ -25,7 +25,7 @@ If you are still forced to work with Java 6, use the latest version 2.4.
 
 # Tasks
 
-There are 3 tasks:
+There are 2 tasks:
 
 * **createExe** - Backward compatible task to generate an .exe file. *Execute this task to generate an executable.* With default settings this creates the executable under `${project.buildDir}/launch4j` and puts all runtime libraries into the lib subfolder. 
 * createAllExecutables - Helper task to run all tasks of the `Launch4jExternalTask` and `Launch4jLibraryTask` type.
