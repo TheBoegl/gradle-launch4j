@@ -185,14 +185,14 @@ Creating three executables is as easy as:
         productName = 'My App'
     }
     
-    task createFastStart(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
+    tasks.register('createFastStart', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
         outfile = 'FastMyApp.exe'
-        mainClassName = 'om.example.myapp.FastStart'
+        mainClassName = 'com.example.myapp.FastStart'
         icon = "${projectDir}/icons/myAppFast.ico"
         fileDescription = 'The lightning fast implementation'
     }
     
-    task "MyApp-memory"(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
+    tasks.register('MyApp-memory', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
         fileDescription = 'The default implementation with increased heap size'
         maxHeapPercent = 50
     }
