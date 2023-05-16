@@ -29,7 +29,6 @@ There are 3 tasks:
 
 * **createExe** - Backward compatible task to generate an .exe file. *Execute this task to generate an executable.* With default settings this creates the executable under `${project.buildDir}/launch4j` and puts all runtime libraries into the lib subfolder. 
 * createAllExecutables - Helper task to run all tasks of the `Launch4jExternalTask` and `Launch4jLibraryTask` type.
-* ~~launch4j~~ - Deprecated placeholder task that depends on the above. This task was deprecated in favor of the createExe task and to avoid the name conflict of launch4j on the project.
 
 Launch4j no longer needs to be installed separately, but if you want, you can still use it from the *PATH*. Since version 2.0 use the [Launch4jExternalTask](#launch4jexternaltask) to create your executable.
 
@@ -92,7 +91,6 @@ The values configurable within the launch4j extension along with their defaults 
 | String mainClassName | | |
 | boolean dontWrapJar | false | |
 | String headerType | "gui" | |
-| ~~String jar~~ | "lib/"+project.tasks[jar].archiveName or<br> "", if the JavaPlugin is not loaded | deprecated use `jarTask` instead |
 | Task jarTask | tasks[jar], if the JavaPlugin is loaded | Task, producing jar |
 | String outfile | project.name+'.exe' | |
 | String errTitle | "" | |
@@ -109,13 +107,11 @@ The values configurable within the launch4j extension along with their defaults 
 | String textVersion | project.version | |
 | String copyright | "unknown" | |
 | String companyName | "" | |
-| ~~String description~~| project.name | deprecated use `fileDescription` instead |
 | String fileDescription | project.name | |
 | String productName | project.name | |
 | String internalName | project.name | |
 | String trademarks | | |
 | String language | "ENGLISH_US" | |
-| ~~String opt~~ | "" | deprecated use `jvmOptions` instead |
 | Set&lt;String&gt; jvmOptions | [ ] | |
 | String bundledJrePath | | |
 | boolean bundledJre64Bit | false | |
@@ -144,8 +140,6 @@ The values configurable within the launch4j extension along with their defaults 
 
 | Removed properties | Default Value|Description |
 |---|---|---|
-| ~~String launch4jCmd~~ | "launch4j" | use the [Launch4jExternalTask](#launch4jexternaltask) instead |
-| ~~boolean externalLaunch4j~~ | false | use the [Launch4jExternalTask](#launch4jexternaltask) instead |
 
 ### Configurable input configuration
 
