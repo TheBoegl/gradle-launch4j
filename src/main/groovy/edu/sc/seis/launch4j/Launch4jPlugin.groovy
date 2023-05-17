@@ -41,7 +41,7 @@ class Launch4jPlugin implements Plugin<Project> {
     static final String LAUNCH4J_EXTENSION_NAME = LAUNCH4J_PLUGIN_NAME
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
-    static final String ARTIFACT_VERSION = '3.14'
+    static final String ARTIFACT_VERSION = '3.50'
     static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/"
 
     private FileOperations fileOperations

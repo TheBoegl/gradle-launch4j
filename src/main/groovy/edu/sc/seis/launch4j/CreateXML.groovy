@@ -105,13 +105,11 @@ class CreateXML {
             }
             jre() {
                 xml.path(config.bundledJrePath.getOrElse(""))
-                xml.bundledJre64Bit(config.bundledJre64Bit.get())
-                xml.bundledJreAsFallback(config.bundledJreAsFallback.get())
+                xml.requiresJdk(config.requiresJdk.get())
+                xml.requires64Bit(config.requires64Bit.get())
                 def minVersion = config.jreMinVersion.isPresent() ? config.jreMinVersion.get() : config.internalJreMinVersion()
                 xml.minVersion(minVersion instanceof Property ? minVersion.get() : minVersion)
                 xml.maxVersion(config.jreMaxVersion.getOrElse(""))
-                xml.jdkPreference(config.jdkPreference.get())
-                xml.runtimeBits(config.jreRuntimeBits.get())
 
                 if (config.jvmOptions.isPresent()) {
                     config.jvmOptions.get().each { opt ->
@@ -155,7 +153,7 @@ class CreateXML {
             }
 
             if (config.messagesStartupError.isPresent() ||
-                config.messagesBundledJreError.isPresent() ||
+                config.messagesJreNotFoundError.isPresent() ||
                 config.messagesJreVersionError.isPresent() ||
                 config.messagesLauncherError.isPresent()
                 || config.messagesInstanceAlreadyExists.isPresent()
@@ -163,8 +161,8 @@ class CreateXML {
                 messages() {
                     if (config.messagesStartupError.isPresent())
                         xml.startupErr(config.messagesStartupError.get())
-                    if (config.messagesBundledJreError.isPresent())
-                        xml.bundledJreErr(config.messagesBundledJreError.get())
+                    if (config.messagesJreNotFoundError.isPresent())
+                        xml.bundledJreErr(config.messagesJreNotFoundError.get())
                     if (config.messagesJreVersionError.isPresent())
                         xml.jreVersionErr(config.messagesJreVersionError.get())
                     if (config.messagesLauncherError.isPresent())

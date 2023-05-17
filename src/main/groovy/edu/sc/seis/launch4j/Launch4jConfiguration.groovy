@@ -25,11 +25,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.*
 
 import java.nio.file.Path
 
@@ -59,6 +55,7 @@ interface Launch4jConfiguration {
     Path getJarTaskDefaultOutputPath()
     Property<String> getLibraryDir()
     Property<String> getXmlFileName()
+    Property<String> getOutfile()
 
     Property<Boolean> getDontWrapJar()
 
@@ -108,9 +105,7 @@ interface Launch4jConfiguration {
 
     Property<String> getBundledJrePath()
 
-    Property<Boolean> getBundledJre64Bit()
-
-    Property<Boolean> getBundledJreAsFallback()
+    Property<Boolean> getRequires64Bit()
 
     Property<String> getJreMinVersion()
 
@@ -118,9 +113,7 @@ interface Launch4jConfiguration {
 
     Property<String> getJreMaxVersion()
 
-    Property<String> getJdkPreference()
-
-    Property<String> getJreRuntimeBits()
+    Property<Boolean> getRequiresJdk()
 
     SetProperty<String> getVariables()
 
@@ -130,7 +123,7 @@ interface Launch4jConfiguration {
 
     Property<String> getMessagesStartupError()
 
-    Property<String> getMessagesBundledJreError()
+    Property<String> getMessagesJreNotFoundError()
 
     Property<String> getMessagesJreVersionError()
 

@@ -35,6 +35,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.model.ReplacedBy
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
@@ -95,17 +96,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         trademarks = objectFactory.property(String)
         language = objectFactory.property(String)
         bundledJrePath = objectFactory.property(String)
-        bundledJre64Bit = objectFactory.property(Boolean)
-        bundledJreAsFallback = objectFactory.property(Boolean)
+        requires64Bit = objectFactory.property(Boolean)
         jreMinVersion = objectFactory.property(String)
         jreMaxVersion = objectFactory.property(String)
-        jdkPreference = objectFactory.property(String)
-        jreRuntimeBits = objectFactory.property(String)
+        requiresJdk = objectFactory.property(Boolean)
         variables = objectFactory.setProperty(String)
         mutexName = objectFactory.property(String)
         windowTitle = objectFactory.property(String)
         messagesStartupError = objectFactory.property(String)
-        messagesBundledJreError = objectFactory.property(String)
+        messagesJreNotFoundError = objectFactory.property(String)
         messagesJreVersionError = objectFactory.property(String)
         messagesLauncherError = objectFactory.property(String)
         messagesInstanceAlreadyExists = objectFactory.property(String)
@@ -152,17 +151,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             trademarks.convention(config.trademarks)
             language.convention(config.language)
             bundledJrePath.convention(config.bundledJrePath)
-            bundledJre64Bit.convention(config.bundledJre64Bit)
-            bundledJreAsFallback.convention(config.bundledJreAsFallback)
+            requires64Bit.convention(config.requires64Bit)
             jreMinVersion.convention(config.jreMinVersion)
             jreMaxVersion.convention(config.jreMaxVersion)
-            jdkPreference.convention(config.jdkPreference)
-            jreRuntimeBits.convention(config.jreRuntimeBits)
+            requiresJdk.convention(config.requiresJdk)
             variables.convention(config.variables)
             mutexName.convention(config.mutexName)
             windowTitle.convention(config.windowTitle)
             messagesStartupError.convention(config.messagesStartupError)
-            messagesBundledJreError.convention(config.messagesBundledJreError)
+            messagesJreNotFoundError.convention(config.messagesJreNotFoundError)
             messagesJreVersionError.convention(config.messagesJreVersionError)
             messagesLauncherError.convention(config.messagesLauncherError)
             messagesInstanceAlreadyExists.convention(config.messagesInstanceAlreadyExists)
@@ -211,17 +208,15 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             trademarks.set(config.trademarks)
             language.set(config.language)
             bundledJrePath.set(config.bundledJrePath)
-            bundledJre64Bit.set(config.bundledJre64Bit)
-            bundledJreAsFallback.set(config.bundledJreAsFallback)
+            requires64Bit.set(config.requires64Bit)
             jreMinVersion.set(config.jreMinVersion)
             jreMaxVersion.set(config.jreMaxVersion)
-            jdkPreference.set(config.jdkPreference)
-            jreRuntimeBits.set(config.jreRuntimeBits)
+            requiresJdk.set(config.requiresJdk)
             variables.set(config.variables)
             mutexName.set(config.mutexName)
             windowTitle.set(config.windowTitle)
             messagesStartupError.set(config.messagesStartupError)
-            messagesBundledJreError.set(config.messagesBundledJreError)
+            messagesJreNotFoundError.set(config.messagesJreNotFoundError)
             messagesJreVersionError.set(config.messagesJreVersionError)
             messagesLauncherError.set(config.messagesLauncherError)
             messagesInstanceAlreadyExists.set(config.messagesInstanceAlreadyExists)
@@ -529,27 +524,26 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Optional
     final Property<String> bundledJrePath
 
-    /**
-     * Optional, defaults to <u>false</u> which limits the calculated heap size to the 32-bit maximum. Set to true in order to use the available memory without this limit. This option works in combination with the HeapSize and HeapPercent options only if the found JRE is a bundled one. In the standard JRE search based on registry the wrapper detects the type of JRE itself and uses the 32-bit heap limit when needed.
-     */
-    @Input
-    @Optional
-    final Property<Boolean> bundledJre64Bit
+    @Deprecated
+    @ReplacedBy("requires64Bit")
+    Boolean getBundledJre64Bit() {
+        logger.warn("use requires64Bit instead of bundledJre64Bit")
+        requires64Bit.getOrElse(false)
+    }
+
+    @Deprecated
+    void setBundledJre64Bit(Boolean value) {
+        logger.warn("use requires64Bit instead of bundledJre64Bit")
+        requires64Bit.set(value)
+    }
 
     /**
      * Optional, defaults to <u>false</u> which treats the bundled JRE as the primary runtime. When set to true, the bundled JRE will only be used in case the mix/max version search fails. This can be used as a fallback option if the user does not have the required Java installed and the bundled JRE is provided on a CD or shared network location.
      */
     @Input
     @Optional
-    final Property<Boolean> bundledJreAsFallback
+    final Property<Boolean> requires64Bit
 
-    /**
-     * If {@link #bundledJrePath} is set:
-     * <ul><li>Search for Java, if an appropriate version cannot be found display error message and open the Java download page.</li</ul>
-     * Else:
-     * <ul><li>Use bundled JRE first, if it cannot be located search for Java, if that fails display error message and open the Java download page. </li></ul>
-     * @see DefaultLaunch4jTask#jreMaxVersion
-     */
     @Input
     @Optional
     final Property<String> jreMinVersion
@@ -586,22 +580,34 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    final Property<String> jdkPreference
+    final Property<Boolean> requiresJdk
+
+    @Deprecated
+    @ReplacedBy("requiresJdk")
+    String getJdkPreference() {
+        logger.warn("use requiresJdk instead of jdkPreference")
+        requiresJdk.getOrElse(false) ? 'jdkOnly' : null
+    }
+
+    @Deprecated
+    void setJdkPreference(String message) {
+        logger.warn("use requiresJdk instead of jdkPreference")
+        requiresJdk.set('jdkOnly'.equalsIgnoreCase(message))
+    }
 
 
-    /**
-     * Optional, defaults to 64/32; Allows to select between 64-bit and 32-bit runtimes. Valid values are:
-     * <ul>
-     *     <li><strong>64</strong><br>Use only 64-bit runtimes</li>
-     *     <li><strong><u>64/32</u></strong><br>Use 64-bit runtimes if available, otherwise use 32-bit</li>
-     *     <li><strong>32/64</strong><br>Use 32-bit runtimes if available, otherwise use 64-bit</li>
-     *     <li><strong>32</strong><br>Use only 32-bit runtimes</li>
-     * </ul>
-     *
-     */
-    @Input
-    @Optional
-    final Property<String> jreRuntimeBits
+    @Deprecated
+    @ReplacedBy("requires64Bit")
+    String getRuntimeBits() {
+        logger.warn("use requires64Bit instead of runtimeBits")
+        requires64Bit.getOrElse(false) ? '64' : null
+    }
+
+    @Deprecated
+    void setRuntimeBits(String value) {
+        logger.warn("use requires64Bit instead of runtimeBits")
+        requires64Bit.set('64' == value)
+    }
 
     /**
      * Unique mutex name that will identify the application.
@@ -626,8 +632,20 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     @Input
     @Optional
-    final Property<String> messagesBundledJreError
+    final Property<String> messagesJreNotFoundError
 
+    @Deprecated
+    @ReplacedBy("messagesJreNotFoundError")
+    String getMessagesBundledJreError() {
+        logger.warn("use messagesJreNotFoundError instead of messagesBundledJreError")
+        messagesJreNotFoundError.getOrNull()
+    }
+
+    @Deprecated
+    void setMessagesBundledJreError(String message) {
+        logger.warn("use messagesJreNotFoundError instead of messagesBundledJreError")
+        messagesJreNotFoundError.set(message)
+    }
 
     @Input
     @Optional

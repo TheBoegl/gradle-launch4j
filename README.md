@@ -16,11 +16,11 @@
 
 # Introduction
 
-The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.14](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
+The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.50](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
 This plugin is compatible with the Gradle versions 4.9 and later.
 If you still rely on an outdated gradle version `[2-4.9[`, use the plugin version 2.5.4.
 
-Since **version 2.5** this plugin requires **Java 8*, as launch4j in version 3.14 requires that as well.
+Since **version 2.5** this plugin requires **Java 8*, as launch4j in version 3.14 and later requires that as well.
 If you are still forced to work with Java 6, use the latest version 2.4.
 
 # Tasks
@@ -114,17 +114,14 @@ The values configurable within the launch4j extension along with their defaults 
 | String language | "ENGLISH_US" | |
 | Set&lt;String&gt; jvmOptions | [ ] | |
 | String bundledJrePath | | |
-| boolean bundledJre64Bit | false | |
-| boolean bundledJreAsFallback | false | |
+| boolean requires64Bit | false | |
 | String jreMinVersion | project.targetCompatibility or<br> the current java version,<br> if the property is not set | |
 | String jreMaxVersion | | |
-| String jdkPreference | "preferJre" | |
-| String jreRuntimeBits | "64/32" | |
 | Set&lt;String&gt; variables | [ ] | |
 | String mutexName | | |
 | String windowTitle | | |
 | String messagesStartupError | | |
-| String messagesBundledJreError | | |
+| String messagesJreNotFoundError | | |
 | String messagesJreVersionError | | |
 | String messagesLauncherError | | |
 | String messagesInstanceAlreadyExists | | |
@@ -138,8 +135,13 @@ The values configurable within the launch4j extension along with their defaults 
 | boolean splashTimeoutError | true | |
 | DuplicatesStrategy duplicatesStrategy | DuplicatesStrategy.EXCLUDE | The duplication Strategy to use if duplicates are found. See also [here](https://docs.gradle.org/current/javadoc/org/gradle/api/file/DuplicatesStrategy.html). <br> Defaults to DuplicatesStrategy.EXCLUDE |
 
-| Removed properties | Default Value|Description |
-|---|---|---|
+| Removed properties                 | Default Value | Description                          |
+|------------------------------------|---------------|--------------------------------------|
+| ~ String messagesBundledJreError ~ |               | use messagesJreNotFoundError instead |
+| ~ boolean bundledJre64Bit ~        | false         | use requires64Bit instead            |
+| ~ boolean bundledJreAsFallback ~   | false         |                                      |
+| ~ String jdkPreference ~           | "preferJre"   | use requiresJdk instead              |
+| ~ String jreRuntimeBits ~          | "64/32"       | use requires64Bit instead            |
 
 ### Configurable input configuration
 

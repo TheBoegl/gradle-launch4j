@@ -26,7 +26,9 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.file.FileOperations
+import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.model.ReplacedBy
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -46,6 +48,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     final FileOperations fileOperations
     final ObjectFactory objectFactory
+    final Logger logger
     @Internal
     final Provider<String> targetCompatibility
     @Internal
@@ -57,6 +60,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     Launch4jPluginExtension(Project project, FileOperations fileOperations, ObjectFactory objectFactory, ProviderFactory providerFactory) {
         this.fileOperations = fileOperations
         this.objectFactory = objectFactory
+        logger = project.logger
         targetCompatibility = asGradleProperty(project, providerFactory, 'targetCompatibility')
         sourceCompatibility = asGradleProperty(project, providerFactory, 'sourceCompatibility')
         jarFileCollection = project.tasks.named(JavaPlugin.JAR_TASK_NAME).map {it?.outputs?.files?: null }
@@ -90,17 +94,15 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         trademarks = objectFactory.property(String)
         language = objectFactory.property(String)
         bundledJrePath = objectFactory.property(String)
-        bundledJre64Bit = objectFactory.property(Boolean)
-        bundledJreAsFallback = objectFactory.property(Boolean)
+        requires64Bit = objectFactory.property(Boolean)
         jreMinVersion = objectFactory.property(String)
         jreMaxVersion = objectFactory.property(String)
-        jdkPreference = objectFactory.property(String)
-        jreRuntimeBits = objectFactory.property(String)
+        requiresJdk = objectFactory.property(Boolean)
         variables = objectFactory.setProperty(String)
         mutexName = objectFactory.property(String)
         windowTitle = objectFactory.property(String)
         messagesStartupError = objectFactory.property(String)
-        messagesBundledJreError = objectFactory.property(String)
+        messagesJreNotFoundError = objectFactory.property(String)
         messagesJreVersionError = objectFactory.property(String)
         messagesLauncherError = objectFactory.property(String)
         messagesInstanceAlreadyExists = objectFactory.property(String)
@@ -148,11 +150,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             internalName.convention("${project.name}")
             trademarks.convention('')
             language.convention('ENGLISH_US')
-            bundledJre64Bit.convention(false)
-            bundledJreAsFallback.convention(false)
+            requires64Bit.convention(false)
             // unable to get correct jreMinVersion here
-            jdkPreference.convention('preferJre')
-            jreRuntimeBits.convention('64/32')
+            requiresJdk.convention(false)
             variables.convention([])
             initialHeapSize.convention(null)
             initialHeapPercent.convention(null)
@@ -194,11 +194,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             internalName.set(project.name)
             trademarks.set('')
             language.set('ENGLISH_US')
-            bundledJre64Bit.set(false)
-            bundledJreAsFallback.set(false)
+            requires64Bit.set(false)
             // unable to get correct jreMinVersion here
-            jdkPreference.set('preferJre')
-            jreRuntimeBits.set('64/32')
+            requiresJdk.set(false)
             variables.set([])
             initialHeapSize.set(null)
             initialHeapPercent.set(null)
@@ -270,8 +268,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     final Property<String> language
 
     final Property<String> bundledJrePath
-    final Property<Boolean> bundledJre64Bit
-    final Property<Boolean> bundledJreAsFallback
+    final Property<Boolean> requires64Bit
     final Property<String> jreMinVersion
 
     @Override
@@ -294,15 +291,13 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         jreMinVersion.get()
     }
     final Property<String> jreMaxVersion
-    final Property<String> jdkPreference
-    final Property<String> jreRuntimeBits
-
+    final Property<Boolean> requiresJdk
     final SetProperty<String> variables
 
     final Property<String> mutexName
     final Property<String> windowTitle
     final Property<String> messagesStartupError
-    final Property<String> messagesBundledJreError
+    final Property<String> messagesJreNotFoundError
     final Property<String> messagesJreVersionError
     final Property<String> messagesLauncherError
     final Property<String> messagesInstanceAlreadyExists
@@ -335,4 +330,44 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     }
 
     final SetProperty<String> classpath
+
+    @Deprecated
+    @ReplacedBy("requiresJdk")
+    String getJdkPreference() {
+        logger.warn("use requiresJdk instead of jdkPreference")
+        requiresJdk.getOrElse(false) ? 'jdkOnly' : null
+    }
+
+    @Deprecated
+    void setJdkPreference(String message) {
+        logger.warn("use requiresJdk instead of jdkPreference")
+        requiresJdk.set('jdkOnly'.equalsIgnoreCase(message))
+    }
+
+
+    @Deprecated
+    @ReplacedBy("requires64Bit")
+    String getRuntimeBits() {
+        logger.warn("use requires64Bit instead of runtimeBits")
+        requires64Bit.getOrElse(false) ? '64' : null
+    }
+
+    @Deprecated
+    void setRuntimeBits(String value) {
+        logger.warn("use requires64Bit instead of runtimeBits")
+        requires64Bit.set('64' == value)
+    }
+
+    @Deprecated
+    @ReplacedBy("messagesJreNotFoundError")
+    String getMessagesBundledJreError() {
+        logger.warn("use messagesJreNotFoundError instead of messagesBundledJreError")
+        messagesJreNotFoundError.getOrNull()
+    }
+
+    @Deprecated
+    void setMessagesBundledJreError(String message) {
+        logger.warn("use messagesJreNotFoundError instead of messagesBundledJreError")
+        messagesJreNotFoundError.set(message)
+    }
 }
