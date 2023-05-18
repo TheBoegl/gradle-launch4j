@@ -25,7 +25,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
-import org.gradle.util.ConfigureUtil
 
 import java.nio.file.Path
 
@@ -46,67 +45,35 @@ class CopyLibraries {
      */
     FileCollection execute(File libraryDir, Object copyConfigurable, Path jarPath, FileCollection runtimeClasspath, ConfigurableFileCollection configurableFileCollection) {
         def files = []
-        def distSpec = {
-            if (copyConfigurable != null) {
-                if (copyConfigurable instanceof CopySpec) {
-                    with(copyConfigurable)
-                } else {
-                    with {
-                        from { copyConfigurable }
-                    }
-                }
-            } else {
-                if (jarPath) {
-                    with {
-                        from { jarPath }
-                    }
-                }
-                if (runtimeClasspath)
-                    with {
-                        from(runtimeClasspath)
-                    }
-            }
-            into { libraryDir }
-            eachFile { FileCopyDetails details ->
-                files.add(details.relativePath.getFile(libraryDir))
-            }
-        }
-
         fileOperations.sync(new Action<CopySpec>() {
             void execute(CopySpec t) {
                 t.duplicatesStrategy = duplicatesStrategy
-                ConfigureUtil.configure(distSpec, t)
-
-//        fileOperations.sync(new Action<CopySpec>() {
-//            void execute(CopySpec t) {
-//                t.duplicatesStrategy = duplicatesStrategy
-//                t.into(libraryDir)
-//                if (copyConfigurable != null) {
-//                    if (copyConfigurable instanceof CopySpec) {
-//                        t.with(copyConfigurable)
-//                    } else {
-//                        t.with {
-//                            from { copyConfigurable }
-//                        }
-//                    }
-//                } else {
-//                    if (jarPath) {
-//                        t.with {
-//                            from { jarPath }
-//                        }
-//                    }
-//                    if (runtimeClasspath) {
-//                        t.with {
-//                            from(runtimeClasspath)
-//                        }
-//                    }
-//                }
-//                t.eachFile { FileCopyDetails details ->
-//                    files.add(details.relativePath.getFile(libraryDir))
-//                }
+                t.into(libraryDir)
+                if (copyConfigurable != null) {
+                    if (copyConfigurable instanceof CopySpec) {
+                        t.with(copyConfigurable)
+                    } else {
+                        t.with {
+                            from { copyConfigurable }
+                        }
+                    }
+                } else {
+                    if (jarPath) {
+                        t.with {
+                            from { jarPath }
+                        }
+                    }
+                    if (runtimeClasspath) {
+                        t.with {
+                            from(runtimeClasspath)
+                        }
+                    }
+                }
+                t.eachFile { FileCopyDetails details ->
+                    files.add(details.relativePath.getFile(libraryDir))
+                }
             }
         })
-
         configurableFileCollection.from(files)
     }
 }
