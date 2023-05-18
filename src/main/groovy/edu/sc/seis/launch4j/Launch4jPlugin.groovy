@@ -25,7 +25,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.DependencySubstitution
-import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.internal.os.OperatingSystem
@@ -71,11 +70,6 @@ class Launch4jPlugin implements Plugin<Project> {
         project.tasks.withType(DefaultLaunch4jTask.class).configureEach {it.launch4jBinaryFiles.from(l4jConfig)}
     }
 
-    private static ModuleDependency addDependency(Project project, Configuration configuration, String notation) {
-        ModuleDependency dependency = project.dependencies.create(notation) as ModuleDependency
-        configuration.dependencies.add(dependency)
-        dependency
-    }
 
     static Configuration configureDependencies(final Project project) {
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
