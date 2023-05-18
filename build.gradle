@@ -30,7 +30,9 @@ dependencies {
         exclude(group: 'org.apache.ant', module: '*')
         exclude(group: 'net.java.abeille', module: '*')
         exclude(group: 'com.jgoodies', module: '*')
-        exclude(group: 'foxtrot', module: '*')
+        exclude(group: 'com.formdev', module: '*')
+        exclude(group: 'commons-beanutils', module: '*')
+        exclude(group: 'commons-logging', module: '*')
         exclude(group: 'com.thoughtworks.xstream')
     }
     implementation 'com.thoughtworks.xstream:xstream:1.4.20'
