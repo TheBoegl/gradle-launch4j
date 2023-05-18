@@ -53,8 +53,8 @@ class Launch4jPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if (GradleVersion.current() < GradleVersion.version("4.9")) {
-            throw new GradleException("this plugin version requires gradle 4.9 and newer.\nUse the latest version 2.x release or update gradle.")
+        if (GradleVersion.current() < GradleVersion.version("4.10")) {
+            throw new GradleException("this plugin version requires gradle 4.10 and newer.\nUse the latest version 2.x release or update gradle.")
         }
         project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension.class, project, fileOperations, project.objects, project.providers)
 
