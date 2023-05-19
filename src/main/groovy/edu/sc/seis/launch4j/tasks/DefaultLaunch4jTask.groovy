@@ -255,8 +255,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     final Provider<RegularFile> dest
 
     @Input
+    @Optional
     final Property<String> xmlFileName
 
+    @Internal
     final Provider<RegularFile> xmlFile
 
     /**
@@ -438,14 +440,14 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     final Property<String> icon
 
     /**
-     * Version number 'x.x.x.x'
+     * Version number {@code 'x.x.x.x'}
      */
     @Input
     @Optional
     final Property<String> version
 
     /**
-     * Free form file version, for example '1.20.RC1'.
+     * Free form file version, for example {@code '1.20.RC1'}.
      */
     @Input
     @Optional
@@ -460,6 +462,12 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     /**
      * Optional, accepts everything you would normally pass to java/javaw launcher: assertion options, system properties and X options. Here you can map environment and special variables <i>EXEDIR</i> (exe's runtime directory), <i>EXEFILE</i> (exe's runtime full file path) to system properties. All variable references must be surrounded with percentage signs and quoted.
+     * <ul>
+     *   <li>-Dlaunch4j.exedir="%EXEDIR%"</li>
+     *   <li>-Dlaunch4j.exefile="%EXEFILE%"</li>
+     *   <li>-Denv.path="%Path%"</li>
+     *   <li>-Dsettings="%HomeDrive%%HomePath%\\settings.ini"</li>
+     * </ul>
      */
     @Input
     @Optional
@@ -511,7 +519,13 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     final Property<String> language
 
     /**
-     * Run if bundled JRE and javaw.exe are present, otherwise stop with error
+     * The {@code bundledJrePath} property is used to specify absolute or relative JRE paths, it does not rely on the current directory or {@link #chdir}. Note that this path is not checked until the actual application execution.
+     *
+     * {@code bundledJrePath} is now required and always used for searching before the registry in order to ensure compatibility with latest runtimes which by default do not add registry keys during installation.
+     * {@link #jreMinVersion} and {@link #jreMaxVersion} are now considered during path and registry search, previously the version was checked only during registry search. The first runtime version matching the given range will be used.
+     *
+     * @see #jreMinVersion
+     * @see #jreMaxVersion
      */
     @Input
     @Optional
@@ -531,12 +545,34 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     /**
-     * Optional, defaults to <u>false</u> which treats the bundled JRE as the primary runtime. When set to true, the bundled JRE will only be used in case the mix/max version search fails. This can be used as a fallback option if the user does not have the required Java installed and the bundled JRE is provided on a CD or shared network location.
+     * Optional, defaults to <u>false</u>. True limits the runtimes to 64-Bit only, false will use 64-Bit or 32-Bit depending on which is found.
+     *
+     * This option works with path and registry search.
      */
     @Input
     @Optional
     final Property<Boolean> requires64Bit
 
+    /**
+     * The minimum Java version
+     *
+     * The traditional version scheme supported by launch4j is {@code 1.x.x[_xxx]} and requires at least 3 parts, for example:
+     * <pre>
+     * 1.6.0
+     * 1.7.0_51
+     * 1.8.0_121
+     * </pre>
+     *
+     * The new version format for Java >= 9 is {@code xxx[.xxx[.xxx]]} where only 1 part is required and the update version after the underscore is not allowed.
+     * <pre>
+     * 1.6
+     * 9
+     * 10.0.1
+     * </pre>
+     *
+     * @see #jreMaxVersion
+     * @see #bundledJrePath
+     */
     @Input
     @Optional
     final Property<String> jreMinVersion
@@ -551,24 +587,32 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     /**
-     * If {@link #bundledJrePath} is set:
-     * <ul><li>Search for Java, if an appropriate version cannot be found display error message and open the Java download page.</li</ul>
-     * Else:
-     * <ul><li>Use bundled JRE first, if it cannot be located search for Java, if that fails display error message and open the Java download page. </li></ul>
-     * @see DefaultLaunch4jTask#jreMinVersion
+     * The maximum Java version
+     *
+     * The traditional version scheme supported by launch4j is {@code 1.x.x[_xxx]} and requires at least 3 parts, for example:
+     * <pre>
+     * 1.6.0
+     * 1.7.0_51
+     * 1.8.0_121
+     * </pre>
+     *
+     * The new version format for Java >= 9 is {@code xxx[.xxx[.xxx]]} where only 1 part is required and the update version after the underscore is not allowed.
+     * <pre>
+     * 1.6
+     * 9
+     * 10.0.1
+     * </pre>
+     *
+     * @see #jreMinVersion
+     * @see #bundledJrePath
      */
     @Input
     @Optional
     final Property<String> jreMaxVersion
 
     /**
-     * Optional, defaults to preferJre; Allows you to specify a preference for a public JRE or a private JDK runtime. Valid values are:
-     * <ul>
-     *     <li><strong>jreOnly</strong><br>Always use a public JRE (equivalent to the old option dontUsePrivateJres=true)</li>
-     *     <li><strong><u>preferJre</u></strong><br>Prefer a public JRE, but use a JDK private runtime if it is newer than the public JRE (equivalent to the old option dontUsePrivateJres=false)</li>
-     *     <li><strong>preferJdk</strong><br>Prefer a JDK private runtime, but use a public JRE if it is newer than the JDK </li>
-     *     <li><strong>jdkOnly</strong><br>Always use a private JDK runtime (fails if there is no JDK installed)</li>
-     * </ul>
+     * Optional, defaults to <u>false</u>. When true only a JDK will be used for execution.
+     * An additional check will be performed if javac is available during path and registry search.
      *
      */
     @Input
@@ -660,6 +704,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      *
      * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
      *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
+     *
      * @see DefaultLaunch4jTask#initialHeapPercent
      * @see DefaultLaunch4jTask#maxHeapSize
      * @see DefaultLaunch4jTask#maxHeapPercent
@@ -673,6 +719,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      * Optional, initial heap size in % of available memory.<br>
      *
      * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
+     *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
      *
      * @see DefaultLaunch4jTask#initialHeapSize
      * @see DefaultLaunch4jTask#maxHeapSize
@@ -688,6 +736,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      *
      * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
      *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
+     *
      * @see DefaultLaunch4jTask#initialHeapSize
      * @see DefaultLaunch4jTask#initialHeapPercent
      * @see DefaultLaunch4jTask#maxHeapPercent
@@ -701,6 +751,8 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      * Optional, max heap size in % of available memory.<br>
      *
      * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
+     *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
      *
      * @see DefaultLaunch4jTask#initialHeapSize
      * @see DefaultLaunch4jTask#initialHeapPercent
