@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         stayAlive = objectFactory.property(Boolean)
         restartOnCrash = objectFactory.property(Boolean)
         duplicatesStrategy = objectFactory.property(DuplicatesStrategy)
-        manifest = objectFactory.property(String)
         icon = objectFactory.property(String)
         version = objectFactory.property(String)
         textVersion = objectFactory.property(String)
@@ -138,7 +137,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             stayAlive.convention(config.stayAlive)
             restartOnCrash.convention(config.restartOnCrash)
             duplicatesStrategy.convention(config.duplicatesStrategy)
-            manifest.convention(config.manifest)
             icon.convention(config.icon)
             version.convention(config.version)
             textVersion.convention(config.textVersion)
@@ -195,7 +193,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             stayAlive.set(config.stayAlive)
             restartOnCrash.set(config.restartOnCrash)
             duplicatesStrategy.set(config.duplicatesStrategy)
-            manifest.set(config.manifest)
             icon.set(config.icon)
             version.set(config.version)
             textVersion.set(config.textVersion)
@@ -432,10 +429,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Input
     @Optional
     final Property<Boolean> restartOnCrash
-
-    @Input
-    @Optional
-    final Property<String> manifest
 
     /**
      * Application icon in ICO format. May contain multiple color depths/resolutions.

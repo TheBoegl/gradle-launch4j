@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         stayAlive = objectFactory.property(Boolean)
         restartOnCrash = objectFactory.property(Boolean)
         duplicatesStrategy = objectFactory.property(DuplicatesStrategy)
-        manifest = objectFactory.property(String)
         icon = objectFactory.property(String)
         version = objectFactory.property(String)
         textVersion = objectFactory.property(String)
@@ -138,7 +137,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             stayAlive.convention(false)
             restartOnCrash.convention(false)
             duplicatesStrategy.convention(DuplicatesStrategy.EXCLUDE)
-            manifest.convention('')
             icon.convention('')
             version.convention("${project.version}")
             textVersion.convention("${project.version}")
@@ -182,7 +180,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
             stayAlive.set(false)
             restartOnCrash.set(false)
             duplicatesStrategy.set(DuplicatesStrategy.EXCLUDE)
-            manifest.set('')
             icon.set('')
             version.set(String.valueOf(project.version))
             textVersion.set(String.valueOf(project.version))
@@ -254,7 +251,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     final Property<Boolean> stayAlive
     final Property<Boolean> restartOnCrash
     final Property<DuplicatesStrategy> duplicatesStrategy
-    final Property<String> manifest
     final Property<String> icon
     final Property<String> version
     final Property<String> textVersion

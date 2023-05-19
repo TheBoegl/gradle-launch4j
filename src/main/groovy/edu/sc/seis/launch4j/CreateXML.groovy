@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,6 @@ class CreateXML {
             xml.supportUrl(config.supportUrl.get())
             xml.stayAlive(config.stayAlive.get())
             xml.restartOnCrash(config.restartOnCrash.get())
-            xml.manifest(config.manifest.get())
             xml.icon(relativizeIfAbsolute(outFilePath, config.icon.get()))
             if (config.variables.isPresent()) {
                 config.variables.get().each { var -> xml.var(var) }

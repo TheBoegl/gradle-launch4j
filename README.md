@@ -101,7 +101,6 @@ The values configurable within the launch4j extension along with their defaults 
 | String supportUrl | "" | |
 | boolean stayAlive | false | |
 | boolean restartOnCrash | false | |
-| String manifest | "" | |
 | String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are uncertain use "${projectDir}/path/to/icon.ico" |
 | String version | project.version | |
 | String textVersion | project.version | |
@@ -142,6 +141,7 @@ The values configurable within the launch4j extension along with their defaults 
 | ~ boolean bundledJreAsFallback ~   | false         |                                      |
 | ~ String jdkPreference ~           | "preferJre"   | use requiresJdk instead              |
 | ~ String jreRuntimeBits ~          | "64/32"       | use requires64Bit instead            |
+| String manifest                    | ""            |                                      |
 
 ### Configurable input configuration
 
