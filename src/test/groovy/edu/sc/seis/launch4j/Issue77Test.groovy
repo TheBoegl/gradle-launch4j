@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ class Issue77Test extends FunctionalSpecification {
                 outfile = 'notWrapped.exe'
                 dontWrapJar = true
             }
-            
+
             task usingOverriddenLaunch4j(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
                 dontWrapJar = false
                 outfile = 'wrapped.exe'
@@ -125,7 +125,7 @@ class Issue77Test extends FunctionalSpecification {
         !jarfile.exists()
         def processFailure = outfile.path.execute()
         then:
-        processFailure.waitFor() == 0
+        processFailure.waitFor() != 0
         processFailure.in.text.trim() != 'Hello World!'
         processFailure.err.text.trim().contains 'com.test.app.Main'
     }

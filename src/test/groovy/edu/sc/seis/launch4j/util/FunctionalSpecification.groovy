@@ -90,10 +90,38 @@ class FunctionalSpecification extends Specification {
     }
 
     protected GradleRunner createAndConfigureGradleRunner(String... arguments) {
+        buildFile << """
+tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEach {
+    stayAlive = true
+}
+"""
+        if (!new File(projectDir, 'src').exists()) {
+            addMainAndUpdateManifest()
+        }
         GradleRunner.create()
             .withProjectDir(projectDir)
             .withDebug(DEBUG)
             .withPluginClasspath()
             .withArguments(arguments)
+    }
+
+    protected addMainAndUpdateManifest() {
+        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
+            package com.test.app;
+
+            public class Main {
+                public static void main(String[] args) {
+                    System.out.println("...");
+                }
+            }
+"""
+
+        buildFile << """
+tasks.withType(Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.test.app.Main'
+    }
+}
+"""
     }
 }

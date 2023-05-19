@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,15 +34,6 @@ class Issue83Test extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
-            package com.test.app;
-
-            public class Main {
-                public static void main(String[] args) {
-                    System.out.println("Hello World!");
-                }
-            }
-        """
         testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
 
         when:
@@ -68,5 +59,6 @@ class Issue83Test extends FunctionalSpecification {
         def process = outfile.path.execute()
         then:
         process.waitFor() == 0
+        process.in.text.trim() == '...'
     }
 }
