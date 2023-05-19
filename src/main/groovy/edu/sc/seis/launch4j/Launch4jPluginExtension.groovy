@@ -35,7 +35,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.util.GradleVersion
 
 import javax.inject.Inject
@@ -46,14 +50,16 @@ import java.util.concurrent.Callable
 @AutoClone
 class Launch4jPluginExtension implements Launch4jConfiguration {
 
+    @Internal
     final FileOperations fileOperations
+    @Internal
     final ObjectFactory objectFactory
-    final Logger logger
+    private final Logger logger
     @Internal
     final Provider<String> targetCompatibility
     @Internal
     final Provider<String> sourceCompatibility
-    @Internal
+    @InputFiles
     final Provider<FileCollection> jarFileCollection
 
     @Inject
@@ -63,7 +69,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         logger = project.logger
         targetCompatibility = asGradleProperty(project, providerFactory, 'targetCompatibility')
         sourceCompatibility = asGradleProperty(project, providerFactory, 'sourceCompatibility')
-        jarFileCollection = project.tasks.named(JavaPlugin.JAR_TASK_NAME).map {it?.outputs?.files?: null }
+        jarFileCollection = project.tasks.named(JavaPlugin.JAR_TASK_NAME).map { it?.outputs?.files ?: null }
         mainClassName = objectFactory.property(String)
         jarTask = objectFactory.property(Task)
         outputDir = objectFactory.property(String)
@@ -225,46 +231,103 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         }
     }
 
-    final Property<String> mainClassName
-    final Property<Task> jarTask
-
     @Input
+    final Property<String> mainClassName
+    @Input
+    @Optional
+    final Property<Task> jarTask
+    @Input
+    @Optional
     final Property<String> outputDir
-
+    @OutputDirectory
     DirectoryProperty outputDirectory
-
+    @Input
+    @Optional
     final Property<String> libraryDir
     @Internal
     final Provider<RegularFile> libraryDirectory
+    @Input
+    @Optional
     final Property<String> xmlFileName
+    @Input
+    @Optional
     final Property<Boolean> dontWrapJar
+    @Input
+    @Optional
     final Property<String> headerType
-
+    @Input
+    @Optional
     final Property<String> outfile
+    @Internal
     final Provider<RegularFile> dest
+    @Input
+    @Optional
     final Property<String> errTitle
+    @Input
+    @Optional
     final Property<String> cmdLine
+    @Input
+    @Optional
     final Property<String> chdir
+    @Input
+    @Optional
     final Property<String> priority
+    @Input
+    @Optional
     final Property<String> downloadUrl
+    @Input
+    @Optional
     final Property<String> supportUrl
+    @Input
+    @Optional
     final Property<Boolean> stayAlive
+    @Input
+    @Optional
     final Property<Boolean> restartOnCrash
+    @Input
+    @Optional
     final Property<DuplicatesStrategy> duplicatesStrategy
+    @Input
+    @Optional
     final Property<String> icon
+    @Input
+    @Optional
     final Property<String> version
+    @Input
+    @Optional
     final Property<String> textVersion
+    @Input
+    @Optional
     final Property<String> copyright
+    @Input
+    @Optional
     final SetProperty<String> jvmOptions
+    @Input
+    @Optional
     final Property<String> companyName
+    @Input
+    @Optional
     final Property<String> fileDescription
+    @Input
+    @Optional
     final Property<String> productName
+    @Input
+    @Optional
     final Property<String> internalName
+    @Input
+    @Optional
     final Property<String> trademarks
+    @Input
+    @Optional
     final Property<String> language
-
+    @Input
+    @Optional
     final Property<String> bundledJrePath
+    @Input
+    @Optional
     final Property<Boolean> requires64Bit
+    @Input
+    @Optional
     final Property<String> jreMinVersion
 
     @Override
@@ -286,30 +349,67 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         }
         jreMinVersion.get()
     }
+    @Input
+    @Optional
     final Property<String> jreMaxVersion
+    @Input
+    @Optional
     final Property<Boolean> requiresJdk
+    @Input
+    @Optional
     final SetProperty<String> variables
 
+    @Input
+    @Optional
     final Property<String> mutexName
+    @Input
+    @Optional
     final Property<String> windowTitle
+    @Input
+    @Optional
     final Property<String> messagesStartupError
+    @Input
+    @Optional
     final Property<String> messagesJreNotFoundError
+    @Input
+    @Optional
     final Property<String> messagesJreVersionError
+    @Input
+    @Optional
     final Property<String> messagesLauncherError
+    @Input
+    @Optional
     final Property<String> messagesInstanceAlreadyExists
 
+    @Input
+    @Optional
     final Property<Integer> initialHeapSize
+    @Input
+    @Optional
     final Property<Integer> initialHeapPercent
+    @Input
+    @Optional
     final Property<Integer> maxHeapSize
+    @Input
+    @Optional
     final Property<Integer> maxHeapPercent
 
+    @Input
+    @Optional
     final Property<String> splashFileName
+    @Input
+    @Optional
     final Property<Boolean> splashWaitForWindows
+    @Input
+    @Optional
     final Property<Integer> splashTimeout
+    @Input
+    @Optional
     final Property<Boolean> splashTimeoutError
 
     transient final Property<Object> copyConfigurable
 
+    @Internal
     final Provider<RegularFile> xmlFile
 
     @Override
@@ -318,8 +418,9 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     }
 
     @Override
+    @InputFile
     Path getJarTaskDefaultOutputPath() {
-        if(jarFileCollection.isPresent() && jarFileCollection.get()) {
+        if (jarFileCollection.isPresent() && jarFileCollection.get()) {
             jarFileCollection.get().singleFile.toPath()
         }
         return null
