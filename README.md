@@ -258,15 +258,14 @@ In order to debug the created executable call it with the command line argument 
 # Using `SNAPSHOT` versions
 
 When you report a bug and it got fixed, you will have access to some `-SNAPSHOT` version.
-Adjust your buildscript to use the OJO repo:
+Adjust your buildscript to use the artifactory OSS repo:
 ```gradle
 buildscript {
   repositories {
-    mavenCentral()
-    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
+    maven { url 'https://boegl.jfrog.io/artifactory/snapshots-gradle-dev-local/' }
   }
   dependencies {
-    classpath 'edu.sc.seis.gradle:launch4j:latest.integration'
+    classpath 'edu.sc.seis.launch4j:launch4j:latest.integration'
   }
 }
 
