@@ -84,14 +84,14 @@ The values configurable within the launch4j extension along with their defaults 
 | Property Name | Default Value | Comment |
 |---------------|---------------|---------|
 | String outputDir | "launch4j" | This is the plugin's working path relative to `$buildDir`. Use the distribution plugin or a custom implementation to copy necessary files to an output location instead of adjusting this property.|
-| String libraryDir | "lib" | |
-| Object copyConfigurable | null | User-redefined set of files to be copied into `libraryDir` (if not set the default logic of copying will be executed) |
-| Set&lt;String&gt; classpath| [] | User-redefined classpath property (if not set the default logic based on the set of copied to `libraryDir` files will be used) |
+| String libraryDir | "lib" | The library directory next to the created executable, where all dependencies, i.e. libraries, will be copied into. |
+| Object copyConfigurable | null | User-defined set of files to copy to`libraryDir` (if not set, the default copy logic is used) |
+| Set&lt;String&gt; classpath| [] | User-defined classpath property (if not set, the default logic based on the set of files copied to `libraryDir` is used) |
 | String xmlFileName | "launch4j.xml" | |
 | String mainClassName | | |
 | boolean dontWrapJar | false | |
 | String headerType | "gui" | |
-| Task jarTask | tasks[jar], if the JavaPlugin is loaded | Task, producing jar |
+| Task jarTask | tasks[jar], if the JavaPlugin is loaded | The jar producing task. See [here](#configurable-input-configuration) how to use this for the shadow plugin. |
 | String outfile | project.name+'.exe' | |
 | String errTitle | "" | |
 | String cmdLine | "" | |
@@ -101,7 +101,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String supportUrl | "" | |
 | boolean stayAlive | false | |
 | boolean restartOnCrash | false | |
-| String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are uncertain use "${projectDir}/path/to/icon.ico" |
+| String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are unsure, use "${projectDir}/path/to/icon.ico" |
 | String version | project.version | |
 | String textVersion | project.version | |
 | String copyright | "unknown" | |
@@ -132,16 +132,16 @@ The values configurable within the launch4j extension along with their defaults 
 | boolean splashWaitForWindows | true | |
 | Integer splashTimeout | 60 | |
 | boolean splashTimeoutError | true | |
-| DuplicatesStrategy duplicatesStrategy | DuplicatesStrategy.EXCLUDE | The duplication Strategy to use if duplicates are found. See also [here](https://docs.gradle.org/current/javadoc/org/gradle/api/file/DuplicatesStrategy.html). <br> Defaults to DuplicatesStrategy.EXCLUDE |
+| DuplicatesStrategy duplicatesStrategy | DuplicatesStrategy.EXCLUDE | The duplication strategy to use when duplicates are found. See also [here](https://docs.gradle.org/current/javadoc/org/gradle/api/file/DuplicatesStrategy.html).|
 
 | Removed properties                 | Default Value | Description                          |
 |------------------------------------|---------------|--------------------------------------|
-| ~ String messagesBundledJreError ~ |               | use messagesJreNotFoundError instead |
-| ~ boolean bundledJre64Bit ~        | false         | use requires64Bit instead            |
-| ~ boolean bundledJreAsFallback ~   | false         |                                      |
-| ~ String jdkPreference ~           | "preferJre"   | use requiresJdk instead              |
-| ~ String jreRuntimeBits ~          | "64/32"       | use requires64Bit instead            |
-| String manifest                    | ""            |                                      |
+| ~~String messagesBundledJreError~~ |               | use messagesJreNotFoundError instead |
+| ~~boolean bundledJre64Bit~~        | false         | use requires64Bit instead            |
+| ~~boolean bundledJreAsFallback~~   | false         |                                      |
+| ~~String jdkPreference~~           | "preferJre"   | use requiresJdk instead              |
+| ~~String jreRuntimeBits~~          | "64/32"       | use requires64Bit instead            |
+| ~~String manifest~~                | ""            |                                      |
 
 ### Configurable input configuration
 
