@@ -54,7 +54,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
 
     buildscript {
       repositories {
-        jcenter()
+        mavenCentral()
       }
       dependencies {
         classpath 'edu.sc.seis.launch4j:launch4j:3.0.0'
@@ -62,7 +62,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
     }
 
     repositories {
-      jcenter()
+      mavenCentral()
     }
 
     apply plugin: 'java'
@@ -262,7 +262,7 @@ Adjust your buildscript to use the OJO repo:
 ```gradle
 buildscript {
   repositories {
-    jcenter()
+    mavenCentral()
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
   }
   dependencies {
