@@ -16,19 +16,19 @@
 
 # Introduction
 
-The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.14](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
-This plugin is compatible with the Gradle versions 2 and later.
+The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.50](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
+This plugin is compatible with the Gradle versions 4.10 and later.
+If you still rely on an outdated gradle version `[2-4.10[`, use the plugin version 2.5.4.
 
-Since **version 2.5** this plugin requires **Java 8*, as launch4j in version 3.14 requires that as well.
+Since **version 2.5** this plugin requires **Java 8*, as launch4j in version 3.14 and later requires that as well.
 If you are still forced to work with Java 6, use the latest version 2.4.
 
 # Tasks
 
-There are 3 tasks:
+There are 2 tasks:
 
 * **createExe** - Backward compatible task to generate an .exe file. *Execute this task to generate an executable.* With default settings this creates the executable under `${project.buildDir}/launch4j` and puts all runtime libraries into the lib subfolder. 
 * createAllExecutables - Helper task to run all tasks of the `Launch4jExternalTask` and `Launch4jLibraryTask` type.
-* ~~launch4j~~ - Deprecated placeholder task that depends on the above. This task was deprecated in favor of the createExe task and to avoid the name conflict of launch4j on the project.
 
 Launch4j no longer needs to be installed separately, but if you want, you can still use it from the *PATH*. Since version 2.0 use the [Launch4jExternalTask](#launch4jexternaltask) to create your executable.
 
@@ -42,7 +42,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     plugins {
       id 'java'
-      id 'edu.sc.seis.launch4j' version '2.5.4'
+      id 'edu.sc.seis.launch4j' version '3.0.0'
     }
 
     launch4j {
@@ -54,15 +54,15 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
 
     buildscript {
       repositories {
-        jcenter()
+        mavenCentral()
       }
       dependencies {
-        classpath 'edu.sc.seis.launch4j:launch4j:2.5.4'
+        classpath 'edu.sc.seis.launch4j:launch4j:3.0.0'
       }
     }
 
     repositories {
-      jcenter()
+      mavenCentral()
     }
 
     apply plugin: 'java'
@@ -84,15 +84,14 @@ The values configurable within the launch4j extension along with their defaults 
 | Property Name | Default Value | Comment |
 |---------------|---------------|---------|
 | String outputDir | "launch4j" | This is the plugin's working path relative to `$buildDir`. Use the distribution plugin or a custom implementation to copy necessary files to an output location instead of adjusting this property.|
-| String libraryDir | "lib" | |
-| Object copyConfigurable | null | User-redefined set of files to be copied into `libraryDir` (if not set the default logic of copying will be executed) |
-| Set&lt;String&gt; classpath| [] | User-redefined classpath property (if not set the default logic based on the set of copied to `libraryDir` files will be used) |
+| String libraryDir | "lib" | The library directory next to the created executable, where all dependencies, i.e. libraries, will be copied into. |
+| Object copyConfigurable | null | User-defined set of files to copy to`libraryDir` (if not set, the default copy logic is used) |
+| Set&lt;String&gt; classpath| [] | User-defined classpath property (if not set, the default logic based on the set of files copied to `libraryDir` is used) |
 | String xmlFileName | "launch4j.xml" | |
 | String mainClassName | | |
 | boolean dontWrapJar | false | |
 | String headerType | "gui" | |
-| ~~String jar~~ | "lib/"+project.tasks[jar].archiveName or<br> "", if the JavaPlugin is not loaded | deprecated use `jarTask` instead |
-| Task jarTask | tasks[jar], if the JavaPlugin is loaded | Task, producing jar |
+| Task jarTask | tasks[jar], if the JavaPlugin is loaded | The jar producing task. See [here](#configurable-input-configuration) how to use this for the shadow plugin. |
 | String outfile | project.name+'.exe' | |
 | String errTitle | "" | |
 | String cmdLine | "" | |
@@ -102,32 +101,26 @@ The values configurable within the launch4j extension along with their defaults 
 | String supportUrl | "" | |
 | boolean stayAlive | false | |
 | boolean restartOnCrash | false | |
-| String manifest | "" | |
-| String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are uncertain use "${projectDir}/path/to/icon.ico" |
+| String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are unsure, use "${projectDir}/path/to/icon.ico" |
 | String version | project.version | |
 | String textVersion | project.version | |
 | String copyright | "unknown" | |
 | String companyName | "" | |
-| ~~String description~~| project.name | deprecated use `fileDescription` instead |
 | String fileDescription | project.name | |
 | String productName | project.name | |
 | String internalName | project.name | |
 | String trademarks | | |
 | String language | "ENGLISH_US" | |
-| ~~String opt~~ | "" | deprecated use `jvmOptions` instead |
 | Set&lt;String&gt; jvmOptions | [ ] | |
 | String bundledJrePath | | |
-| boolean bundledJre64Bit | false | |
-| boolean bundledJreAsFallback | false | |
+| boolean requires64Bit | false | |
 | String jreMinVersion | project.targetCompatibility or<br> the current java version,<br> if the property is not set | |
 | String jreMaxVersion | | |
-| String jdkPreference | "preferJre" | |
-| String jreRuntimeBits | "64/32" | |
 | Set&lt;String&gt; variables | [ ] | |
 | String mutexName | | |
 | String windowTitle | | |
 | String messagesStartupError | | |
-| String messagesBundledJreError | | |
+| String messagesJreNotFoundError | | |
 | String messagesJreVersionError | | |
 | String messagesLauncherError | | |
 | String messagesInstanceAlreadyExists | | |
@@ -139,12 +132,16 @@ The values configurable within the launch4j extension along with their defaults 
 | boolean splashWaitForWindows | true | |
 | Integer splashTimeout | 60 | |
 | boolean splashTimeoutError | true | |
-| DuplicatesStrategy duplicatesStrategy | DuplicatesStrategy.EXCLUDE | The duplication Strategy to use if duplicates are found. See also [here](https://docs.gradle.org/current/javadoc/org/gradle/api/file/DuplicatesStrategy.html). <br> Defaults to DuplicatesStrategy.EXCLUDE |
+| DuplicatesStrategy duplicatesStrategy | DuplicatesStrategy.EXCLUDE | The duplication strategy to use when duplicates are found. See also [here](https://docs.gradle.org/current/javadoc/org/gradle/api/file/DuplicatesStrategy.html).|
 
-| Removed properties | Default Value|Description |
-|---|---|---|
-| ~~String launch4jCmd~~ | "launch4j" | use the [Launch4jExternalTask](#launch4jexternaltask) instead |
-| ~~boolean externalLaunch4j~~ | false | use the [Launch4jExternalTask](#launch4jexternaltask) instead |
+| Removed properties                 | Default Value | Description                          |
+|------------------------------------|---------------|--------------------------------------|
+| ~~String messagesBundledJreError~~ |               | use messagesJreNotFoundError instead |
+| ~~boolean bundledJre64Bit~~        | false         | use requires64Bit instead            |
+| ~~boolean bundledJreAsFallback~~   | false         |                                      |
+| ~~String jdkPreference~~           | "preferJre"   | use requiresJdk instead              |
+| ~~String jreRuntimeBits~~          | "64/32"       | use requires64Bit instead            |
+| ~~String manifest~~                | ""            |                                      |
 
 ### Configurable input configuration
 
@@ -190,14 +187,14 @@ Creating three executables is as easy as:
         productName = 'My App'
     }
     
-    task createFastStart(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
+    tasks.register('createFastStart', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
         outfile = 'FastMyApp.exe'
-        mainClassName = 'om.example.myapp.FastStart'
+        mainClassName = 'com.example.myapp.FastStart'
         icon = "${projectDir}/icons/myAppFast.ico"
         fileDescription = 'The lightning fast implementation'
     }
     
-    task "MyApp-memory"(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
+    tasks.register('MyApp-memory', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
         fileDescription = 'The default implementation with increased heap size'
         maxHeapPercent = 50
     }
@@ -223,7 +220,12 @@ In order to use a launch4j instance named 'launch4j-test' located in the PATH cr
         launch4jCmd = 'launch4j-test'
         outfile = 'MyApp.exe'
     }
+# Using another launch4j binary
+To use a different launch4j binary instead of the default one, you can provide it as follows. Use your desired version instead of 3.50.
 
+    dependencies {
+        launch4jBin 'net.sf.launch4j:launch4j:3.50:workdir-win32'
+    }
 # Kotlin
 
 To get started using this plugin from a kotlin build script the above example from [the section Launch4jLibraryTask](#launch4jlibrarytask) would be written as:
@@ -256,15 +258,14 @@ In order to debug the created executable call it with the command line argument 
 # Using `SNAPSHOT` versions
 
 When you report a bug and it got fixed, you will have access to some `-SNAPSHOT` version.
-Adjust your buildscript to use the OJO repo:
+Adjust your buildscript to use the artifactory OSS repo:
 ```gradle
 buildscript {
   repositories {
-    jcenter()
-    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
+    maven { url 'https://boegl.jfrog.io/artifactory/snapshots-gradle-dev-local/' }
   }
   dependencies {
-    classpath 'edu.sc.seis.gradle:launch4j:latest.integration'
+    classpath 'edu.sc.seis.launch4j:launch4j:latest.integration'
   }
 }
 

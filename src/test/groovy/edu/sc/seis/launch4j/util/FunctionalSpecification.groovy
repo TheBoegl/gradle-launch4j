@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,14 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
+
 @CompileStatic
 class FunctionalSpecification extends Specification {
-    private final static boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")
+    private static final boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")
+    private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor()
 
     @Rule
     final TemporaryFolder testProjectDir = new TemporaryFolder()
@@ -46,15 +51,77 @@ class FunctionalSpecification extends Specification {
         """
     }
 
+    def cleanup() {
+        deleteDirectory(projectDir)
+    }
+
+    static void delete(File file) {
+        if (!file.delete()) {
+            enqueueDeletion(file)
+        }
+    }
+
+    def deleteDirectory(File folder) {
+        File[] allContents = folder.listFiles()
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file)
+            }
+        }
+        if (folder.name.endsWith('.jar') || folder.name.endsWith('.exe')) {
+            // delay file deletion to avoid `Error: Unable to access jarfile` errors
+            enqueueDeletion(folder)
+        } else {
+            delete(folder)
+        }
+    }
+
+    private static void enqueueDeletion(File file) {
+        EXECUTOR.schedule(new Runnable() {
+            @Override
+            void run() {
+                delete(file)
+            }
+        }, 10, TimeUnit.SECONDS)
+    }
+
     protected BuildResult build(String... arguments) {
         createAndConfigureGradleRunner(arguments).build()
     }
 
     protected GradleRunner createAndConfigureGradleRunner(String... arguments) {
+        buildFile << """
+tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEach {
+    stayAlive = true
+}
+"""
+        if (!new File(projectDir, 'src').exists()) {
+            addMainAndUpdateManifest()
+        }
         GradleRunner.create()
             .withProjectDir(projectDir)
             .withDebug(DEBUG)
             .withPluginClasspath()
             .withArguments(arguments)
+    }
+
+    protected addMainAndUpdateManifest() {
+        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
+            package com.test.app;
+
+            public class Main {
+                public static void main(String[] args) {
+                    System.out.println("...");
+                }
+            }
+"""
+
+        buildFile << """
+tasks.withType(Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.test.app.Main'
+    }
+}
+"""
     }
 }

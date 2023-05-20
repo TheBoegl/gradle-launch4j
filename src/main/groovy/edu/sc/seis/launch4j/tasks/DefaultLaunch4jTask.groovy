@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,47 +17,222 @@
 
 package edu.sc.seis.launch4j.tasks
 
-import edu.sc.seis.launch4j.*
+import edu.sc.seis.launch4j.CopyLibraries
+import edu.sc.seis.launch4j.CreateXML
+import edu.sc.seis.launch4j.Launch4jConfiguration
+import edu.sc.seis.launch4j.Launch4jPlugin
+import edu.sc.seis.launch4j.Launch4jPluginExtension
 import org.gradle.api.DefaultTask
-import org.gradle.api.JavaVersion
+import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.model.ReplacedBy
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.util.GradleVersion
 
 import java.nio.file.Path
-
 // do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
     private Launch4jPluginExtension config
+    private FileCollection runtimeClassFiles
+    @Internal
+    final Provider<Configuration> launch4jDependency
+    @Internal
+    final Provider<RegularFile> launch4jBinaryDirectory
+
+    @InputFiles
+    final ConfigurableFileCollection launch4jBinaryFiles
 
     protected DefaultLaunch4jTask() {
-        config = project.getExtensions().getByType(Launch4jPluginExtension.class)
-        if (GradleVersion.current() >= GradleVersion.version("4.4")) {
-            jarTask = project.objects.property(Task)
-            outputDir = project.objects.property(String)
-            if (GradleVersion.current() >= GradleVersion.version("5.1")) {
-                jarTask.convention(config.jarTask)
-                outputDir.convention(config.outputDir)
-                outputDirectory = project.objects.directoryProperty().convention(project.layout.buildDirectory.dir(outputDir))
-            } else {
-                // inputs do not set dependsOn
-                dependsOn(config.jarTask)
-                jarTask.set(config.jarTask)
-                outputDir.set(config.outputDir)
-                outputDirectory = project.layout.directoryProperty()
-                outputDirectory.set(project.layout.buildDirectory.dir(outputDir))
-            }
-            inputs.files(jarTask.map {it.outputs.files})
+        config = project.extensions.getByType(Launch4jPluginExtension.class)
+        launch4jDependency = project.configurations.named(Launch4jPlugin.LAUNCH4J_CONFIGURATION_NAME_BINARY)
+        runtimeClassFiles = project.plugins.hasPlugin('java') ?
+            (project.configurations.findByName('runtimeClasspath') ?
+                project.configurations.runtimeClasspath : project.configurations.runtime) : project.files()
+        ObjectFactory objectFactory = project.objects
+        ProjectLayout layout = project.layout
+        launch4jBinaryFiles = configurableFileCollection(project)
+        launch4jBinaryDirectory = layout.buildDirectory.map {it.file(Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY)}
+        mainClassName = objectFactory.property(String)
+        jarTask = objectFactory.property(Task)
+        outputDir = objectFactory.property(String)
+        dontWrapJar = objectFactory.property(Boolean)
+        outfile = objectFactory.property(String)
+        xmlFileName = objectFactory.property(String)
+        libraryDir = objectFactory.property(String)
+        headerType = objectFactory.property(String)
+        errTitle = objectFactory.property(String)
+        cmdLine = objectFactory.property(String)
+        chdir = objectFactory.property(String)
+        priority = objectFactory.property(String)
+        downloadUrl = objectFactory.property(String)
+        supportUrl = objectFactory.property(String)
+        stayAlive = objectFactory.property(Boolean)
+        restartOnCrash = objectFactory.property(Boolean)
+        duplicatesStrategy = objectFactory.property(DuplicatesStrategy)
+        icon = objectFactory.property(String)
+        version = objectFactory.property(String)
+        textVersion = objectFactory.property(String)
+        copyright = objectFactory.property(String)
+        jvmOptions = objectFactory.setProperty(String)
+        companyName = objectFactory.property(String)
+        fileDescription = objectFactory.property(String)
+        productName = objectFactory.property(String)
+        internalName = objectFactory.property(String)
+        trademarks = objectFactory.property(String)
+        language = objectFactory.property(String)
+        bundledJrePath = objectFactory.property(String)
+        requires64Bit = objectFactory.property(Boolean)
+        jreMinVersion = objectFactory.property(String)
+        jreMaxVersion = objectFactory.property(String)
+        requiresJdk = objectFactory.property(Boolean)
+        variables = objectFactory.setProperty(String)
+        mutexName = objectFactory.property(String)
+        windowTitle = objectFactory.property(String)
+        messagesStartupError = objectFactory.property(String)
+        messagesJreNotFoundError = objectFactory.property(String)
+        messagesJreVersionError = objectFactory.property(String)
+        messagesLauncherError = objectFactory.property(String)
+        messagesInstanceAlreadyExists = objectFactory.property(String)
+        initialHeapSize = objectFactory.property(Integer)
+        initialHeapPercent = objectFactory.property(Integer)
+        maxHeapSize = objectFactory.property(Integer)
+        maxHeapPercent = objectFactory.property(Integer)
+        splashFileName = objectFactory.property(String)
+        splashWaitForWindows = objectFactory.property(Boolean)
+        splashTimeout = objectFactory.property(Integer)
+        splashTimeoutError = objectFactory.property(Boolean)
+        copyConfigurable = objectFactory.property(Object)
+        classpath = objectFactory.setProperty(String)
+        def isPropertyConventionSupported = GradleVersion.current() >= GradleVersion.version("5.1")
+        if (isPropertyConventionSupported) {
+            mainClassName.convention(config.mainClassName)
+            jarTask.convention(config.jarTask)
+            outputDir.convention(config.outputDir)
+            outputDirectory = objectFactory.directoryProperty().convention(layout.buildDirectory.dir(outputDir))
+            dontWrapJar.convention(config.dontWrapJar)
+            outfile.convention(config.outfile)
+            libraryDir.convention(config.libraryDir)
+            xmlFileName.convention("${name}.xml")
+            headerType.convention(config.headerType)
+            errTitle.convention(config.errTitle)
+            cmdLine.convention(config.cmdLine)
+            chdir.convention(config.chdir)
+            priority.convention(config.priority)
+            downloadUrl.convention(config.downloadUrl)
+            supportUrl.convention(config.supportUrl)
+            stayAlive.convention(config.stayAlive)
+            restartOnCrash.convention(config.restartOnCrash)
+            duplicatesStrategy.convention(config.duplicatesStrategy)
+            icon.convention(config.icon)
+            version.convention(config.version)
+            textVersion.convention(config.textVersion)
+            copyright.convention(config.copyright)
+            jvmOptions.convention(config.jvmOptions)
+            companyName.convention(config.companyName)
+            fileDescription.convention(config.fileDescription)
+            productName.convention(config.productName)
+            internalName.convention(config.internalName)
+            trademarks.convention(config.trademarks)
+            language.convention(config.language)
+            bundledJrePath.convention(config.bundledJrePath)
+            requires64Bit.convention(config.requires64Bit)
+            jreMinVersion.convention(config.jreMinVersion)
+            jreMaxVersion.convention(config.jreMaxVersion)
+            requiresJdk.convention(config.requiresJdk)
+            variables.convention(config.variables)
+            mutexName.convention(config.mutexName)
+            windowTitle.convention(config.windowTitle)
+            messagesStartupError.convention(config.messagesStartupError)
+            messagesJreNotFoundError.convention(config.messagesJreNotFoundError)
+            messagesJreVersionError.convention(config.messagesJreVersionError)
+            messagesLauncherError.convention(config.messagesLauncherError)
+            messagesInstanceAlreadyExists.convention(config.messagesInstanceAlreadyExists)
+            initialHeapSize.convention(config.initialHeapSize)
+            initialHeapPercent.convention(config.initialHeapPercent)
+            maxHeapSize.convention(config.maxHeapSize)
+            maxHeapPercent.convention(config.maxHeapPercent)
+            splashFileName.convention(config.splashFileName)
+            splashWaitForWindows.convention(config.splashWaitForWindows)
+            splashTimeout.convention(config.splashTimeout)
+            splashTimeoutError.convention(config.splashTimeoutError)
+            copyConfigurable.convention(config.copyConfigurable)
+            classpath.convention([])
         } else {
-            throw new IllegalStateException("at least gradle 4.4 is required for this plugin to work and provide org.gradle.api.provider.Property")
+            // inputs do not set dependsOn
+            dependsOn(config.jarTask)
+            mainClassName.set(config.mainClassName)
+            jarTask.set(config.jarTask)
+            outputDir.set(config.outputDir)
+            outputDirectory = layout.directoryProperty()
+            outputDirectory.set(layout.buildDirectory.dir(outputDir))
+            dontWrapJar.set(config.dontWrapJar)
+            outfile.set(config.outfile)
+            libraryDir.set(config.libraryDir)
+            xmlFileName.set(name + '.xml')
+            headerType.set(config.headerType)
+            errTitle.set(config.errTitle)
+            cmdLine.set(config.cmdLine)
+            chdir.set(config.chdir)
+            priority.set(config.priority)
+            downloadUrl.set(config.downloadUrl)
+            supportUrl.set(config.supportUrl)
+            stayAlive.set(config.stayAlive)
+            restartOnCrash.set(config.restartOnCrash)
+            duplicatesStrategy.set(config.duplicatesStrategy)
+            icon.set(config.icon)
+            version.set(config.version)
+            textVersion.set(config.textVersion)
+            copyright.set(config.copyright)
+            jvmOptions.set(config.jvmOptions)
+            companyName.set(config.companyName)
+            fileDescription.set(config.fileDescription)
+            productName.set(config.productName)
+            internalName.set(config.internalName)
+            trademarks.set(config.trademarks)
+            language.set(config.language)
+            bundledJrePath.set(config.bundledJrePath)
+            requires64Bit.set(config.requires64Bit)
+            jreMinVersion.set(config.jreMinVersion)
+            jreMaxVersion.set(config.jreMaxVersion)
+            requiresJdk.set(config.requiresJdk)
+            variables.set(config.variables)
+            mutexName.set(config.mutexName)
+            windowTitle.set(config.windowTitle)
+            messagesStartupError.set(config.messagesStartupError)
+            messagesJreNotFoundError.set(config.messagesJreNotFoundError)
+            messagesJreVersionError.set(config.messagesJreVersionError)
+            messagesLauncherError.set(config.messagesLauncherError)
+            messagesInstanceAlreadyExists.set(config.messagesInstanceAlreadyExists)
+            initialHeapSize.set(config.initialHeapSize)
+            initialHeapPercent.set(config.initialHeapPercent)
+            maxHeapSize.set(config.maxHeapSize)
+            maxHeapPercent.set(config.maxHeapPercent)
+            splashFileName.set(config.splashFileName)
+            splashWaitForWindows.set(config.splashWaitForWindows)
+            splashTimeout.set(config.splashTimeout)
+            splashTimeoutError.set(config.splashTimeoutError)
+            copyConfigurable.set(config.copyConfigurable)
+            classpath.set([])
         }
+        inputs.files(jarTask.map {it.outputs.files})
+        dest = outputDirectory.file(outfile)
+        xmlFile = outputDirectory.file(xmlFileName)
+        libraryDirectory = outputDirectory.file(libraryDir)
+        copyLibraryFileCollection = configurableFileCollection(project)
     }
 
     @Input
@@ -67,10 +242,6 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @OutputDirectory
     final DirectoryProperty outputDirectory
 
-    private File getOutputDirectoryAsFile() {
-        outputDirectory.get().getAsFile();
-    }
-
     /**
      * Output executable file<br>
      *
@@ -78,26 +249,17 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Optional
     @Input
-    String outfile = "${name}.exe"
+    final Property<String> outfile
 
-    @Override
-    String getOutfile() {
-        outfile ? (outfile == (Launch4jPlugin.TASK_RUN_NAME + '.exe') ? config.outfile : outfile) : config.outfile
-    }
-
-    @Override
     @OutputFile
-    File getDest() {
-        project.file("${getOutputDirectoryAsFile()}/${getOutfile()}")
-    }
+    final Provider<RegularFile> dest
 
     @Input
-    String xmlFileName = "${name}.xml"
+    @Optional
+    final Property<String> xmlFileName
 
-    @Override
-    File getXmlFile() {
-        project.file("${getOutputDirectoryAsFile()}/${xmlFileName ?: config.xmlFileName}")
-    }
+    @Internal
+    final Provider<RegularFile> xmlFile
 
     /**
      * The name where the dependency jars should be copied to.<br>
@@ -106,34 +268,34 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String libraryDir
-
-    @Override
-    String getLibraryDir() {
-        libraryDir ?: config.libraryDir
-    }
+    final Property<String> libraryDir
 
     @Internal
-    File getLibraryDirectory() {
-        project.file("${getOutputDirectoryAsFile()}/${libraryDir ?: config.libraryDir}")
-    }
+    final Provider<RegularFile> libraryDirectory
+
+    final Property<Object> copyConfigurable
 
     @Input
     @Optional
-    Object copyConfigurable
-
-    /**
+    def getCopyConfigurable() {
+        if(GradleVersion.current() < GradleVersion.version("5.0")) {
+            // cannot serialize copyConfigurable
+            getCopyFiles()
+        } else
+            return copyConfigurable
+    }
+/**
      * Try to get the inputs right.
      * @return the input files of the copyConfigurable
      */
     @InputFiles
     @Optional
     Object getCopyFiles() {
-        def copyConfigurable = getCopyConfigurable()
+        def copyConfigurable = copyConfigurable.getOrNull()
         if (copyConfigurable instanceof CopySpecInternal) {
             def specResolver = (copyConfigurable as CopySpecInternal).buildRootResolver()
             def files = specResolver.allSource.files
-            def rootResolverDestination = specResolver.destPath.getFile(getLibraryDirectory())
+            def rootResolverDestination = specResolver.destPath.getFile(getLibraryDirectory().get().asFile)
             files + rootResolverDestination
             files.addAll((copyConfigurable as DefaultCopySpec).getChildren().collect { CopySpecInternal cpi ->
                 cpi.buildRootResolver().destPath.getFile(rootResolverDestination)
@@ -146,45 +308,27 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         }
     }
 
-    Object getCopyConfigurable() {
-        copyConfigurable == null ? config.copyConfigurable : copyConfigurable
-    }
+    private final ConfigurableFileCollection copyLibraryFileCollection
 
     FileCollection copyLibraries() {
-        def jarPath = getDontWrapJar() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
-        new CopyLibraries(project, config.fileOperations, duplicatesStrategy).execute(getLibraryDirectory(), getCopyConfigurable(), jarPath)
+        def jarPath = dontWrapJar.get() ? (getJarTaskOutputPath() ?: getJarTaskDefaultOutputPath()) : null
+        new CopyLibraries(config.objectFactory, config.fileOperations, duplicatesStrategy.get()).execute(libraryDirectory.get().asFile, copyConfigurable.getOrNull(), jarPath, runtimeClassFiles, copyLibraryFileCollection)
+    }
+
+    static ConfigurableFileCollection configurableFileCollection(Project project) {
+        if (GradleVersion.current() >= GradleVersion.version("5.3")) {
+            project.objects.fileCollection()
+        } else {
+            project.files()
+        }
     }
 
     /**
-     * The main class to start if {@link #jar} is not set.
+     * The main class to start if {@link #jarTask} is not set.
      */
     @Input
     @Optional
-    String mainClassName
-
-    @Override
-    String getMainClassName() {
-        mainClassName ?: config.mainClassName
-    }
-
-    /**
-     * Optional, by default specifies the jar to wrap.
-     * To launch a jar without wrapping it enter the runtime path of the jar relative to the executable and set {@link #dontWrapJar} to true.
-     * For example, if the executable launcher and the application jar named <i>calc.exe</i> and <i>calc.jar</i> are in the same directory then you would use {@code jar = calc.jar} and {@code dontWrapJar = true}.
-     */
-    @Deprecated
-    String jar
-
-    /**
-     * Use libraryDir and jarTask instead
-     */
-    @Override
-    @Deprecated
-    @Input
-    @Optional
-    String getJar() {
-        jar ?: config.jar
-    }
+    final Property<String> mainClassName
 
     @Internal
     final Property<Task> jarTask
@@ -204,19 +348,11 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     /**
      * Optional, defaults to <u>false</u>.<br>
      *     Launch4j by default wraps jars in native executables, you can prevent this by setting {@link #dontWrapJar} to true.
-     *     The exe acts then as a launcher and starts the application specified in {@link #jar} or this runtime dependencies and {@link #mainClassName}
+     *     The exe acts then as a launcher and starts the application specified in {@link #jarTask} or this runtime dependencies and {@link #mainClassName}
      */
     @Input
     @Optional
-    Boolean dontWrapJar
-
-    @Override
-    Boolean getDontWrapJar() {
-        if (dontWrapJar == null) {
-            return config.getDontWrapJar()
-        }
-        return dontWrapJar
-    }
+    final Property<Boolean> dontWrapJar
 
     /**
      * Type of the header used to wrap the application.
@@ -225,12 +361,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String headerType
-
-    @Override
-    String getHeaderType() {
-        headerType ?: config.headerType
-    }
+    final Property<String> headerType
 
     /**
      * Optional, sets the title of the error message box that's displayed if Java cannot be found for instance.
@@ -238,24 +369,14 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String errTitle
-
-    @Override
-    String getErrTitle() {
-        errTitle ?: config.errTitle
-    }
+    final Property<String> errTitle
 
     /**
      * Optional, constant command line arguments.
      */
     @Input
     @Optional
-    String cmdLine
-
-    @Override
-    String getCmdLine() {
-        cmdLine ?: config.cmdLine
-    }
+    final Property<String> cmdLine
 
     /**
      * Optional. Change current directory to an arbitrary path relative to the executable.
@@ -264,12 +385,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String chdir
-
-    @Override
-    String getChdir() {
-        (chdir != null) ? chdir : config.chdir
-    }
+    final Property<String> chdir
 
     /**
      * The process priority.<br>
@@ -277,12 +393,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String priority
-
-    @Override
-    String getPriority() {
-        priority ?: config.priority
-    }
+    final Property<String> priority
 
     /**
      * The page to navigate the browser to if no java environment is found.<br>
@@ -291,36 +402,18 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    String downloadUrl
-
-    @Override
-    String getDownloadUrl() {
-        downloadUrl ?: config.downloadUrl
-    }
+    final Property<String> downloadUrl
 
     @Input
     @Optional
-    String supportUrl
-
-    @Override
-    String getSupportUrl() {
-        supportUrl ?: config.supportUrl
-    }
+    final Property<String> supportUrl
 
     /**
      * Optional, defaults to <u>false</u> in GUI header, always true in console header. When enabled the launcher waits for the Java application to finish and returns it's exit code.
      */
     @Input
     @Optional
-    Boolean stayAlive
-
-    @Override
-    Boolean getStayAlive() {
-        if (stayAlive == null) {
-            return config.stayAlive
-        }
-        return stayAlive
-    }
+    final Property<Boolean> stayAlive
 
     /**
      * The duplication Strategy to use if duplicates are found.
@@ -329,15 +422,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    DuplicatesStrategy duplicatesStrategy
-
-    @Override
-    DuplicatesStrategy getDuplicatesStrategy(){
-        if (duplicatesStrategy == null){
-            return config.duplicatesStrategy
-        }
-        return duplicatesStrategy
-    }
+    final Property<DuplicatesStrategy> duplicatesStrategy
 
     /**
      * Optional, defaults to <u>false</u>.
@@ -345,426 +430,329 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    Boolean restartOnCrash
-
-    @Override
-    Boolean getRestartOnCrash() {
-        if (restartOnCrash == null) {
-            return config.restartOnCrash
-        }
-        return restartOnCrash
-    }
-
-    @Input
-    @Optional
-    String manifest
-
-    @Override
-    String getManifest() {
-        manifest ?: config.manifest
-    }
+    final Property<Boolean> restartOnCrash
 
     /**
      * Application icon in ICO format. May contain multiple color depths/resolutions.
      */
     @Input
     @Optional
-    String icon
-
-    @Override
-    String getIcon() {
-        icon ?: config.icon
-    }
+    final Property<String> icon
 
     /**
-     * Version number 'x.x.x.x'
+     * Version number {@code 'x.x.x.x'}
      */
     @Input
     @Optional
-    String version
-
-    @Override
-    String getVersion() {
-        version ?: config.version
-    }
+    final Property<String> version
 
     /**
-     * Free form file version, for example '1.20.RC1'.
+     * Free form file version, for example {@code '1.20.RC1'}.
      */
     @Input
     @Optional
-    String textVersion
-
-    @Override
-    String getTextVersion() {
-        textVersion ?: config.textVersion
-    }
+    final Property<String> textVersion
 
     /**
      * Legal copyright.
      */
     @Input
     @Optional
-    String copyright
-
-    @Override
-    String getCopyright() {
-        copyright ?: config.copyright
-    }
+    final Property<String> copyright
 
     /**
      * Optional, accepts everything you would normally pass to java/javaw launcher: assertion options, system properties and X options. Here you can map environment and special variables <i>EXEDIR</i> (exe's runtime directory), <i>EXEFILE</i> (exe's runtime full file path) to system properties. All variable references must be surrounded with percentage signs and quoted.
+     * <ul>
+     *   <li>-Dlaunch4j.exedir="%EXEDIR%"</li>
+     *   <li>-Dlaunch4j.exefile="%EXEFILE%"</li>
+     *   <li>-Denv.path="%Path%"</li>
+     *   <li>-Dsettings="%HomeDrive%%HomePath%\\settings.ini"</li>
+     * </ul>
      */
     @Input
     @Optional
-    Set<String> jvmOptions = []
-
-    @Override
-    Set<String> getJvmOptions() {
-        jvmOptions ?: config.jvmOptions
-    }
-
-    @Deprecated
-    void setOpt(String opt) {
-        if (!opt) return // null check
-        this.jvmOptions = [opt] as Set
-        project.logger.warn("${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.opt property is deprecated. Use ${Launch4jPlugin.LAUNCH4J_EXTENSION_NAME}.jvmOptions instead.")
-    }
+    final SetProperty<String> jvmOptions
 
     @Input
     @Optional
-    Set<String> variables = []
-
-    @Override
-    Set<String> getVariables() {
-        variables ?: config.variables
-    }
+    final SetProperty<String> variables
     /**
      * Optional text.
      */
     @Input
     @Optional
-    String companyName
-
-    @Override
-    String getCompanyName() {
-        companyName ?: config.companyName
-    }
+    final Property<String> companyName
 
     /**
      * File description presented to the user.
      */
     @Input
     @Optional
-    String fileDescription
-
-    @Override
-    String getFileDescription() {
-        fileDescription ?: config.fileDescription
-    }
+    final Property<String> fileDescription
 
     /**
      * Text.
      */
     @Input
     @Optional
-    String productName
-
-    @Override
-    String getProductName() {
-        productName ?: config.productName
-    }
+    final Property<String> productName
 
     /**
      * Internal name without extension, original filename or module name for example.
      */
     @Input
     @Optional
-    String internalName
-
-    @Override
-    String getInternalName() {
-        internalName ?: config.internalName
-    }
+    final Property<String> internalName
 
     /**
      * Trademarks that apply to the file.
      */
     @Input
     @Optional
-    String trademarks
-
-    @Override
-    String getTrademarks() {
-        trademarks ?: config.trademarks
-    }
+    final Property<String> trademarks
 
     /**
      * One of the language codes.
      */
     @Input
     @Optional
-    String language
+    final Property<String> language
 
-    @Override
-    String getLanguage() {
-        language ?: config.language
-    }
     /**
-     * Run if bundled JRE and javaw.exe are present, otherwise stop with error
+     * The {@code bundledJrePath} property is used to specify absolute or relative JRE paths, it does not rely on the current directory or {@link #chdir}. Note that this path is not checked until the actual application execution.
+     *
+     * {@code bundledJrePath} is now required and always used for searching before the registry in order to ensure compatibility with latest runtimes which by default do not add registry keys during installation.
+     * {@link #jreMinVersion} and {@link #jreMaxVersion} are now considered during path and registry search, previously the version was checked only during registry search. The first runtime version matching the given range will be used.
+     *
+     * @see #jreMinVersion
+     * @see #jreMaxVersion
      */
     @Input
     @Optional
-    String bundledJrePath
+    final Property<String> bundledJrePath
 
-    @Override
-    String getBundledJrePath() {
-        bundledJrePath ?: config.bundledJrePath
-    }
-
-    /**
-     * Optional, defaults to <u>false</u> which limits the calculated heap size to the 32-bit maximum. Set to true in order to use the available memory without this limit. This option works in combination with the HeapSize and HeapPercent options only if the found JRE is a bundled one. In the standard JRE search based on registry the wrapper detects the type of JRE itself and uses the 32-bit heap limit when needed.
-     */
-    @Input
-    @Optional
-    Boolean bundledJre64Bit
-
-    @Override
+    @Deprecated
+    @ReplacedBy("requires64Bit")
     Boolean getBundledJre64Bit() {
-        if (bundledJre64Bit == null) {
-            return config.bundledJre64Bit
-        }
-        return bundledJre64Bit
+        logger.warn("use requires64Bit instead of bundledJre64Bit")
+        requires64Bit.getOrElse(false)
+    }
+
+    @Deprecated
+    void setBundledJre64Bit(Boolean value) {
+        logger.warn("use requires64Bit instead of bundledJre64Bit")
+        requires64Bit.set(value)
     }
 
     /**
-     * Optional, defaults to <u>false</u> which treats the bundled JRE as the primary runtime. When set to true, the bundled JRE will only be used in case the mix/max version search fails. This can be used as a fallback option if the user does not have the required Java installed and the bundled JRE is provided on a CD or shared network location.
+     * Optional, defaults to <u>false</u>. True limits the runtimes to 64-Bit only, false will use 64-Bit or 32-Bit depending on which is found.
+     *
+     * This option works with path and registry search.
      */
     @Input
     @Optional
-    Boolean bundledJreAsFallback
+    final Property<Boolean> requires64Bit
 
-    @Override
-    Boolean getBundledJreAsFallback() {
-        if (bundledJreAsFallback == null) {
-            return config.bundledJreAsFallback
-        }
-        return bundledJreAsFallback
-    }
     /**
-     * If {@link #bundledJrePath} is set:
-     * <ul><li>Search for Java, if an appropriate version cannot be found display error message and open the Java download page.</li</ul>
-     * Else:
-     * <ul><li>Use bundled JRE first, if it cannot be located search for Java, if that fails display error message and open the Java download page. </li></ul>
-     * @see DefaultLaunch4jTask#jreMaxVersion
+     * The minimum Java version
+     *
+     * The traditional version scheme supported by launch4j is {@code 1.x.x[_xxx]} and requires at least 3 parts, for example:
+     * <pre>
+     * 1.6.0
+     * 1.7.0_51
+     * 1.8.0_121
+     * </pre>
+     *
+     * The new version format for Java >= 9 is {@code xxx[.xxx[.xxx]]} where only 1 part is required and the update version after the underscore is not allowed.
+     * <pre>
+     * 1.6
+     * 9
+     * 10.0.1
+     * </pre>
+     *
+     * @see #jreMaxVersion
+     * @see #bundledJrePath
      */
     @Input
     @Optional
-    String jreMinVersion
-
-    @Override
-    String getJreMinVersion() {
-        if (jreMinVersion != null) {
-            return jreMinVersion
-        }
-        return config.jreMinVersion
-    }
+    final Property<String> jreMinVersion
 
     @Override
     String internalJreMinVersion() {
-        if (!jreMinVersion) {
-            if (project.hasProperty('targetCompatibility')) {
-                jreMinVersion = project.property('targetCompatibility')
-            } else {
-                jreMinVersion = JavaVersion.current()
-            }
-            while (jreMinVersion ==~ /\d+(\.\d+)?/) {
-                jreMinVersion = jreMinVersion + '.0'
-            }
+        if (!jreMinVersion.isPresent()) {
+            config.internalJreMinVersion()
+        } else {
+            jreMinVersion.get()
         }
-        jreMinVersion
     }
 
     /**
-     * If {@link #bundledJrePath} is set:
-     * <ul><li>Search for Java, if an appropriate version cannot be found display error message and open the Java download page.</li</ul>
-     * Else:
-     * <ul><li>Use bundled JRE first, if it cannot be located search for Java, if that fails display error message and open the Java download page. </li></ul>
-     * @see DefaultLaunch4jTask#jreMinVersion
+     * The maximum Java version
+     *
+     * The traditional version scheme supported by launch4j is {@code 1.x.x[_xxx]} and requires at least 3 parts, for example:
+     * <pre>
+     * 1.6.0
+     * 1.7.0_51
+     * 1.8.0_121
+     * </pre>
+     *
+     * The new version format for Java >= 9 is {@code xxx[.xxx[.xxx]]} where only 1 part is required and the update version after the underscore is not allowed.
+     * <pre>
+     * 1.6
+     * 9
+     * 10.0.1
+     * </pre>
+     *
+     * @see #jreMinVersion
+     * @see #bundledJrePath
      */
     @Input
     @Optional
-    String jreMaxVersion
-
-    @Override
-    String getJreMaxVersion() {
-        jreMaxVersion ?: config.jreMaxVersion
-    }
+    final Property<String> jreMaxVersion
 
     /**
-     * Optional, defaults to preferJre; Allows you to specify a preference for a public JRE or a private JDK runtime. Valid values are:
-     * <ul>
-     *     <li><strong>jreOnly</strong><br>Always use a public JRE (equivalent to the old option dontUsePrivateJres=true)</li>
-     *     <li><strong><u>preferJre</u></strong><br>Prefer a public JRE, but use a JDK private runtime if it is newer than the public JRE (equivalent to the old option dontUsePrivateJres=false)</li>
-     *     <li><strong>preferJdk</strong><br>Prefer a JDK private runtime, but use a public JRE if it is newer than the JDK </li>
-     *     <li><strong>jdkOnly</strong><br>Always use a private JDK runtime (fails if there is no JDK installed)</li>
-     * </ul>
+     * Optional, defaults to <u>false</u>. When true only a JDK will be used for execution.
+     * An additional check will be performed if javac is available during path and registry search.
      *
      */
     @Input
     @Optional
-    String jdkPreference
+    final Property<Boolean> requiresJdk
 
-    @Override
+    @Deprecated
+    @ReplacedBy("requiresJdk")
     String getJdkPreference() {
-        jdkPreference ?: config.jdkPreference
+        logger.warn("use requiresJdk instead of jdkPreference")
+        requiresJdk.getOrElse(false) ? 'jdkOnly' : null
     }
 
-    /**
-     * Optional, defaults to 64/32; Allows to select between 64-bit and 32-bit runtimes. Valid values are:
-     * <ul>
-     *     <li><strong>64</strong><br>Use only 64-bit runtimes</li>
-     *     <li><strong><u>64/32</u></strong><br>Use 64-bit runtimes if available, otherwise use 32-bit</li>
-     *     <li><strong>32/64</strong><br>Use 32-bit runtimes if available, otherwise use 64-bit</li>
-     *     <li><strong>32</strong><br>Use only 32-bit runtimes</li>
-     * </ul>
-     *
-     */
-    @Input
-    @Optional
-    String jreRuntimeBits
-
-    @Override
-    String getJreRuntimeBits() {
-        jreRuntimeBits ?: config.jreRuntimeBits
+    @Deprecated
+    void setJdkPreference(String message) {
+        logger.warn("use requiresJdk instead of jdkPreference")
+        requiresJdk.set('jdkOnly'.equalsIgnoreCase(message))
     }
+
+
+    @Deprecated
+    @ReplacedBy("requires64Bit")
+    String getRuntimeBits() {
+        logger.warn("use requires64Bit instead of runtimeBits")
+        requires64Bit.getOrElse(false) ? '64' : null
+    }
+
+    @Deprecated
+    void setRuntimeBits(String value) {
+        logger.warn("use requires64Bit instead of runtimeBits")
+        requires64Bit.set('64' == value)
+    }
+
     /**
      * Unique mutex name that will identify the application.
      */
     @Input
     @Optional
-    String mutexName
+    final Property<String> mutexName
 
-    @Override
-    String getMutexName() {
-        mutexName ?: config.mutexName
-    }
 
     /**
      * Optional, recognized by GUI header only. Title or title part of a window to bring up instead of running a new instance.
      */
     @Input
     @Optional
-    String windowTitle
+    final Property<String> windowTitle
 
-    @Override
-    String getWindowTitle() {
-        windowTitle ?: config.windowTitle
-    }
 
     @Input
     @Optional
-    String messagesStartupError
+    final Property<String> messagesStartupError
 
-    @Override
-    String getMessagesStartupError() {
-        messagesStartupError ?: config.messagesStartupError
-    }
 
     @Input
     @Optional
-    String messagesBundledJreError
+    final Property<String> messagesJreNotFoundError
 
-    @Override
+    @Deprecated
+    @ReplacedBy("messagesJreNotFoundError")
     String getMessagesBundledJreError() {
-        messagesBundledJreError ?: config.messagesBundledJreError
+        logger.warn("use messagesJreNotFoundError instead of messagesBundledJreError")
+        messagesJreNotFoundError.getOrNull()
+    }
+
+    @Deprecated
+    void setMessagesBundledJreError(String message) {
+        logger.warn("use messagesJreNotFoundError instead of messagesBundledJreError")
+        messagesJreNotFoundError.set(message)
     }
 
     @Input
     @Optional
-    String messagesJreVersionError
+    final Property<String> messagesJreVersionError
 
-    @Override
-    String getMessagesJreVersionError() {
-        messagesJreVersionError ?: config.messagesJreVersionError
-    }
 
     @Input
     @Optional
-    String messagesLauncherError
+    final Property<String> messagesLauncherError
 
-    @Override
-    String getMessagesLauncherError() {
-        messagesLauncherError ?: config.messagesLauncherError
-    }
 
     @Input
     @Optional
-    String messagesInstanceAlreadyExists
+    final Property<String> messagesInstanceAlreadyExists
 
-    @Override
-    String getMessagesInstanceAlreadyExists() {
-        messagesInstanceAlreadyExists ?: config.messagesInstanceAlreadyExists
-    }
 
     /**
      * Optional, initial heap size in MB.<br>
      *
      * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
      *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
+     *
      * @see DefaultLaunch4jTask#initialHeapPercent
      * @see DefaultLaunch4jTask#maxHeapSize
      * @see DefaultLaunch4jTask#maxHeapPercent
      */
     @Input
     @Optional
-    Integer initialHeapSize
+    final Property<Integer> initialHeapSize
 
-    @Override
-    Integer getInitialHeapSize() {
-        initialHeapSize ?: config.initialHeapSize
-    }
 
     /**
      * Optional, initial heap size in % of available memory.<br>
      *
      * If {@link #initialHeapSize} and {@link #initialHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
      *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
+     *
      * @see DefaultLaunch4jTask#initialHeapSize
      * @see DefaultLaunch4jTask#maxHeapSize
      * @see DefaultLaunch4jTask#maxHeapPercent
      */
     @Input
     @Optional
-    Integer initialHeapPercent
+    final Property<Integer> initialHeapPercent
 
-    @Override
-    Integer getInitialHeapPercent() {
-        initialHeapPercent ?: config.initialHeapPercent
-    }
 
     /**
      * Optional, max heap size in MB.<br>
      *
      * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
      *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
+     *
      * @see DefaultLaunch4jTask#initialHeapSize
      * @see DefaultLaunch4jTask#initialHeapPercent
      * @see DefaultLaunch4jTask#maxHeapPercent
      */
     @Input
     @Optional
-    Integer maxHeapSize
+    final Property<Integer> maxHeapSize
 
-    @Override
-    Integer getMaxHeapSize() {
-        maxHeapSize ?: config.maxHeapSize
-    }
 
     /**
      * Optional, max heap size in % of available memory.<br>
      *
      * If {@link #maxHeapSize} and {@link #maxHeapPercent} are specified, then the setting which yields more memory will be chosen at runtime. In other words, setting both values means: percent of available memory no less than size in MB.
+     *
+     * If the runtime is 32-Bit then a 32-Bit limit will be imposed even if more memory is available during path and registry search.
      *
      * @see DefaultLaunch4jTask#initialHeapSize
      * @see DefaultLaunch4jTask#initialHeapPercent
@@ -772,80 +760,47 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
      */
     @Input
     @Optional
-    Integer maxHeapPercent
+    final Property<Integer> maxHeapPercent
 
-    @Override
-    Integer getMaxHeapPercent() {
-        maxHeapPercent ?: config.maxHeapPercent
-    }
     /**
      * Splash screen image in BMP format.
      */
     @Input
     @Optional
-    String splashFileName
+    final Property<String> splashFileName
 
-    @Override
-    String getSplashFileName() {
-        splashFileName ?: config.splashFileName
-    }
 
     /**
      * Optional, defaults to <u>true</u>. Close the splash screen when an application window or Java error message box appears. If set to false, the splash screen will be closed on timeout.
      */
     @Input
     @Optional
-    Boolean splashWaitForWindows
-
-    @Override
-    Boolean getSplashWaitForWindows() {
-        if (splashWaitForWindows == null) {
-            return config.splashWaitForWindows
-        }
-        return splashWaitForWindows
-    }
+    final Property<Boolean> splashWaitForWindows
 
     /**
      * Optional, defaults to <u>60</u>. Number of seconds after which the splash screen must be closed. Splash timeout may cause an error depending on {@link #splashTimeoutError}.
      */
     @Input
     @Optional
-    Integer splashTimeout
+    final Property<Integer> splashTimeout
 
-    @Override
-    Integer getSplashTimeout() {
-        splashTimeout ?: config.splashTimeout
-    }
 
     /**
      * Optional, defaults to <u>true</u>. True signals an error on splash timeout, false closes the splash screen quietly.
      */
     @Input
     @Optional
-    Boolean splashTimeoutError
-
-    @Override
-    Boolean getSplashTimeoutError() {
-        if (splashTimeoutError == null) {
-            return config.splashTimeoutError
-        }
-        return splashTimeoutError
-    }
+    final Property<Boolean> splashTimeoutError
 
     @Input
     @Optional
-    Set<String> classpath = []
-
-    @Override
-    Set<String> getClasspath() {
-        classpath ?: config.classpath
-    }
+    final SetProperty<String> classpath
 
     protected void createXML(FileCollection copySpec) {
-        new CreateXML(project).execute(getXmlFile(), this, copySpec)
+        new CreateXML().execute(xmlFile.get().asFile, this, copySpec, runtimeClassFiles)
     }
 
     protected void createExecutableFolder() {
-        getDest().parentFile?.mkdirs()
+        dest.get().asFile.parentFile?.mkdirs()
     }
 }

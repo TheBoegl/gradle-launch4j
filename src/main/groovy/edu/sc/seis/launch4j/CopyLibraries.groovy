@@ -18,21 +18,23 @@
 package edu.sc.seis.launch4j
 
 import org.gradle.api.Action
-import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.internal.file.FileOperations
+import org.gradle.api.model.ObjectFactory
+
 import java.nio.file.Path
 
 class CopyLibraries {
-    Project project
+    ObjectFactory objectFactory
     FileOperations fileOperations
     DuplicatesStrategy duplicatesStrategy
 
-    CopyLibraries(Project project, FileOperations fileOperations, DuplicatesStrategy duplicatesStrategy) {
-        this.project = project
+    CopyLibraries(ObjectFactory objectFactory, FileOperations fileOperations, DuplicatesStrategy duplicatesStrategy) {
+        this.objectFactory = objectFactory
         this.fileOperations = fileOperations
         this.duplicatesStrategy = duplicatesStrategy
     }
@@ -41,43 +43,37 @@ class CopyLibraries {
      * Copies the project dependency jars to the configured library directory
      * @param libraryDir
      */
-    FileCollection execute(File libraryDir, Object copyConfigurable, Path jarPath) {
+    FileCollection execute(File libraryDir, Object copyConfigurable, Path jarPath, FileCollection runtimeClasspath, ConfigurableFileCollection configurableFileCollection) {
         def files = []
-        def distSpec = {
-            if (copyConfigurable != null) {
-                if (copyConfigurable instanceof CopySpec) {
-                    with(copyConfigurable)
-                } else {
-                    with {
-                        from { copyConfigurable }
-                    }
-                }
-            } else {
-                if (jarPath) {
-                    with {
-                        from { jarPath }
-                    }
-                }
-                if (project.plugins.hasPlugin('java')) {
-                    with {
-                        from(project.configurations.findByName('runtimeClasspath') ?
-                            project.configurations.runtimeClasspath : project.configurations.runtime)
-                    }
-                }
-            }
-            into { libraryDir }
-            eachFile { FileCopyDetails details ->
-                files.add(details.relativePath.getFile(libraryDir))
-            }
-        }
-
         fileOperations.sync(new Action<CopySpec>() {
             void execute(CopySpec t) {
                 t.duplicatesStrategy = duplicatesStrategy
-                project.configure(t, distSpec)
+                t.into(libraryDir)
+                if (copyConfigurable != null) {
+                    if (copyConfigurable instanceof CopySpec) {
+                        t.with(copyConfigurable)
+                    } else {
+                        t.with {
+                            from { copyConfigurable }
+                        }
+                    }
+                } else {
+                    if (jarPath) {
+                        t.with {
+                            from { jarPath }
+                        }
+                    }
+                    if (runtimeClasspath) {
+                        t.with {
+                            from(runtimeClasspath)
+                        }
+                    }
+                }
+                t.eachFile { FileCopyDetails details ->
+                    files.add(details.relativePath.getFile(libraryDir))
+                }
             }
         })
-
-        project.files(files)
+        configurableFileCollection.from(files)
     }
 }

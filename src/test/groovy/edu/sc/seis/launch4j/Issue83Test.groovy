@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
+import org.gradle.api.JavaVersion
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -31,15 +32,6 @@ class Issue83Test extends FunctionalSpecification {
                 bundledJrePath = '$jrePath'
                 mainClassName = 'com.test.app.Main'
                 outfile = 'Test.exe'
-            }
-        """
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
-            package com.test.app;
-
-            public class Main {
-                public static void main(String[] args) {
-                    System.out.println("Hello World!");
-                }
             }
         """
         testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
@@ -61,11 +53,12 @@ class Issue83Test extends FunctionalSpecification {
         xml.exists()
         def xmlText = xml.text
         xmlText.contains("<path>$jrePath</path>")
-        xmlText.contains('<minVersion></minVersion')
+        xmlText.contains("<minVersion>${JavaVersion.current()}.0</minVersion")
         xmlText.contains('<maxVersion></maxVersion')
 
         def process = outfile.path.execute()
         then:
         process.waitFor() == 0
+        process.in.text.trim() == '...'
     }
 }

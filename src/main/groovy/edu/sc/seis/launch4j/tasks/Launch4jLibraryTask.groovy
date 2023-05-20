@@ -18,33 +18,27 @@
 package edu.sc.seis.launch4j.tasks
 
 import edu.sc.seis.launch4j.Extract
-import edu.sc.seis.launch4j.Launch4jPlugin
 import groovy.transform.CompileStatic
 import net.sf.launch4j.Builder
 import net.sf.launch4j.Log
 import net.sf.launch4j.config.ConfigPersister
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskAction
-import org.gradle.util.GradleVersion
 
 class Launch4jLibraryTask extends DefaultLaunch4jTask {
 
     @TaskAction
     def run() {
-        Extract.binaries(project)
+        def binaryDir = Extract.binaries(project, launch4jBinaryFiles, launch4jBinaryDirectory.get().asFile)
         createExecutableFolder()
-        if (GradleVersion.current() < GradleVersion.version('3.0')) {
-            System.setProperty('javax.xml.parsers.DocumentBuilderFactory', 'com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl')
-            System.setProperty('javax.xml.parsers.SAXParserFactory', 'com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl')
-        }
         createXML(copyLibraries())
-        File xml = getXmlFile()
+        File xml = xmlFile.get().asFile
         ConfigPersister.getInstance().load(xml)
-        Builder b = new Builder(new GradleLogger(project.logger), new File(project.buildDir, Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY))
+        Builder b = new Builder(new GradleLogger(logger), binaryDir)
         b.build()
         if (project.hasProperty("l4j-debug")) {
             def debugXmlFile = new File(temporaryDir, xml.name)
-            project.logger.lifecycle("creating debug xml file {}", debugXmlFile)
+            logger.lifecycle("creating debug xml file {}", debugXmlFile)
             debugXmlFile.text = xml.text
         }
         project.delete(xml)

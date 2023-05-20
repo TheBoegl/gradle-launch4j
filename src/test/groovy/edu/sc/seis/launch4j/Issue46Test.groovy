@@ -27,61 +27,6 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class Issue46Test extends FunctionalSpecification {
 
     @Unroll
-    def 'Running the task to create the executable with the deprecated opt for language #language succeeds'() {
-        given:
-        buildFile << """
-            launch4j {
-                mainClassName = 'com.test.app.Main'
-                outfile = 'test.exe'
-                opt = "-Duser.language=${language}"
-            }
-        """
-
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
-        sourceFile << """
-            package com.test.app;
-            
-            import java.util.Locale;
-
-            public class Main {
-                public static void main(String[] args) {
-                    if ("${language}".equals(Locale.getDefault().getLanguage())) {
-                        System.out.println("${message}");
-                    } else {
-                        System.out.println("wrong language!");
-                    }
-                }
-            }
-        """
-
-        when:
-        def result = build('createExe')
-
-        then:
-        result.task(':jar').outcome == SUCCESS
-        result.task(':createExe').outcome == SUCCESS
-
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == message
-
-        where:
-        language    | message
-        'de'        | 'Hallo Welt!'
-        'en'        | 'Hello World!'
-//        'fr'        | 'Bonjour monde!'
-//        'it'        | 'Ciao mondo!'
-    }
-
-
-    @Unroll
     def 'Running the task to create the executable with jvmOptions for language #language succeeds'() {
         given:
         buildFile << """
@@ -95,7 +40,7 @@ class Issue46Test extends FunctionalSpecification {
         File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             import java.util.Locale;
 
             public class Main {
@@ -148,7 +93,7 @@ class Issue46Test extends FunctionalSpecification {
         File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
-            
+
             public class Main {
                 public static void main(String[] args) {
                     System.out.println("Hello World!");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
         buildFile << """
             launch4j {
                 mainClassName = 'com.test.app.Main'
+                outfile = 'test.exe'
             }
         """
 
@@ -52,9 +53,20 @@ class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
+        when:
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
+        then:
+        outfile.exists()
+
+        when:
+        def process = outfile.path.execute()
+        then:
+        process.waitFor() == 0
+        process.in.text.trim() == 'Hello World!'
+
         where:
         // versions prior 2.8 will not allow the classpath injection
-        // drop support for pre 4.4 gradle versions i.e. '2.14.1' and '3.5.1'
-        gradleVersion << ['4.10.2', '5.6.4', '6.9.3', '7.6', GradleVersion.current().getVersion(), '8.1.1'].unique()
+        // drop support for pre 4.10 gradle versions i.e. '2.14.1' and '3.5.1'
+        gradleVersion << ['4.10', '4.10.3', '5.0', '5.6.4', '6.9.3', '7.6', GradleVersion.current().getVersion(), '8.1.1'].unique()
     }
 }
