@@ -136,13 +136,13 @@ The values configurable within the launch4j extension along with their defaults 
 
 | Removed properties                 | Default Value | Description                          |
 |------------------------------------|---------------|--------------------------------------|
-| ~~String messagesBundledJreError~~ |               | use messagesJreNotFoundError instead |
-| ~~boolean bundledJre64Bit~~        | false         | use requires64Bit instead            |
 | ~~boolean bundledJreAsFallback~~   | false         |                                      |
+| ~~boolean bundledJre64Bit~~        | false         | use requires64Bit instead            |"
 | ~~jar~~                            | "lib/"+project.tasks[jar].archiveName<br/>or<br/>"", if the JavaPlugin is not loaded |    |
 | ~~String jdkPreference~~           | "preferJre"   | use requiresJdk instead              |
 | ~~String jreRuntimeBits~~          | "64/32"       | use requires64Bit instead            |
 | ~~String manifest~~                | ""            |                                      |
+| ~~String messagesBundledJreError~~ |               | use messagesJreNotFoundError instead |
 
 ### Configurable input configuration
 
