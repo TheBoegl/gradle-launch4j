@@ -1,29 +1,13 @@
 plugins {
-    id "com.gradle.plugin-publish" version "1.0.0"
+    id "com.gradle.plugin-publish" version "1.2.0"
     id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.artifactory" version "4.29.2"
+    id "com.jfrog.artifactory" version "4.32.0"
     id 'org.unbroken-dome.test-sets' version '4.0.0'
-}
-
-// Write the plugin's classpath to a file to share with the tests.
-task createClasspathManifest {
-    def outputDir = file("$buildDir/$name")
-
-    inputs.files(sourceSets.main.runtimeClasspath)
-        .withPropertyName("runtimeClasspath")
-        .withNormalizer(ClasspathNormalizer)
-    outputs.dir(outputDir)
-        .withPropertyName("outputDir")
-
-    doLast {
-        outputDir.mkdirs()
-        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
-    }
 }
 
 repositories {
@@ -31,7 +15,7 @@ repositories {
 }
 
 ext {
-    ARTIFACT_VERSION = '3.14'
+    ARTIFACT_VERSION = '3.50'
     spock_version = '1.3-groovy-2.5'
 }
 
@@ -46,10 +30,12 @@ dependencies {
         exclude(group: 'org.apache.ant', module: '*')
         exclude(group: 'net.java.abeille', module: '*')
         exclude(group: 'com.jgoodies', module: '*')
-        exclude(group: 'foxtrot', module: '*')
+        exclude(group: 'com.formdev', module: '*')
+        exclude(group: 'commons-beanutils', module: '*')
+        exclude(group: 'commons-logging', module: '*')
         exclude(group: 'com.thoughtworks.xstream')
     }
-    implementation 'com.thoughtworks.xstream:xstream:1.4.19'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.20'
 
     testImplementation gradleTestKit()
     testImplementation ("org.spockframework:spock-core:${spock_version}") {
@@ -58,14 +44,11 @@ dependencies {
     }
     testImplementation 'junit:junit:4.13.2'
     backwardsCompatibiltyTestImplementation sourceSets.test.output
-
-    // Add the classpath file to the test runtime classpath.
-    testRuntimeOnly files(createClasspathManifest)
 }
 
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
-version "2.5.4"
+version "3.0.0"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -119,7 +102,8 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
+    useJUnit()
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
 }
 

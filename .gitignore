@@ -134,3 +134,6 @@ local.properties
 .shelf/
 /gradle.properties
 /.gradletasknamecache
+
+# test projects for issues
+issue*/

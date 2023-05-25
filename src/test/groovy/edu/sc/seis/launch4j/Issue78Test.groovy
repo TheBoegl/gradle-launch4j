@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,20 +29,10 @@ class Issue78Test extends FunctionalSpecification {
             dependencies {
                 implementation 'com.squareup.moshi:moshi:1.8.0'
             }
-            
+
             launch4j {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'test.exe'
-            }
-        """
-
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
-        sourceFile << """
-            package com.test.app;
-            
-            public class Main {
-                public static void main(String[] args) {
-                }
             }
         """
 
@@ -63,6 +53,7 @@ class Issue78Test extends FunctionalSpecification {
         def process = outfile.path.execute()
         then:
         process.waitFor() == 0
+        process.in.text.trim() == '...'
     }
 
 }

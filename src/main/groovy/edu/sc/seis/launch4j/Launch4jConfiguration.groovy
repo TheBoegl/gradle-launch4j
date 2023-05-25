@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,140 +19,131 @@ package edu.sc.seis.launch4j
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.*
+
 import java.nio.file.Path
 
 @CompileStatic
 interface Launch4jConfiguration {
+    @Input
+    @Optional
+    Property<String> getOutputDir()
 
-    String getOutputDir()
-
-    File getOutputDirectory()
-
-    String getOutfile()
+    @OutputDirectory
+    DirectoryProperty getOutputDirectory()
 
     @OutputFile
-    File getDest()
+    Provider<RegularFile> getDest()
 
     @Internal("usually the xml file is deleted anyways")
-    File getXmlFile()
+    Provider<RegularFile> getXmlFile()
+    @Internal
+    Provider<RegularFile> getLibraryDirectory()
 
-    String getLibraryDir()
+    Property<String> getMainClassName()
 
-    String getMainClassName()
-
-    @Deprecated
-    String getJar()
-
-    Task getJarTask()
+    Property<Task> getJarTask()
 
     Path getJarTaskOutputPath()
 
     Path getJarTaskDefaultOutputPath()
+    Property<String> getLibraryDir()
+    Property<String> getXmlFileName()
+    Property<String> getOutfile()
 
-    Boolean getDontWrapJar()
+    Property<Boolean> getDontWrapJar()
 
-    String getHeaderType()
+    Property<String> getHeaderType()
 
-    String getErrTitle()
+    Property<String> getErrTitle()
 
-    String getCmdLine()
+    Property<String> getCmdLine()
 
-    String getChdir()
+    Property<String> getChdir()
 
-    String getPriority()
+    Property<String> getPriority()
 
-    String getDownloadUrl()
+    Property<String> getDownloadUrl()
 
-    String getSupportUrl()
+    Property<String> getSupportUrl()
 
-    Boolean getStayAlive()
+    Property<Boolean> getStayAlive()
 
-    DuplicatesStrategy getDuplicatesStrategy()
+    Property<DuplicatesStrategy> getDuplicatesStrategy()
 
-    Boolean getRestartOnCrash()
+    Property<Boolean> getRestartOnCrash()
 
-    String getManifest()
+    Property<String> getIcon()
 
-    String getIcon()
+    Property<String> getVersion()
 
-    String getVersion()
+    Property<String> getTextVersion()
 
-    String getTextVersion()
+    Property<String> getCopyright()
 
-    String getCopyright()
+    SetProperty<String> getJvmOptions()
 
-    Set<String> getJvmOptions()
+    Property<String> getCompanyName()
 
-    /**
-     * this is a backwards compatible setter for opts which was a String.
-     * @param opt the JVM options
-     * @deprecated since 2.3 use {@link #getJvmOptions()}
-     */
-    @Deprecated
-    void setOpt(String opt)
+    Property<String> getFileDescription()
 
-    String getCompanyName()
+    Property<String> getProductName()
 
-    String getFileDescription()
+    Property<String> getInternalName()
 
-    String getProductName()
+    Property<String> getTrademarks()
 
-    String getInternalName()
+    Property<String> getLanguage()
 
-    String getTrademarks()
+    Property<String> getBundledJrePath()
 
-    String getLanguage()
+    Property<Boolean> getRequires64Bit()
 
-    String getBundledJrePath()
-
-    Boolean getBundledJre64Bit()
-
-    Boolean getBundledJreAsFallback()
-
-    String getJreMinVersion()
+    Property<String> getJreMinVersion()
 
     String internalJreMinVersion()
 
-    String getJreMaxVersion()
+    Property<String> getJreMaxVersion()
 
-    String getJdkPreference()
+    Property<Boolean> getRequiresJdk()
 
-    String getJreRuntimeBits()
+    SetProperty<String> getVariables()
 
-    Set<String> getVariables()
+    Property<String> getMutexName()
 
-    String getMutexName()
+    Property<String> getWindowTitle()
 
-    String getWindowTitle()
+    Property<String> getMessagesStartupError()
 
-    String getMessagesStartupError()
+    Property<String> getMessagesJreNotFoundError()
 
-    String getMessagesBundledJreError()
+    Property<String> getMessagesJreVersionError()
 
-    String getMessagesJreVersionError()
+    Property<String> getMessagesLauncherError()
 
-    String getMessagesLauncherError()
+    Property<String> getMessagesInstanceAlreadyExists()
 
-    String getMessagesInstanceAlreadyExists()
+    Property<Integer> getInitialHeapSize()
 
-    Integer getInitialHeapSize()
+    Property<Integer> getInitialHeapPercent()
 
-    Integer getInitialHeapPercent()
+    Property<Integer> getMaxHeapSize()
 
-    Integer getMaxHeapSize()
+    Property<Integer> getMaxHeapPercent()
 
-    Integer getMaxHeapPercent()
+    Property<String> getSplashFileName()
 
-    String getSplashFileName()
+    Property<Boolean> getSplashWaitForWindows()
 
-    Boolean getSplashWaitForWindows()
+    Property<Integer> getSplashTimeout()
 
-    Integer getSplashTimeout()
+    Property<Boolean> getSplashTimeoutError()
 
-    Boolean getSplashTimeoutError()
-
-    Set<String> getClasspath()
+    SetProperty<String> getClasspath()
 }

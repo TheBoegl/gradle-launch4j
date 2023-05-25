@@ -26,10 +26,10 @@ class Issue43Test extends FunctionalSpecification {
 
     @Override
     def setup() {
-        File icon = new File(FunctionalSpecification.class.classLoader.findResource('main.ico').toURI())
+        File icon = new File(FunctionalSpecification.class.classLoader.getResource('main.ico').toURI())
         Files.copy(icon, new File(projectDir, 'main.ico'))
 
-        File splash = new File(FunctionalSpecification.class.classLoader.findResource('splash.bmp').toURI())
+        File splash = new File(FunctionalSpecification.class.classLoader.getResource('splash.bmp').toURI())
         Files.copy(splash, new File(projectDir, 'splash.bmp'))
     }
 
@@ -81,7 +81,7 @@ class Issue43Test extends FunctionalSpecification {
         given:
 
         File testIcon = new File(projectDir, 'main.ico')
-        File icon = new File(FunctionalSpecification.class.classLoader.findResource('main.ico').toURI())
+        File icon = new File(FunctionalSpecification.class.classLoader.getResource('main.ico').toURI())
         Files.copy(icon, testIcon)
 
         buildFile << '''
@@ -127,7 +127,7 @@ class Issue43Test extends FunctionalSpecification {
         given:
 
         File testIcon = new File(projectDir, 'main.ico')
-        File icon = new File(FunctionalSpecification.class.classLoader.findResource('main.ico').toURI())
+        File icon = new File(FunctionalSpecification.class.classLoader.getResource('main.ico').toURI())
         Files.copy(icon, testIcon)
 
         buildFile << '''

@@ -21,6 +21,7 @@ import edu.sc.seis.launch4j.CreateXML
 import edu.sc.seis.launch4j.Launch4jPluginExtension
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
@@ -28,7 +29,9 @@ class CreateLaunch4jXMLTask extends DefaultTask {
 
     @TaskAction
     void writeXmlConfig() {
-        new CreateXML(project).execute(project.getExtensions().getByName('launch4j') as Launch4jPluginExtension)
+        FileCollection collection = project.plugins.hasPlugin('java') ?
+            (project.configurations.findByName('runtimeClasspath') ?: project.configurations.getByName('runtime')) : project.files()
+        new CreateXML().execute(project.getExtensions().getByType(Launch4jPluginExtension.class), collection)
     }
 
 }

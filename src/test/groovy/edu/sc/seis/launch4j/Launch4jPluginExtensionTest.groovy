@@ -29,7 +29,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         buildFile << """
             task printProperties {
                 doLast {
-                    println launch4j.outputDir
+                    println launch4j.outputDir.get()
                 }
             }
         """
@@ -84,9 +84,11 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         testOutput.traverse {
             switch (it.absolutePath){
                 case "${testOutput.absolutePath}/lib":
+                    //intentionally fall through
                 case "${testOutput.absolutePath}/lib/testProject.jar":
+                    //intentionally fall through
                 case "${testOutput.absolutePath}/Test.exe":
-                    break;
+                    break
                 default:
                     !it.exists()
             }

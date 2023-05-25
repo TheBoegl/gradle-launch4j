@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2022 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,79 +19,79 @@ package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask
 import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
-import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.DependencySubstitution
+import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.util.GradleVersion
 
 import javax.inject.Inject
-
-@CompileStatic
+//@CompileStatic
 class Launch4jPlugin implements Plugin<Project> {
 
     static final String LAUNCH4J_PLUGIN_NAME = "launch4j"
     static final String LAUNCH4J_GROUP = LAUNCH4J_PLUGIN_NAME
 
     static final String LAUNCH4J_EXTENSION_NAME = LAUNCH4J_PLUGIN_NAME
-//    static final String LAUNCH4J_CONFIGURATION_NAME = 'launch4j'
     static final String LAUNCH4J_CONFIGURATION_NAME_BINARY = 'launch4jBin'
     static final String TASK_RUN_NAME = 'createExe'
-    static final String TASK_LAUNCH4J_NAME = 'launch4j'
-    static final String ARTIFACT_VERSION = '3.14'
-    static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/bin-launch4j-${ARTIFACT_VERSION}"
+    static final String ARTIFACT_VERSION = '3.50'
+    static final String LAUNCH4J_BINARY_DIRECTORY = "tmp/launch4j/"
 
-    private Project project
     private FileOperations fileOperations
 
     @Inject
-    public Launch4jPlugin(FileOperations fileOperations) {
+    Launch4jPlugin(FileOperations fileOperations) {
         this.fileOperations = fileOperations
     }
 
     @Override
     void apply(Project project) {
-        this.project = project
-        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension, project, fileOperations)
-
-        configureDependencies(project)
-        applyTasks(project)
-    }
-
-    void applyTasks(final Project project) {
-        def runLibTask = project.task(TASK_RUN_NAME, type: Launch4jLibraryTask, group: LAUNCH4J_GROUP, description: 'Runs the launch4j jar to generate an .exe file')
-        def createAllExecutables = project.task("createAllExecutables", group: LAUNCH4J_GROUP, description: 'Runs all tasks that implements DefaultLaunch4jTask')
-        createAllExecutables.dependsOn project.tasks.withType(DefaultLaunch4jTask)
-
-        def l4jPlaceholderTask = project.task(TASK_LAUNCH4J_NAME, group: LAUNCH4J_GROUP, description: 'Deprecated placeholder task to run launch4j to generate an .exe file')
-        l4jPlaceholderTask.dependsOn runLibTask
-        l4jPlaceholderTask.doFirst {
-            project.logger.warn("The `${TASK_LAUNCH4J_NAME}` task is deprecated. Use the `${TASK_RUN_NAME}` task instead")
+        if (GradleVersion.current() < GradleVersion.version("4.10")) {
+            throw new GradleException("this plugin version requires gradle 4.10 and newer.\nUse the latest version 2.x release or update gradle.")
         }
+        project.extensions.create(LAUNCH4J_EXTENSION_NAME, Launch4jPluginExtension.class, project, fileOperations, project.objects, project.providers)
+
+        def l4jConfig = configureDependencies(project)
+        project.tasks.register(TASK_RUN_NAME, Launch4jLibraryTask.class) { task ->
+            task.group = LAUNCH4J_GROUP
+            task.description = 'Runs the launch4j jar to generate an .exe file'
+        }
+        project.tasks.register("createAllExecutables", DefaultTask.class) { task ->
+            task.group = LAUNCH4J_GROUP
+            task.description = 'Runs all tasks that implement DefaultLaunch4jTask'
+            task.dependsOn = project.tasks.withType(DefaultLaunch4jTask.class)
+        }
+        project.tasks.withType(DefaultLaunch4jTask.class).configureEach {it.launch4jBinaryFiles.from(l4jConfig)}
     }
 
-    private ModuleDependency addDependency(Configuration configuration, String notation) {
-        ModuleDependency dependency = project.dependencies.create(notation) as ModuleDependency
-        configuration.dependencies.add(dependency)
-        dependency
-    }
 
-    void configureDependencies(final Project project) {
+    static Configuration configureDependencies(final Project project) {
         Configuration binaryConfig = project.configurations.create(LAUNCH4J_CONFIGURATION_NAME_BINARY).setVisible(false)
             .setTransitive(false).setDescription('The launch4j binary configuration for this project.')
+        binaryConfig.setCanBeConsumed(false)
+        binaryConfig.setCanBeResolved(true)
 
 
         if (project.repositories.isEmpty()) {
             project.logger.debug("Adding the mavenCentral repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
             project.repositories.mavenCentral()
         }
-        def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
-        project.dependencies {
-            addDependency(binaryConfig, "${l4jArtifact}:${workdir()}")
+        binaryConfig.resolutionStrategy.dependencySubstitution{
+            all { DependencySubstitution dependency ->
+                if (dependency.requested instanceof ModuleComponentSelector && dependency.requested.group == 'net.sf.launch4j' && dependency.requested.module == 'launch4j') {
+                    // does not work to add the classifier here, so the user must supply it.
+                    dependency.useTarget "net.sf.launch4j:launch4j:${dependency.requested.version}:${workdir()}"
+                }
+            }
         }
+        def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
+        binaryConfig.defaultDependencies {it.add(project.dependencies.create("${l4jArtifact}:${workdir()}"))}
     }
 
     static String workdir() {
@@ -105,7 +105,7 @@ class Launch4jPlugin implements Plugin<Project> {
             return 'workdir-mac'
         } else if (os.isLinux() || os.isUnix()) { // isUnix will also match MacOs, hence, call it as last resort
             String arch = System.getProperty("os.arch")
-            if ("amd64".equals(arch) || "x86_64".equals(arch)) {
+            if ("amd64" == arch || "x86_64" == arch) {
                 return 'workdir-linux64'
             } else {
                 return 'workdir-linux'

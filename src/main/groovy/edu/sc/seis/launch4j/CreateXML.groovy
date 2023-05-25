@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,178 +18,165 @@
 package edu.sc.seis.launch4j
 
 import groovy.xml.MarkupBuilder
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
 
 import java.nio.file.Path
 import java.nio.file.Paths
 
 class CreateXML {
 
-    private final Project project
-
-    CreateXML(Project project) {
-        this.project = project
+    void execute(Launch4jPluginExtension l4j, FileCollection runtimeClasspath) {
+        execute(l4j.xmlFile.get().asFile, l4j, null, runtimeClasspath)
     }
 
-    void execute(Launch4jPluginExtension l4j) {
-        execute(l4j.getXmlFile(), l4j, null)
-    }
-
-    void execute(File xmlFile, Launch4jConfiguration config, FileCollection copySpec) {
-        def outputDir = config.getOutputDirectory()
+    void execute(File xmlFile, Launch4jConfiguration config, FileCollection copySpec, FileCollection runtimeClassFiles) {
+        def outputDir = config.getOutputDirectory().get().asFile
         outputDir.mkdirs()
-        def outFilePath = config.getDest().parentFile.toPath()
+        def outFilePath = config.dest.get().asFile.parentFile.toPath()
         def classpath
-        if (config.classpath) {
-            classpath = config.classpath
+        if (config.classpath.isPresent() && config.classpath.get()) {
+            classpath = config.classpath.get()
         } else if (copySpec instanceof FileCollection) {
             classpath = copySpec.collect {
                 outFilePath.relativize(it.toPath()).toString()
             }
         } else {
             classpath = (copySpec ?:
-                (project.plugins.hasPlugin('java') ?
-                    (project.configurations.findByName('runtimeClasspath') ?
-                        project.configurations.runtimeClasspath : project.configurations.runtime) : [])).collect {
-                outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir, it.name))).toString()
+                runtimeClassFiles ?: []).collect {
+                outFilePath.relativize(outputDir.toPath().resolve(Paths.get(config.libraryDir.get(), it.name))).toString()
                 // relativize paths relative to outfile
             }
         }
         def jarTaskOutputPath = config.getJarTaskOutputPath()
         def jar
-        if (config.dontWrapJar) {
+        if (config.dontWrapJar.get()) {
             /**
              * Priority of sources for path to jar:
              * 1. `jarTask` (output file resolved against libraryDirectory), if not set then:
-             * 2. `jar` (resolved against outputDirectory), if not set then:
-             * 3. `jarTask` default fallback if Java plugin was applied (tasks[jar]) (output file resolved against libraryDirectory)
-             * 4. null
+             * 2. `jarTask` default fallback if Java plugin was applied (tasks[jar]) (output file resolved against libraryDirectory)
+             * 3. null
              */
             def jarPath
             if (jarTaskOutputPath) {
-                jarPath = config.getLibraryDirectory().toPath().resolve(jarTaskOutputPath.fileName)
-            } else if (config.getJar()) {
-                jarPath = outputDir.toPath().resolve(config.getJar())
+                jarPath = config.getLibraryDirectory().get().asFile.toPath().resolve(jarTaskOutputPath.fileName)
             } else if (config.getJarTaskDefaultOutputPath()) {
-                jarPath = config.getLibraryDirectory().toPath().resolve(config.getJarTaskDefaultOutputPath().fileName)
+                jarPath = config.getLibraryDirectory().get().asFile.toPath().resolve(config.getJarTaskDefaultOutputPath().fileName)
             } else {
                 jarPath = null
             }
 
-            jar = jarPath ? outFilePath.relativize(jarPath) : ""
+            jar = jarPath ? outFilePath.toAbsolutePath().relativize(jarPath.toAbsolutePath()) : ""
         } else {
             /**
              * Priority of sources for path to jar:
              * 1. `jarTask`, if not set then:
-             * 2. `jar`, if not set then:
-             * 3. `jarTask` default fallback if Java plugin was applied (tasks[jar])
-             * 4. null
+             * 2. `jarTask` default fallback if Java plugin was applied (tasks[jar])
+             * 3. null
              */
-            jar = jarTaskOutputPath ?: (config.getJar() ? outputDir.toPath().resolve(config.getJar()) : config.getJarTaskDefaultOutputPath()) ?: ""
+            jar = jarTaskOutputPath ?: config.getJarTaskDefaultOutputPath() ?: ""
         }
-        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"));
+        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"))
         def xml = new MarkupBuilder(writer)
         xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
         xml.launch4jConfig() {
-            xml.dontWrapJar(config.dontWrapJar)
-            xml.headerType(config.headerType)
+            xml.dontWrapJar(config.dontWrapJar.get())
+            xml.headerType(config.headerType.get())
             xml.jar(jar)
-            xml.outfile(config.outfile)
-            xml.errTitle(config.errTitle)
-            xml.cmdLine(config.cmdLine)
-            xml.chdir(config.chdir)
-            xml.priority(config.priority)
-            xml.downloadUrl(config.downloadUrl)
-            xml.supportUrl(config.supportUrl)
-            xml.stayAlive(config.stayAlive)
-            xml.restartOnCrash(config.restartOnCrash)
-            xml.manifest(config.manifest)
-            xml.icon(relativizeIfAbsolute(outFilePath, config.icon))
-            config.variables.each { var -> xml.var(var) }
-            if (config.mainClassName) {
+            xml.outfile(config.outfile.get())
+            xml.errTitle(config.errTitle.get())
+            xml.cmdLine(config.cmdLine.get())
+            xml.chdir(config.chdir.get())
+            xml.priority(config.priority.get())
+            xml.downloadUrl(config.downloadUrl.get())
+            xml.supportUrl(config.supportUrl.get())
+            xml.stayAlive(config.stayAlive.get())
+            xml.restartOnCrash(config.restartOnCrash.get())
+            xml.icon(relativizeIfAbsolute(outFilePath, config.icon.get()))
+            if (config.variables.isPresent()) {
+                config.variables.get().each { var -> xml.var(var) }
+            }
+            if (config.mainClassName.isPresent()) {
                 xml.classPath() {
-                    mainClass(config.mainClassName)
+                    mainClass(config.mainClassName.get())
                     classpath.each() { val -> xml.cp(val) }
                 }
             }
             jre() {
-                xml.path(config.bundledJrePath != null ? config.bundledJrePath : "")
-                xml.bundledJre64Bit(config.bundledJre64Bit)
-                xml.bundledJreAsFallback(config.bundledJreAsFallback)
-                def minVersion = config.jreMinVersion == null && config.bundledJrePath != null ? "" : config.jreMinVersion ? config.jreMinVersion : config.internalJreMinVersion()
-                xml.minVersion(minVersion)
-                xml.maxVersion(config.jreMaxVersion != null ? config.jreMaxVersion : "")
-                xml.jdkPreference(config.jdkPreference)
-                xml.runtimeBits(config.jreRuntimeBits)
+                xml.path(config.bundledJrePath.getOrElse(""))
+                xml.requiresJdk(config.requiresJdk.get())
+                xml.requires64Bit(config.requires64Bit.get())
+                def minVersion = config.jreMinVersion.isPresent() ? config.jreMinVersion.get() : config.internalJreMinVersion()
+                xml.minVersion(minVersion instanceof Property ? minVersion.get() : minVersion)
+                xml.maxVersion(config.jreMaxVersion.getOrElse(""))
 
-                config.jvmOptions.each { opt ->
-                    if (opt) {
+                if (config.jvmOptions.isPresent()) {
+                    config.jvmOptions.get().each { opt ->
                         xml.opt(opt)
                     }
                 }
 
-                if (config.initialHeapSize != null)
-                    xml.initialHeapSize(config.initialHeapSize)
+                if (config.initialHeapSize.isPresent())
+                    xml.initialHeapSize(config.initialHeapSize.get())
 
-                if (config.initialHeapPercent != null)
-                    xml.initialHeapPercent(config.initialHeapPercent)
+                if (config.initialHeapPercent.isPresent())
+                    xml.initialHeapPercent(config.initialHeapPercent.get())
 
-                if (config.maxHeapSize != null)
-                    xml.maxHeapSize(config.maxHeapSize)
+                if (config.maxHeapSize.isPresent())
+                    xml.maxHeapSize(config.maxHeapSize.get())
 
-                if (config.maxHeapPercent != null)
-                    xml.maxHeapPercent(config.maxHeapPercent)
+                if (config.maxHeapPercent.isPresent())
+                    xml.maxHeapPercent(config.maxHeapPercent.get())
             }
-            if (config.splashFileName != null && config.splashTimeout != null) {
+            if (config.splashFileName.isPresent() && config.splashTimeout.isPresent()) {
                 splash() {
-                    xml.file(relativizeIfAbsolute(outFilePath, config.splashFileName))
-                    xml.waitForWindow(config.splashWaitForWindows)
-                    xml.timeout(config.splashTimeout)
-                    xml.timeoutErr(config.splashTimeoutError)
+                    xml.file(relativizeIfAbsolute(outFilePath, config.splashFileName.get()))
+                    xml.waitForWindow(config.splashWaitForWindows.get())
+                    xml.timeout(config.splashTimeout.get())
+                    xml.timeoutErr(config.splashTimeoutError.get())
                 }
             }
             versionInfo() {
-                xml.fileVersion(parseDotVersion(config.version))
-                xml.txtFileVersion(config.textVersion)
-                xml.fileDescription(config.fileDescription)
-                xml.copyright(config.copyright)
-                xml.productVersion(parseDotVersion(config.version))
-                xml.txtProductVersion(config.textVersion)
-                xml.productName(config.productName)
-                xml.companyName(config.companyName)
-                xml.internalName(config.internalName)
-                xml.originalFilename(config.outfile)
-                xml.trademarks(config.trademarks)
-                xml.language(config.language)
+                xml.fileVersion(parseDotVersion(config.version.get()))
+                xml.txtFileVersion(config.textVersion.get())
+                xml.fileDescription(config.fileDescription.get())
+                xml.copyright(config.copyright.get())
+                xml.productVersion(parseDotVersion(config.version.get()))
+                xml.txtProductVersion(config.textVersion.get())
+                xml.productName(config.productName.get())
+                xml.companyName(config.companyName.get())
+                xml.internalName(config.internalName.get())
+                xml.originalFilename(config.outfile.get())
+                xml.trademarks(config.trademarks.get())
+                xml.language(config.language.get())
             }
 
-            if (config.messagesStartupError != null ||
-                config.messagesBundledJreError != null ||
-                config.messagesJreVersionError != null ||
-                config.messagesLauncherError != null
-                || config.messagesInstanceAlreadyExists != null
+            if (config.messagesStartupError.isPresent() ||
+                config.messagesJreNotFoundError.isPresent() ||
+                config.messagesJreVersionError.isPresent() ||
+                config.messagesLauncherError.isPresent()
+                || config.messagesInstanceAlreadyExists.isPresent()
             ) {
                 messages() {
-                    if (config.messagesStartupError != null)
-                        xml.startupErr(config.messagesStartupError)
-                    if (config.messagesBundledJreError != null)
-                        xml.bundledJreErr(config.messagesBundledJreError)
-                    if (config.messagesJreVersionError != null)
-                        xml.jreVersionErr(config.messagesJreVersionError)
-                    if (config.messagesLauncherError != null)
-                        xml.launcherErr(config.messagesLauncherError)
-                    if (config.messagesInstanceAlreadyExists != null)
-                        xml.instanceAlreadyExistsMsg(config.messagesInstanceAlreadyExists)
+                    if (config.messagesStartupError.isPresent())
+                        xml.startupErr(config.messagesStartupError.get())
+                    if (config.messagesJreNotFoundError.isPresent())
+                        xml.bundledJreErr(config.messagesJreNotFoundError.get())
+                    if (config.messagesJreVersionError.isPresent())
+                        xml.jreVersionErr(config.messagesJreVersionError.get())
+                    if (config.messagesLauncherError.isPresent())
+                        xml.launcherErr(config.messagesLauncherError.get())
+                    if (config.messagesInstanceAlreadyExists.isPresent())
+                        xml.instanceAlreadyExistsMsg(config.messagesInstanceAlreadyExists.get())
                 }
             }
-            if (config.mutexName != null || config.windowTitle != null) {
+            if (config.mutexName.isPresent() || config.windowTitle.isPresent()) {
                 singleInstance() {
-                    if (config.mutexName != null)
-                        xml.mutexName(config.mutexName)
+                    if (config.mutexName.isPresent())
+                        xml.mutexName(config.mutexName.get())
 
-                    if (config.windowTitle != null)
-                        xml.windowTitle(config.windowTitle)
+                    if (config.windowTitle.isPresent())
+                        xml.windowTitle(config.windowTitle.get())
                 }
             }
         }
