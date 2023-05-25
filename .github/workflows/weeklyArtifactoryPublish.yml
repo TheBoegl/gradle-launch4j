@@ -9,6 +9,9 @@ name: Artifactory Publish
 on:
   schedule:
     - cron: '0 0 * * 0' # every sunday at midnight
+  push:
+    branches:
+      - develop
 
 jobs:
   build:
