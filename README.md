@@ -54,7 +54,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
 
     buildscript {
       repositories {
-        mavenCentral()
+        gradlePluginPortal()
       }
       dependencies {
         classpath 'edu.sc.seis.launch4j:launch4j:3.0.0'
