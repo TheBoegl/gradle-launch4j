@@ -428,6 +428,21 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     final SetProperty<String> classpath
 
+    @Override
+    void setClasspath(Iterable<String> iterable) {
+        classpath.addAll(iterable)
+    }
+
+    @Override
+    void setJvmOptions(Iterable<String> iterable) {
+        jvmOptions.addAll(iterable)
+    }
+
+    @Override
+    void setVariables(Iterable<String> iterable) {
+        variables.addAll(iterable)
+    }
+
     @Deprecated
     @ReplacedBy("requiresJdk")
     String getJdkPreference() {

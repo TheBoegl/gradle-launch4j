@@ -89,6 +89,9 @@ interface Launch4jConfiguration {
 
     SetProperty<String> getJvmOptions()
 
+    @SuppressWarnings('unused')
+    void setJvmOptions(Iterable<String> iterable)
+
     Property<String> getCompanyName()
 
     Property<String> getFileDescription()
@@ -114,6 +117,9 @@ interface Launch4jConfiguration {
     Property<Boolean> getRequiresJdk()
 
     SetProperty<String> getVariables()
+
+    @SuppressWarnings('unused')
+    void setVariables(Iterable<String> iterable)
 
     Property<String> getMutexName()
 
@@ -146,4 +152,8 @@ interface Launch4jConfiguration {
     Property<Boolean> getSplashTimeoutError()
 
     SetProperty<String> getClasspath()
+
+    @SuppressWarnings('unused')
+    void setClasspath(Iterable<String> iterable)
+
 }

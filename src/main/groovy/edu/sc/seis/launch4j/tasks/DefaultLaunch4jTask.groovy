@@ -170,7 +170,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             splashTimeout.convention(config.splashTimeout)
             splashTimeoutError.convention(config.splashTimeoutError)
             copyConfigurable.convention(config.copyConfigurable)
-            classpath.convention([])
+            classpath.convention(config.classpath)
         } else {
             // inputs do not set dependsOn
             dependsOn(config.jarTask)
@@ -226,7 +226,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             splashTimeout.set(config.splashTimeout)
             splashTimeoutError.set(config.splashTimeoutError)
             copyConfigurable.set(config.copyConfigurable)
-            classpath.set([])
+            classpath.set(config.classpath)
         }
         inputs.files(jarTask.map {it.outputs.files})
         dest = outputDirectory.file(outfile)
@@ -473,9 +473,19 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Optional
     final SetProperty<String> jvmOptions
 
+    @Override
+    void setJvmOptions(Iterable<String> iterable) {
+        jvmOptions.addAll(iterable)
+    }
+
     @Input
     @Optional
     final SetProperty<String> variables
+
+    @Override
+    void setVariables(Iterable<String> iterable) {
+        variables.addAll(iterable)
+    }
     /**
      * Optional text.
      */
@@ -795,6 +805,12 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Input
     @Optional
     final SetProperty<String> classpath
+
+    @Override
+    void setClasspath(Iterable<String> iterable) {
+        getClasspath().set(iterable)
+    }
+
 
     protected void createXML(FileCollection copySpec) {
         new CreateXML().execute(xmlFile.get().asFile, this, copySpec, runtimeClassFiles)
