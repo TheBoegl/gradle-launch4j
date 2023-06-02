@@ -426,6 +426,8 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         return null
     }
 
+    @Input
+    @Optional
     final SetProperty<String> classpath
 
     @Override
