@@ -1,3 +1,7 @@
+## Version [3.0.1](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.1)
+- **FIX** [#151](https://github.com/TheBoegl/gradle-launch4j/issues/151): Correctly set the classpath in the created executable.
+- **FIX** [#150](https://github.com/TheBoegl/gradle-launch4j/issues/150): Provide setter for all set properties.
+
 ## Version [3.0.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.0)
 - **FIX** [#88](https://github.com/TheBoegl/gradle-launch4j/issues/88): Correctly set the minimum required Java version in the created executable and follow the readme specification.
 - **FIX** [#144](https://github.com/TheBoegl/gradle-launch4j/issues/144): Update to Launch4j version 3.50.
