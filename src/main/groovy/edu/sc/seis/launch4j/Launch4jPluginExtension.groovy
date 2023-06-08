@@ -71,7 +71,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         sourceCompatibility = asGradleProperty(project, providerFactory, 'sourceCompatibility')
         jarFileCollection = objectFactory.property(FileCollection)
         mainClassName = objectFactory.property(String)
-        jarTask = objectFactory.property(Task)
+        jarFiles = objectFactory.property(FileCollection)
         outputDir = objectFactory.property(String)
         dontWrapJar = objectFactory.property(Boolean)
         outfile = objectFactory.property(String)
@@ -126,18 +126,8 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         def isPropertyConventionSupported = GradleVersion.current() >= GradleVersion.version("5.1")
         project.pluginManager.withPlugin('java') {
             def javaJarTask = project.tasks.named(JavaPlugin.JAR_TASK_NAME)
-            def outputs = javaJarTask.map { it?.outputs?.files?:null}
-            if (isPropertyConventionSupported) {
-                if (GradleVersion.current() >= GradleVersion.version('5.6')) {
-                    jarFileCollection.value(outputs)
-                } else {
-                    jarFileCollection.convention(outputs)
-                }
-                jarTask.convention(javaJarTask)
-            } else {
-                jarFileCollection.set(outputs)
-                jarTask.set(javaJarTask)
-            }
+            PropertyUtils.assign(jarFileCollection, javaJarTask.map { it?.outputs?.files ?: null })
+            PropertyUtils.assign(jarFiles, jarFileCollection)
         }
         if (isPropertyConventionSupported) {
             outputDir.convention(defaultOutputDir)
@@ -245,9 +235,24 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     @Input
     final Property<String> mainClassName
-    @Input
+
+    @InputFiles
     @Optional
-    final Property<Task> jarTask
+    final Property<FileCollection> jarFiles
+
+    void setJarFiles(FileCollection fileCollection) {
+        jarFiles.set(fileCollection)
+    }
+
+    void setJarFiles(Provider<FileCollection> provider) {
+        jarFiles.set(provider)
+    }
+
+    @Override
+    void setJarTask(Task task) {
+        setJarFiles(task?.outputs?.files)
+    }
+
     @Input
     @Optional
     final Property<String> outputDir
@@ -426,14 +431,14 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
 
     @Override
     Path getJarTaskOutputPath() {
-        return jarTask.getOrNull().outputs?.files?.singleFile?.toPath()
+        return jarFiles.getOrNull().singleFile?.toPath()
     }
 
     @Override
     @InputFile
     Path getJarTaskDefaultOutputPath() {
         if (jarFileCollection.isPresent() && jarFileCollection.get()) {
-            jarFileCollection.get().singleFile.toPath()
+            return jarFileCollection.get().singleFile.toPath()
         }
         return null
     }
