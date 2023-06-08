@@ -65,7 +65,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         ObjectFactory objectFactory = project.objects
         ProjectLayout layout = project.layout
         launch4jBinaryFiles = configurableFileCollection(project)
-        launch4jBinaryDirectory = layout.buildDirectory.map {it.file(Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY)}
+        launch4jBinaryDirectory = layout.buildDirectory.map { it.file(Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY) }
         mainClassName = objectFactory.property(String)
         jarTask = objectFactory.property(Task)
         outputDir = objectFactory.property(String)
@@ -228,7 +228,9 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             copyConfigurable.set(config.copyConfigurable)
             classpath.set(config.classpath)
         }
-        jarTask.map {inputs.files(it.outputs.files)}
+        if (jarTask.isPresent()) {
+            inputs.files(jarTask.map { it.outputs.files})
+        }
         dest = outputDirectory.file(outfile)
         xmlFile = outputDirectory.file(xmlFileName)
         libraryDirectory = outputDirectory.file(libraryDir)
