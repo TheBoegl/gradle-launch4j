@@ -228,7 +228,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             copyConfigurable.set(config.copyConfigurable)
             classpath.set(config.classpath)
         }
-        inputs.files(jarTask.map {it.outputs.files})
+        jarTask.map {inputs.files(it.outputs.files)}
         dest = outputDirectory.file(outfile)
         xmlFile = outputDirectory.file(xmlFileName)
         libraryDirectory = outputDirectory.file(libraryDir)
