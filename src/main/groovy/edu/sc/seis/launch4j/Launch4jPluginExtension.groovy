@@ -238,6 +238,7 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     final Property<String> mainClassName
 
     @InputFiles
+    @Optional
     final Property<FileCollection> jarFiles
 
     void setJarFiles(FileCollection fileCollection) {
