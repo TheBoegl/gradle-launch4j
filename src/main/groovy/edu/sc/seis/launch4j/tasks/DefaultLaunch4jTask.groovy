@@ -22,6 +22,7 @@ import edu.sc.seis.launch4j.CreateXML
 import edu.sc.seis.launch4j.Launch4jConfiguration
 import edu.sc.seis.launch4j.Launch4jPlugin
 import edu.sc.seis.launch4j.Launch4jPluginExtension
+import edu.sc.seis.launch4j.PropertyUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -67,7 +68,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         launch4jBinaryFiles = configurableFileCollection(project)
         launch4jBinaryDirectory = layout.buildDirectory.map {it.file(Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY)}
         mainClassName = objectFactory.property(String)
-        jarTask = objectFactory.property(Task)
+        jarFiles = objectFactory.property(FileCollection)
         outputDir = objectFactory.property(String)
         dontWrapJar = objectFactory.property(Boolean)
         outfile = objectFactory.property(String)
@@ -117,10 +118,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         splashTimeoutError = objectFactory.property(Boolean)
         copyConfigurable = objectFactory.property(Object)
         classpath = objectFactory.setProperty(String)
+        PropertyUtils.assign(jarFiles, config.jarFiles)
         def isPropertyConventionSupported = GradleVersion.current() >= GradleVersion.version("5.1")
         if (isPropertyConventionSupported) {
             mainClassName.convention(config.mainClassName)
-            jarTask.convention(config.jarTask)
             outputDir.convention(config.outputDir)
             outputDirectory = objectFactory.directoryProperty().convention(layout.buildDirectory.dir(outputDir))
             dontWrapJar.convention(config.dontWrapJar)
@@ -173,9 +174,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             classpath.convention([])
         } else {
             // inputs do not set dependsOn
-            dependsOn(config.jarTask)
             mainClassName.set(config.mainClassName)
-            jarTask.set(config.jarTask)
             outputDir.set(config.outputDir)
             outputDirectory = layout.directoryProperty()
             outputDirectory.set(layout.buildDirectory.dir(outputDir))
@@ -228,7 +227,11 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             copyConfigurable.set(config.copyConfigurable)
             classpath.set([])
         }
-        inputs.files(jarTask.map {it.outputs.files})
+        if (jarFiles.isPresent()) {
+            inputs.files(jarFiles.get())
+        } else if (config.jarFileCollection.isPresent()) {
+            inputs.files(config.jarFileCollection.get())
+        }
         dest = outputDirectory.file(outfile)
         xmlFile = outputDirectory.file(xmlFileName)
         libraryDirectory = outputDirectory.file(libraryDir)
@@ -324,19 +327,33 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     }
 
     /**
-     * The main class to start if {@link #jarTask} is not set.
+     * The main class to start if {@link #setJarTask} is not set.
      */
     @Input
     @Optional
     final Property<String> mainClassName
+    @InputFiles
+    @Optional
+    final Property<FileCollection> jarFiles
 
-    @Internal
-    final Property<Task> jarTask
+    void setJarFiles(FileCollection fileCollection) {
+        jarFiles.set(fileCollection)
+    }
+
+    void setJarFiles(Provider<FileCollection> provider) {
+        jarFiles.set(provider)
+    }
+
+    @Override
+    void setJarTask(Task task) {
+        dependsOn(task)
+        setJarFiles(task?.outputs?.files)
+    }
 
     @Internal
     @Override
     Path getJarTaskOutputPath() {
-        jarTask.getOrNull()?.outputs?.files?.singleFile?.toPath()
+        jarFiles.getOrNull()?.singleFile?.toPath()
     }
 
     @Internal
@@ -348,7 +365,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     /**
      * Optional, defaults to <u>false</u>.<br>
      *     Launch4j by default wraps jars in native executables, you can prevent this by setting {@link #dontWrapJar} to true.
-     *     The exe acts then as a launcher and starts the application specified in {@link #jarTask} or this runtime dependencies and {@link #mainClassName}
+     *     The exe acts then as a launcher and starts the application specified in {@link #setJarTask} or this runtime dependencies and {@link #mainClassName}
      */
     @Input
     @Optional
