@@ -38,8 +38,8 @@ class Issue142Test extends FunctionalSpecification {
         def result = gradleRunner.build()
 
         then:
-        result.output.contains('1 problem was found reusing the configuration cache.\n' +
-            '- Gradle runtime: support for using a Java agent with TestKit builds is not yet implemented with the configuration cache.')
+        result.output.contains('1 problem was found reusing the configuration cache.')
+        result.output.contains('- Gradle runtime: support for using a Java agent with TestKit builds is not yet implemented with the configuration cache.')
         result.output.contains('Reusing configuration cache.')
     }
 }
