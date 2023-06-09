@@ -29,6 +29,7 @@ class Issue142Test extends FunctionalSpecification {
         """
 
 
+        // the TestKit is not yet implemented with the configuration cache, so we convert the error to a warning and check for its presence below.
         def gradleRunner = createAndConfigureGradleRunner('--configuration-cache', '--configuration-cache-problems=warn', 'createExe').withGradleVersion('8.1.1')
         when:
         gradleRunner.build()
@@ -37,6 +38,8 @@ class Issue142Test extends FunctionalSpecification {
         def result = gradleRunner.build()
 
         then:
+        result.output.contains('1 problem was found reusing the configuration cache.\n' +
+            '- Gradle runtime: support for using a Java agent with TestKit builds is not yet implemented with the configuration cache.')
         result.output.contains('Reusing configuration cache.')
     }
 }
