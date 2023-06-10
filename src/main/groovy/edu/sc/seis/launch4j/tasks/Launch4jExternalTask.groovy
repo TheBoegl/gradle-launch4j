@@ -22,6 +22,7 @@ import edu.sc.seis.launch4j.PropertyUtils
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.util.GradleVersion
@@ -31,19 +32,18 @@ import javax.inject.Inject
 class Launch4jExternalTask extends DefaultLaunch4jTask {
 
     @Input
+    @Optional
     final Property<String> launch4jCmd
     private final Object execOperations
 
     Launch4jExternalTask() {
+        launch4jCmd = PropertyUtils.assign(project.objects.property(String), "launch4j")
         if (GradleVersion.current() >= GradleVersion.version('6.0')) {
             this.execOperations = project.objects.newInstance(InjectedExecOperations).execOperations
         } else {
             this.execOperations = null;
         }
-        launch4jCmd = PropertyUtils.assign(project.objects.property(String), "launch4j")
     }
-
-
 
     @TaskAction
     def run() {

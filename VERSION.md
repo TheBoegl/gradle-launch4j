@@ -1,3 +1,6 @@
+## Version [3.0.3](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.3)
+- **FIXUP** The previous release contained an undetected refactoring bug.
+
 ## Version [3.0.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.2)
 - **FIX** [#152](https://github.com/TheBoegl/gradle-launch4j/issues/152): Apply the plugin without the need for the jar plugin.
 - **FIX** [#142](https://github.com/TheBoegl/gradle-launch4j/issues/142): Added support for Gradle configuration caching.
