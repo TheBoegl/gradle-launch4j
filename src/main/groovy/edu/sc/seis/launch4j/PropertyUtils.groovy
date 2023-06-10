@@ -25,7 +25,7 @@ import org.gradle.util.GradleVersion
 class PropertyUtils {
     static boolean HAS_CONVENTION_SUPPORT = GradleVersion.current() >= GradleVersion.version('5.1')
 
-    static void assign(Property<FileCollection> property, FileCollection value) {
+    static <T> void assign(Property<T> property, T value) {
         if (HAS_CONVENTION_SUPPORT) {
             property.convention(value)
         } else {
@@ -33,7 +33,7 @@ class PropertyUtils {
         }
     }
 
-    static void assign(Property<FileCollection> property, Provider<FileCollection> provider) {
+    static <T> void assign(Property<T> property, Provider<T> provider) {
         if (HAS_CONVENTION_SUPPORT) {
             property.convention(provider)
         } else {
