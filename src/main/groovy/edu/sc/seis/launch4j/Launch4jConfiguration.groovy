@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -48,7 +49,9 @@ interface Launch4jConfiguration {
 
     Property<String> getMainClassName()
 
-    Property<Task> getJarTask()
+    Property<FileCollection> getJarFiles()
+
+    void setJarTask(Task task)
 
     Path getJarTaskOutputPath()
 

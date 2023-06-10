@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2023 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,26 @@
 
 package edu.sc.seis.launch4j
 
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
+import org.gradle.api.file.FileTree
 import org.gradle.api.file.RelativePath
+import org.gradle.api.internal.file.FileOperations
 
 import java.nio.file.Files
 
 class Extract {
 
-    static File binaries(Project project, FileCollection configuration, File destinationParentFolder) {
-        def workingDirName = Launch4jPlugin.workdir()
-        def jarName = "launch4j-(\\d{1,2}\\.\\d{1,2})-${workingDirName}"
-        def workingJar = configuration.find { File file -> file.name =~ /${jarName}.jar/ }
-        if (!workingJar) {
-            throw new Exception("launch4j binary jar ${workingDirName} file not found! Expected ${workingDirName}.jar but got ${configuration.files.collect {it.name}}. Use the correct classifier for this platform.")
-        }
-        def m = workingJar.name =~ /launch4j-(\d{1,2}\.\d{1,2})/
-        def version = m? m[0][1] : workingJar.name
-        def destination = destinationParentFolder.toPath().resolve(version)
+    static void binaries(FileTree launch4jZipTree, FileOperations fileOperations, FileCollection configuration, File destinationParentFolder) {
+        def destination = destinationParentFolder.toPath()
         Files.createDirectories(destination)
         def lockFile = destination.resolve("created").toFile()
         if (!lockFile.exists()) {
-            def copyOptions = {
-                from { project.zipTree(workingJar) }
-                includeEmptyDirs = false
-                into { destination }
-                eachFile { FileCopyDetails fcp ->
+            def copy = fileOperations.copy {
+                it.from {  launch4jZipTree }
+                it.includeEmptyDirs = false
+                it.into { destination }
+                it.eachFile { FileCopyDetails fcp ->
                     // only extract the binaries
                     if (fcp.relativePath.pathString.startsWith("launch4j-")) {
                         // remap the file to the root
@@ -56,12 +49,11 @@ class Extract {
                     }
                 }
             }
-            if (project.copy(copyOptions).didWork) {
+            if (copy.didWork) {
                 lockFile.text = new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone("UTC"))
             } else {
-                throw new Exception("the unpacking of launch4j $version failed")
+                throw new Exception("the unpacking of launch4j ${destination.getFileName().toString()} failed")
             }
         }
-        destination.toFile()
     }
 }

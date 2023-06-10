@@ -1,3 +1,7 @@
+## Version [3.0.2](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.2)
+- **FIX** [#152](https://github.com/TheBoegl/gradle-launch4j/issues/152): Apply the plugin without the need for the jar plugin.
+- **FIX** [#142](https://github.com/TheBoegl/gradle-launch4j/issues/142): Added support for Gradle configuration caching.
+
 ## Version [3.0.1](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.1)
 - **FIX** [#151](https://github.com/TheBoegl/gradle-launch4j/issues/151): Correctly set the classpath in the created executable.
 - **FIX** [#150](https://github.com/TheBoegl/gradle-launch4j/issues/150): Provide setter for all set properties.
