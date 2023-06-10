@@ -17,22 +17,12 @@
 
 package edu.sc.seis.launch4j.tasks
 
-import edu.sc.seis.launch4j.CopyLibraries
-import edu.sc.seis.launch4j.CreateXML
-import edu.sc.seis.launch4j.Launch4jConfiguration
-import edu.sc.seis.launch4j.Launch4jPlugin
-import edu.sc.seis.launch4j.Launch4jPluginExtension
-import edu.sc.seis.launch4j.PropertyUtils
+import edu.sc.seis.launch4j.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.ProjectLayout
-import org.gradle.api.file.RegularFile
+import org.gradle.api.file.*
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.DefaultCopySpec
 import org.gradle.api.model.ObjectFactory
@@ -44,13 +34,17 @@ import org.gradle.api.tasks.*
 import org.gradle.util.GradleVersion
 
 import java.nio.file.Path
+import java.util.concurrent.Callable
+import java.util.regex.Matcher
+
 // do not compile static because this will break the layout#directoryProperty() for gradle version 4.3 to 5.1.
 abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfiguration {
 
-    private Launch4jPluginExtension config
+    protected Launch4jPluginExtension config
     private FileCollection runtimeClassFiles
+    private Provider<Configuration> launch4jDependency
     @Internal
-    final Provider<Configuration> launch4jDependency
+    final Provider<FileTree> launch4jZipTree
     @Internal
     final Provider<RegularFile> launch4jBinaryDirectory
 
@@ -60,13 +54,21 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     protected DefaultLaunch4jTask() {
         config = project.extensions.getByType(Launch4jPluginExtension.class)
         launch4jDependency = project.configurations.named(Launch4jPlugin.LAUNCH4J_CONFIGURATION_NAME_BINARY)
+        launch4jBinaryFiles = configurableFileCollection(project)
+        launch4jBinaryFiles.from(launch4jDependency)
+        def workingJar = getWorkingJar(launch4jBinaryFiles)
+        launch4jZipTree = project.providers.provider(new Callable<FileTree>() {
+            @Override
+            FileTree call() throws Exception {
+                project.zipTree(workingJar)
+            }
+        })
         runtimeClassFiles = project.plugins.hasPlugin('java') ?
             (project.configurations.findByName('runtimeClasspath') ?
                 project.configurations.runtimeClasspath : project.configurations.runtime) : project.files()
         ObjectFactory objectFactory = project.objects
         ProjectLayout layout = project.layout
-        launch4jBinaryFiles = configurableFileCollection(project)
-        launch4jBinaryDirectory = layout.buildDirectory.map { it.file(Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY) }
+        launch4jBinaryDirectory = layout.buildDirectory.map { it.file(Launch4jPlugin.LAUNCH4J_BINARY_DIRECTORY + "/${getLaunch4jVersion(workingJar)}/") }
         mainClassName = objectFactory.property(String)
         jarFiles = objectFactory.property(FileCollection)
         outputDir = objectFactory.property(String)
@@ -236,6 +238,21 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         xmlFile = outputDirectory.file(xmlFileName)
         libraryDirectory = outputDirectory.file(libraryDir)
         copyLibraryFileCollection = configurableFileCollection(project)
+    }
+
+    private static File getWorkingJar(ConfigurableFileCollection launch4jBinaryFiles) {
+        def workingDirName = Launch4jPlugin.workdir()
+        def jarName = "launch4j-(\\d{1,2}\\.\\d{1,2})-${workingDirName}"
+        def workingJar = launch4jBinaryFiles.files.find { File file -> file.name =~ /${jarName}.jar/ }
+        if (!workingJar) {
+            throw new Exception("launch4j binary jar ${workingDirName} file not found! Expected ${workingDirName}.jar but got ${launch4jBinaryFiles.files.collect { it.name }}. Use the correct classifier for this platform.")
+        }
+        workingJar
+    }
+
+    private static String getLaunch4jVersion(File workingJar) {
+        Matcher m = workingJar.name =~ /launch4j-(\d{1,2}\.\d{1,2})/
+        m ? m[0][1] as String : workingJar.name
     }
 
     @Input
@@ -836,4 +853,5 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     protected void createExecutableFolder() {
         dest.get().asFile.parentFile?.mkdirs()
     }
+
 }

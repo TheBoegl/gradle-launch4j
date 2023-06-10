@@ -44,7 +44,6 @@ import org.gradle.util.GradleVersion
 
 import javax.inject.Inject
 import java.nio.file.Path
-import java.util.concurrent.Callable
 
 // do not compile static because this will break the layout#directoryProperty() for gradle version 4.9 to 5.1.
 @AutoClone
@@ -67,8 +66,8 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         this.fileOperations = fileOperations
         this.objectFactory = objectFactory
         logger = project.logger
-        targetCompatibility = asGradleProperty(project, providerFactory, 'targetCompatibility')
-        sourceCompatibility = asGradleProperty(project, providerFactory, 'sourceCompatibility')
+        targetCompatibility = PropertyUtils.asGradleProperty(project, providerFactory, 'targetCompatibility')
+        sourceCompatibility = PropertyUtils.asGradleProperty(project, providerFactory, 'sourceCompatibility')
         jarFileCollection = objectFactory.property(FileCollection)
         mainClassName = objectFactory.property(String)
         jarFiles = objectFactory.property(FileCollection)
@@ -216,21 +215,6 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         dest = outputDirectory.file(outfile)
         xmlFile = outputDirectory.file(xmlFileName)
         libraryDirectory = outputDirectory.file(libraryDir)
-    }
-
-    private static Provider<String> asGradleProperty(Project project, ProviderFactory providerFactory, String propertyName) {
-//        providerFactory.gradleProperty(propertyName) // should be working as of gradle 6.2, but the value is not available.
-        def provider = providerFactory.provider(new Callable<String>() {
-            @Override
-            String call() throws Exception {
-                return project.hasProperty(propertyName) ? project.property(propertyName) : null
-            }
-        })
-        if (GradleVersion.current() >= GradleVersion.version("6.5") && GradleVersion.current() <= GradleVersion.version("7.4")) {
-            provider.forUseAtConfigurationTime()
-        } else {
-            provider
-        }
     }
 
     @Input
