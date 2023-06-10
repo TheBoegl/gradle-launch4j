@@ -19,7 +19,6 @@ package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
 
-import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class Issue144Test extends FunctionalSpecification {
@@ -68,8 +67,10 @@ class Issue144Test extends FunctionalSpecification {
         def result = createAndConfigureGradleRunner('createExe').buildAndFail()
 
         then:
-        result.task(':jar').outcome == SUCCESS
-        result.task(':createExe').outcome == FAILED
+        result.tasks.isEmpty()
+        result.output.contains('launch4j binary jar')
+        result.output.contains('file not found!')
+        result.output.contains('Use the correct classifier for this platform.')
     }
 
 }

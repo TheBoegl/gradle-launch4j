@@ -17,15 +17,18 @@
 
 package edu.sc.seis.launch4j
 
-import org.gradle.api.file.FileCollection
+import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.util.GradleVersion
+
+import java.util.concurrent.Callable
 
 class PropertyUtils {
     static boolean HAS_CONVENTION_SUPPORT = GradleVersion.current() >= GradleVersion.version('5.1')
 
-    static void assign(Property<FileCollection> property, FileCollection value) {
+    static <T> void assign(Property<T> property, T value) {
         if (HAS_CONVENTION_SUPPORT) {
             property.convention(value)
         } else {
@@ -33,11 +36,26 @@ class PropertyUtils {
         }
     }
 
-    static void assign(Property<FileCollection> property, Provider<FileCollection> provider) {
+    static <T> void assign(Property<T> property, Provider<T> provider) {
         if (HAS_CONVENTION_SUPPORT) {
             property.convention(provider)
         } else {
             property.set(provider)
+        }
+    }
+
+    static Provider<String> asGradleProperty(Project project, ProviderFactory providerFactory, String propertyName) {
+//        providerFactory.gradleProperty(propertyName) // should be working as of gradle 6.2, but the value is not available.
+        def provider = providerFactory.provider(new Callable<String>() {
+            @Override
+            String call() throws Exception {
+                return project.hasProperty(propertyName) ? project.property(propertyName) : null
+            }
+        })
+        if (GradleVersion.current() >= GradleVersion.version("6.5") && GradleVersion.current() <= GradleVersion.version("7.4")) {
+            provider.forUseAtConfigurationTime()
+        } else {
+            provider
         }
     }
 }
