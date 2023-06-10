@@ -28,19 +28,21 @@ import java.util.concurrent.Callable
 class PropertyUtils {
     static boolean HAS_CONVENTION_SUPPORT = GradleVersion.current() >= GradleVersion.version('5.1')
 
-    static <T> void assign(Property<T> property, T value) {
+    static <T> Property<T> assign(Property<T> property, T value) {
         if (HAS_CONVENTION_SUPPORT) {
             property.convention(value)
         } else {
             property.set(value)
+            property
         }
     }
 
-    static <T> void assign(Property<T> property, Provider<T> provider) {
+    static <T> Property<T> assign(Property<T> property, Provider<T> provider) {
         if (HAS_CONVENTION_SUPPORT) {
-            property.convention(provider)
+            return property.convention(provider)
         } else {
             property.set(provider)
+            property
         }
     }
 

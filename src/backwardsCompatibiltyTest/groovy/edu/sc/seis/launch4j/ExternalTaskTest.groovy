@@ -83,7 +83,7 @@ class ExternalTaskTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         when:
-        def fail = createAndConfigureGradleRunner('externalExe').withGradleVersion('6.9.4').buildAndFail()
+        def fail = createAndConfigureGradleRunner('externalExe', '--stacktrace').withGradleVersion('6.9.4').buildAndFail()
 
         then:
         fail.task(':externalExe').outcome == FAILED
