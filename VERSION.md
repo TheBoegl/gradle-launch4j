@@ -1,3 +1,7 @@
+## Version [3.0.4](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.4)
+- **FIX** [#154](https://github.com/TheBoegl/gradle-launch4j/issues/154): Add wrapper manifest support.
+- **FIX** [#153](https://github.com/TheBoegl/gradle-launch4j/issues/153): Simplify keeping the libraries next to the executable.
+
 ## Version [3.0.3](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.3)
 - **FIXUP** The previous release contained an undetected refactoring bug.
 
