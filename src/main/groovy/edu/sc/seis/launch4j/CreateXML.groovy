@@ -92,6 +92,7 @@ class CreateXML {
             xml.supportUrl(config.supportUrl.get())
             xml.stayAlive(config.stayAlive.get())
             xml.restartOnCrash(config.restartOnCrash.get())
+            xml.manifest(config.manifest.get())
             xml.icon(relativizeIfAbsolute(outFilePath, config.icon.get()))
             if (config.variables.isPresent()) {
                 config.variables.get().each { var -> xml.var(var) }
