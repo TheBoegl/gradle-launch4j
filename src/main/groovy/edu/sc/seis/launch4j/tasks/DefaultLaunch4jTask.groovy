@@ -239,7 +239,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         }
         dest = outputDirectory.file(outfile)
         xmlFile = outputDirectory.file(xmlFileName)
-        libraryDirectory = outputDirectory.file(libraryDir)
+        libraryDirectory = outputDirectory.file(libraryDir.map {it.isEmpty() ? '.' : it})
         copyLibraryFileCollection = configurableFileCollection(project)
     }
 
