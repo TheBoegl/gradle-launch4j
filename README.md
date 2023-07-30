@@ -42,7 +42,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     plugins {
       id 'java'
-      id 'edu.sc.seis.launch4j' version '3.0.3'
+      id 'edu.sc.seis.launch4j' version '3.0.4'
     }
 
     launch4j {
@@ -57,7 +57,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
         gradlePluginPortal()
       }
       dependencies {
-        classpath 'edu.sc.seis.launch4j:launch4j:3.0.3'
+        classpath 'edu.sc.seis.launch4j:launch4j:3.0.4'
       }
     }
 
@@ -101,6 +101,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String supportUrl | "" | |
 | boolean stayAlive | false | |
 | boolean restartOnCrash | false | |
+| String manifest | "" | |
 | String icon | "" | A relative path from the outfile or an absolute path to the icon file. If you are unsure, use "${projectDir}/path/to/icon.ico" |
 | String version | project.version | |
 | String textVersion | project.version | |
@@ -141,7 +142,6 @@ The values configurable within the launch4j extension along with their defaults 
 | ~~jar~~                            | "lib/"+project.tasks[jar].archiveName<br/>or<br/>"", if the JavaPlugin is not loaded |    |
 | ~~String jdkPreference~~           | "preferJre"   | use requiresJdk instead              |
 | ~~String jreRuntimeBits~~          | "64/32"       | use requires64Bit instead            |
-| ~~String manifest~~                | ""            |                                      |
 | ~~String messagesBundledJreError~~ |               | use messagesJreNotFoundError instead |
 
 ### Configurable input configuration

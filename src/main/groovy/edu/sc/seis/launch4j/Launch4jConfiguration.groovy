@@ -82,6 +82,8 @@ interface Launch4jConfiguration {
 
     Property<Boolean> getRestartOnCrash()
 
+    Property<String> getManifest()
+
     Property<String> getIcon()
 
     Property<String> getVersion()

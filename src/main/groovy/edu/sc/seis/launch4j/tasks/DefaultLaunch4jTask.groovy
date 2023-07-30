@@ -86,6 +86,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         stayAlive = objectFactory.property(Boolean)
         restartOnCrash = objectFactory.property(Boolean)
         duplicatesStrategy = objectFactory.property(DuplicatesStrategy)
+        manifest = objectFactory.property(String)
         icon = objectFactory.property(String)
         version = objectFactory.property(String)
         textVersion = objectFactory.property(String)
@@ -140,6 +141,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             stayAlive.convention(config.stayAlive)
             restartOnCrash.convention(config.restartOnCrash)
             duplicatesStrategy.convention(config.duplicatesStrategy)
+            manifest.convention(config.manifest)
             icon.convention(config.icon)
             version.convention(config.version)
             textVersion.convention(config.textVersion)
@@ -194,6 +196,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             stayAlive.set(config.stayAlive)
             restartOnCrash.set(config.restartOnCrash)
             duplicatesStrategy.set(config.duplicatesStrategy)
+            manifest.set(config.manifest)
             icon.set(config.icon)
             version.set(config.version)
             textVersion.set(config.textVersion)
@@ -236,7 +239,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         }
         dest = outputDirectory.file(outfile)
         xmlFile = outputDirectory.file(xmlFileName)
-        libraryDirectory = outputDirectory.file(libraryDir)
+        libraryDirectory = outputDirectory.file(libraryDir.map {it.isEmpty() ? '.' : it})
         copyLibraryFileCollection = configurableFileCollection(project)
     }
 
@@ -465,6 +468,10 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Input
     @Optional
     final Property<Boolean> restartOnCrash
+
+    @Input
+    @Optional
+    final Property<String> manifest
 
     /**
      * Application icon in ICO format. May contain multiple color depths/resolutions.
