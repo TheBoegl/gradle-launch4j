@@ -17,6 +17,7 @@
 - **FIX** [#88](https://github.com/TheBoegl/gradle-launch4j/issues/88): Correctly set the minimum required Java version in the created executable and follow the readme specification.
 - **FIX** [#144](https://github.com/TheBoegl/gradle-launch4j/issues/144): Update to Launch4j version 3.50.
 - **IMPROVEMENT**: Use Gradle properties and providers to improve up-to-date checks.
+- **REMOVED**: The deprecated launch4j task and properties as defined in the [Readme](https://github.com/TheBoegl/gradle-launch4j#how-to-configure).
 
 ## Version [2.5.4](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v2.5.4)
 - **FIX** [#117](https://github.com/TheBoegl/gradle-launch4j/issues/117): Set default duplicate handling strategy and make property configurable. ([Felix Schnabel](https://github.com/Shadow-Devil))
