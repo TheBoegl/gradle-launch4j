@@ -233,21 +233,21 @@ To get started using this plugin from a kotlin build script the above example fr
 ```kotlin
 
 tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
-    outfile = "${appName}.exe"
-    mainClassName = mainClass
-    icon = "$projectDir/icons/myApp.ico"
-    productName = "My App"
+    outfile.set("${appName}.exe")
+    mainClassName.set(mainClass)
+    icon.set("$projectDir/icons/myApp.ico")
+    productName.set("My App")
 }
 
 tasks.register<edu.sc.seis.launch4j.tasks.Launch4jLibraryTask>("createFastStart") {
-    outfile = "FastMyApp.exe"
-    mainClassName = "com.example.myapp.FastStart"
-    icon = "$projectDir/icons/myAppFast.ico"
-    fileDescription = "The lightning fast implementation"
+    outfile.set("FastMyApp.exe")
+    mainClassName.set("com.example.myapp.FastStart")
+    icon.set("$projectDir/icons/myAppFast.ico")
+    fileDescription.set("The lightning fast implementation")
 }
 tasks.register<edu.sc.seis.launch4j.tasks.Launch4jLibraryTask>("MyApp-memory") {
-    fileDescription = "The default implementation with increased heap size"
-    maxHeapPercent = 50
+    fileDescription.set("The default implementation with increased heap size")
+    maxHeapPercent.set(50)
 }
 ```
 
