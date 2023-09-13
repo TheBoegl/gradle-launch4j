@@ -1,4 +1,7 @@
-## Version [3.0.4](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.4)
+## Version [3.0.5](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.5)
+- **FIX** [#163](https://github.com/TheBoegl/gradle-launch4j/issues/163): Correctly set the JRE not found error message.
+
+- ## Version [3.0.4](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.4)
 - **FIX** [#154](https://github.com/TheBoegl/gradle-launch4j/issues/154): Add wrapper manifest support.
 - **FIX** [#153](https://github.com/TheBoegl/gradle-launch4j/issues/153): Simplify keeping the libraries next to the executable.
 
