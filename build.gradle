@@ -98,7 +98,7 @@ artifactory {
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '6.9.3'
+    gradleVersion = '6.9.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 
