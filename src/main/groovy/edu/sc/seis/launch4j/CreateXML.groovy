@@ -162,7 +162,7 @@ class CreateXML {
                     if (config.messagesStartupError.isPresent())
                         xml.startupErr(config.messagesStartupError.get())
                     if (config.messagesJreNotFoundError.isPresent())
-                        xml.bundledJreErr(config.messagesJreNotFoundError.get())
+                        xml.jreNotFoundErr(config.messagesJreNotFoundError.get())
                     if (config.messagesJreVersionError.isPresent())
                         xml.jreVersionErr(config.messagesJreVersionError.get())
                     if (config.messagesLauncherError.isPresent())
