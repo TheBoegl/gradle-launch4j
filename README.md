@@ -18,10 +18,10 @@
 
 The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.50](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
 This plugin is compatible with the Gradle versions 4.10 and later.
-If you still rely on an outdated gradle version `[2-4.10[`, use the plugin version 2.5.4.
+If you still rely on an outdated gradle version `[2-4.10[`, use the plugin version [2.5.4](https://github.com/TheBoegl/gradle-launch4j/tree/v2.5.4).
 
 Since **version 2.5** this plugin requires **Java 8*, as launch4j in version 3.14 and later requires that as well.
-If you are still forced to work with Java 6, use the latest version 2.4.
+If you are still forced to work with Java 6, use the plugin version [2.4.9](https://github.com/TheBoegl/gradle-launch4j/tree/v2.4.9).
 
 # Tasks
 
