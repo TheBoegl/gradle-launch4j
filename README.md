@@ -95,7 +95,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String outfile | project.name+'.exe' | |
 | String errTitle | "" | |
 | String cmdLine | "" | |
-| String chdir | '.' | |
+| String chdir | '.' | After launching, '.' changes working directory to directory of executable, or '' to not change. Note that env variable `%OLDPWD%` contains the original working directory and can be passed on launch to your application if needed. |
 | String priority | 'normal' | |
 | String downloadUrl | "http://java.com/download" | |
 | String supportUrl | "" | |
