@@ -1,3 +1,7 @@
+## Version [3.0.6](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.6)
+- **IMPROVEMENT** [#169](https://github.com/TheBoegl/gradle-launch4j/issues/169): Add jar task setter for task provider.
+- **IMPROVEMENT** [#168](https://github.com/TheBoegl/gradle-launch4j/issues/168): Improve error handling on launch4j exception.
+
 ## Version [3.0.5](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.5)
 - **FIX** [#163](https://github.com/TheBoegl/gradle-launch4j/issues/163): Correctly set the JRE not found error message.
 
