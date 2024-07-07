@@ -370,6 +370,12 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         setJarFiles(task?.outputs?.files)
     }
 
+    @Override
+    void setJarTask(Provider<Task> task) {
+        dependsOn(task)
+        setJarFiles(task.map { it.outputs?.files })
+    }
+
     @Internal
     @Override
     Path getJarTaskOutputPath() {

@@ -53,6 +53,8 @@ interface Launch4jConfiguration {
 
     void setJarTask(Task task)
 
+    void setJarTask(Provider<Task> task)
+
     Path getJarTaskOutputPath()
 
     Path getJarTaskDefaultOutputPath()

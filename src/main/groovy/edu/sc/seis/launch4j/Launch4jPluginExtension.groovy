@@ -240,6 +240,11 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
         setJarFiles(task?.outputs?.files)
     }
 
+    @Override
+    void setJarTask(Provider<Task> task) {
+        setJarFiles(task.map { it -> it.outputs?.files })
+    }
+
     @Input
     @Optional
     final Property<String> outputDir
