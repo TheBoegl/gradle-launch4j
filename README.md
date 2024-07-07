@@ -18,10 +18,10 @@
 
 The gradle-launch4j plugin uses [launch4j](http://launch4j.sourceforge.net/) [3.50](src/main/groovy/edu/sc/seis/launch4j/Launch4jPlugin.groovy) to create windows .exe files for java applications.
 This plugin is compatible with the Gradle versions 4.10 and later.
-If you still rely on an outdated gradle version `[2-4.10[`, use the plugin version 2.5.4.
+If you still rely on an outdated gradle version `[2-4.10[`, use the plugin version [2.5.4](https://github.com/TheBoegl/gradle-launch4j/tree/v2.5.4).
 
 Since **version 2.5** this plugin requires **Java 8*, as launch4j in version 3.14 and later requires that as well.
-If you are still forced to work with Java 6, use the latest version 2.4.
+If you are still forced to work with Java 6, use the plugin version [2.4.9](https://github.com/TheBoegl/gradle-launch4j/tree/v2.4.9).
 
 # Tasks
 
@@ -42,7 +42,7 @@ An example configuration within your `build.gradle` for use in all Gradle versio
 
     plugins {
       id 'java'
-      id 'edu.sc.seis.launch4j' version '3.0.5'
+      id 'edu.sc.seis.launch4j' version '3.0.6'
     }
 
     launch4j {
@@ -57,7 +57,7 @@ The same script snippet for using [legacy plugin application](https://docs.gradl
         gradlePluginPortal()
       }
       dependencies {
-        classpath 'edu.sc.seis.launch4j:launch4j:3.0.5'
+        classpath 'edu.sc.seis.launch4j:launch4j:3.0.6'
       }
     }
 
@@ -95,7 +95,7 @@ The values configurable within the launch4j extension along with their defaults 
 | String outfile | project.name+'.exe' | |
 | String errTitle | "" | |
 | String cmdLine | "" | |
-| String chdir | '.' | |
+| String chdir | '.' | After launching, '.' changes working directory to directory of executable, or '' to not change. Note that env variable `%OLDPWD%` contains the original working directory and can be passed on launch to your application if needed. |
 | String priority | 'normal' | |
 | String downloadUrl | "http://java.com/download" | |
 | String supportUrl | "" | |
@@ -233,21 +233,21 @@ To get started using this plugin from a kotlin build script the above example fr
 ```kotlin
 
 tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
-    outfile = "${appName}.exe"
-    mainClassName = mainClass
-    icon = "$projectDir/icons/myApp.ico"
-    productName = "My App"
+    outfile.set("${appName}.exe")
+    mainClassName.set(mainClass)
+    icon.set("$projectDir/icons/myApp.ico")
+    productName.set("My App")
 }
 
 tasks.register<edu.sc.seis.launch4j.tasks.Launch4jLibraryTask>("createFastStart") {
-    outfile = "FastMyApp.exe"
-    mainClassName = "com.example.myapp.FastStart"
-    icon = "$projectDir/icons/myAppFast.ico"
-    fileDescription = "The lightning fast implementation"
+    outfile.set("FastMyApp.exe")
+    mainClassName.set("com.example.myapp.FastStart")
+    icon.set("$projectDir/icons/myAppFast.ico")
+    fileDescription.set("The lightning fast implementation")
 }
 tasks.register<edu.sc.seis.launch4j.tasks.Launch4jLibraryTask>("MyApp-memory") {
-    fileDescription = "The default implementation with increased heap size"
-    maxHeapPercent = 50
+    fileDescription.set("The default implementation with increased heap size")
+    maxHeapPercent.set(50)
 }
 ```
 

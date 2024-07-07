@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2024 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -368,6 +368,12 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     void setJarTask(Task task) {
         dependsOn(task)
         setJarFiles(task?.outputs?.files)
+    }
+
+    @Override
+    void setJarTask(Provider<Task> task) {
+        dependsOn(task)
+        setJarFiles(task.map { it.outputs?.files })
     }
 
     @Internal

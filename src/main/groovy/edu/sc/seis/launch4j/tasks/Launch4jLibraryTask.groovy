@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2024 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import edu.sc.seis.launch4j.Extract
 import edu.sc.seis.launch4j.PropertyUtils
 import groovy.transform.CompileStatic
 import net.sf.launch4j.Builder
+import net.sf.launch4j.BuilderException
 import net.sf.launch4j.Log
 import net.sf.launch4j.config.ConfigPersister
 import org.gradle.api.logging.Logger
@@ -48,7 +49,11 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
         File xml = xmlFile.get().asFile
         ConfigPersister.getInstance().load(xml)
         Builder b = new Builder(new GradleLogger(logger), binaryDir)
-        b.build()
+        try {
+            b.build()
+        } catch (BuilderException e) {
+            throw new IllegalArgumentException(e.getMessage(), e)
+        }
         if (debugProvider.isPresent()) {
             def debugXmlFile = new File(temporaryDir, xml.name)
             logger.lifecycle("creating debug xml file {}", debugXmlFile)

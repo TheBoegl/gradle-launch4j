@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2024 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import groovy.xml.MarkupBuilder
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -76,112 +78,112 @@ class CreateXML {
              */
             jar = jarTaskOutputPath ?: config.getJarTaskDefaultOutputPath() ?: ""
         }
-        def writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8"))
-        def xml = new MarkupBuilder(writer)
-        xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
-        xml.launch4jConfig() {
-            xml.dontWrapJar(config.dontWrapJar.get())
-            xml.headerType(config.headerType.get())
-            xml.jar(jar)
-            xml.outfile(config.outfile.get())
-            xml.errTitle(config.errTitle.get())
-            xml.cmdLine(config.cmdLine.get())
-            xml.chdir(config.chdir.get())
-            xml.priority(config.priority.get())
-            xml.downloadUrl(config.downloadUrl.get())
-            xml.supportUrl(config.supportUrl.get())
-            xml.stayAlive(config.stayAlive.get())
-            xml.restartOnCrash(config.restartOnCrash.get())
-            xml.manifest(config.manifest.get())
-            xml.icon(relativizeIfAbsolute(outFilePath, config.icon.get()))
-            if (config.variables.isPresent()) {
-                config.variables.get().each { var -> xml.var(var) }
-            }
-            if (config.mainClassName.isPresent()) {
-                xml.classPath() {
-                    mainClass(config.mainClassName.get())
-                    classpath.each() { val -> xml.cp(val) }
+        Files.newBufferedWriter(xmlFile.toPath(), StandardCharsets.UTF_8).withWriter { writer ->
+            def xml = new MarkupBuilder(writer)
+            xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
+            xml.launch4jConfig() {
+                xml.dontWrapJar(config.dontWrapJar.get())
+                xml.headerType(config.headerType.get())
+                xml.jar(jar)
+                xml.outfile(config.outfile.get())
+                xml.errTitle(config.errTitle.get())
+                xml.cmdLine(config.cmdLine.get())
+                xml.chdir(config.chdir.get())
+                xml.priority(config.priority.get())
+                xml.downloadUrl(config.downloadUrl.get())
+                xml.supportUrl(config.supportUrl.get())
+                xml.stayAlive(config.stayAlive.get())
+                xml.restartOnCrash(config.restartOnCrash.get())
+                xml.manifest(config.manifest.get())
+                xml.icon(relativizeIfAbsolute(outFilePath, config.icon.get()))
+                if (config.variables.isPresent()) {
+                    config.variables.get().each { var -> xml.var(var) }
                 }
-            }
-            jre() {
-                xml.path(config.bundledJrePath.getOrElse(""))
-                xml.requiresJdk(config.requiresJdk.get())
-                xml.requires64Bit(config.requires64Bit.get())
-                def minVersion = config.jreMinVersion.isPresent() ? config.jreMinVersion.get() : config.internalJreMinVersion()
-                xml.minVersion(minVersion instanceof Property ? minVersion.get() : minVersion)
-                xml.maxVersion(config.jreMaxVersion.getOrElse(""))
-
-                if (config.jvmOptions.isPresent()) {
-                    config.jvmOptions.get().each { opt ->
-                        xml.opt(opt)
+                if (config.mainClassName.isPresent()) {
+                    xml.classPath() {
+                        mainClass(config.mainClassName.get())
+                        classpath.each() { val -> xml.cp(val) }
                     }
                 }
+                jre() {
+                    xml.path(config.bundledJrePath.getOrElse(""))
+                    xml.requiresJdk(config.requiresJdk.get())
+                    xml.requires64Bit(config.requires64Bit.get())
+                    def minVersion = config.jreMinVersion.isPresent() ? config.jreMinVersion.get() : config.internalJreMinVersion()
+                    xml.minVersion(minVersion instanceof Property ? minVersion.get() : minVersion)
+                    xml.maxVersion(config.jreMaxVersion.getOrElse(""))
 
-                if (config.initialHeapSize.isPresent())
-                    xml.initialHeapSize(config.initialHeapSize.get())
+                    if (config.jvmOptions.isPresent()) {
+                        config.jvmOptions.get().each { opt ->
+                            xml.opt(opt)
+                        }
+                    }
 
-                if (config.initialHeapPercent.isPresent())
-                    xml.initialHeapPercent(config.initialHeapPercent.get())
+                    if (config.initialHeapSize.isPresent())
+                        xml.initialHeapSize(config.initialHeapSize.get())
 
-                if (config.maxHeapSize.isPresent())
-                    xml.maxHeapSize(config.maxHeapSize.get())
+                    if (config.initialHeapPercent.isPresent())
+                        xml.initialHeapPercent(config.initialHeapPercent.get())
 
-                if (config.maxHeapPercent.isPresent())
-                    xml.maxHeapPercent(config.maxHeapPercent.get())
-            }
-            if (config.splashFileName.isPresent() && config.splashTimeout.isPresent()) {
-                splash() {
-                    xml.file(relativizeIfAbsolute(outFilePath, config.splashFileName.get()))
-                    xml.waitForWindow(config.splashWaitForWindows.get())
-                    xml.timeout(config.splashTimeout.get())
-                    xml.timeoutErr(config.splashTimeoutError.get())
+                    if (config.maxHeapSize.isPresent())
+                        xml.maxHeapSize(config.maxHeapSize.get())
+
+                    if (config.maxHeapPercent.isPresent())
+                        xml.maxHeapPercent(config.maxHeapPercent.get())
                 }
-            }
-            versionInfo() {
-                xml.fileVersion(parseDotVersion(config.version.get()))
-                xml.txtFileVersion(config.textVersion.get())
-                xml.fileDescription(config.fileDescription.get())
-                xml.copyright(config.copyright.get())
-                xml.productVersion(parseDotVersion(config.version.get()))
-                xml.txtProductVersion(config.textVersion.get())
-                xml.productName(config.productName.get())
-                xml.companyName(config.companyName.get())
-                xml.internalName(config.internalName.get())
-                xml.originalFilename(config.outfile.get())
-                xml.trademarks(config.trademarks.get())
-                xml.language(config.language.get())
-            }
-
-            if (config.messagesStartupError.isPresent() ||
-                config.messagesJreNotFoundError.isPresent() ||
-                config.messagesJreVersionError.isPresent() ||
-                config.messagesLauncherError.isPresent()
-                || config.messagesInstanceAlreadyExists.isPresent()
-            ) {
-                messages() {
-                    if (config.messagesStartupError.isPresent())
-                        xml.startupErr(config.messagesStartupError.get())
-                    if (config.messagesJreNotFoundError.isPresent())
-                        xml.jreNotFoundErr(config.messagesJreNotFoundError.get())
-                    if (config.messagesJreVersionError.isPresent())
-                        xml.jreVersionErr(config.messagesJreVersionError.get())
-                    if (config.messagesLauncherError.isPresent())
-                        xml.launcherErr(config.messagesLauncherError.get())
-                    if (config.messagesInstanceAlreadyExists.isPresent())
-                        xml.instanceAlreadyExistsMsg(config.messagesInstanceAlreadyExists.get())
+                if (config.splashFileName.isPresent() && config.splashTimeout.isPresent()) {
+                    splash() {
+                        xml.file(relativizeIfAbsolute(outFilePath, config.splashFileName.get()))
+                        xml.waitForWindow(config.splashWaitForWindows.get())
+                        xml.timeout(config.splashTimeout.get())
+                        xml.timeoutErr(config.splashTimeoutError.get())
+                    }
                 }
-            }
-            if (config.mutexName.isPresent() || config.windowTitle.isPresent()) {
-                singleInstance() {
-                    if (config.mutexName.isPresent())
-                        xml.mutexName(config.mutexName.get())
+                versionInfo() {
+                    xml.fileVersion(parseDotVersion(config.version.get()))
+                    xml.txtFileVersion(config.textVersion.get())
+                    xml.fileDescription(config.fileDescription.get())
+                    xml.copyright(config.copyright.get())
+                    xml.productVersion(parseDotVersion(config.version.get()))
+                    xml.txtProductVersion(config.textVersion.get())
+                    xml.productName(config.productName.get())
+                    xml.companyName(config.companyName.get())
+                    xml.internalName(config.internalName.get())
+                    xml.originalFilename(config.outfile.get())
+                    xml.trademarks(config.trademarks.get())
+                    xml.language(config.language.get())
+                }
 
-                    if (config.windowTitle.isPresent())
-                        xml.windowTitle(config.windowTitle.get())
+                if (config.messagesStartupError.isPresent() ||
+                    config.messagesJreNotFoundError.isPresent() ||
+                    config.messagesJreVersionError.isPresent() ||
+                    config.messagesLauncherError.isPresent()
+                    || config.messagesInstanceAlreadyExists.isPresent()
+                ) {
+                    messages() {
+                        if (config.messagesStartupError.isPresent())
+                            xml.startupErr(config.messagesStartupError.get())
+                        if (config.messagesJreNotFoundError.isPresent())
+                            xml.jreNotFoundErr(config.messagesJreNotFoundError.get())
+                        if (config.messagesJreVersionError.isPresent())
+                            xml.jreVersionErr(config.messagesJreVersionError.get())
+                        if (config.messagesLauncherError.isPresent())
+                            xml.launcherErr(config.messagesLauncherError.get())
+                        if (config.messagesInstanceAlreadyExists.isPresent())
+                            xml.instanceAlreadyExistsMsg(config.messagesInstanceAlreadyExists.get())
+                    }
+                }
+                if (config.mutexName.isPresent() || config.windowTitle.isPresent()) {
+                    singleInstance() {
+                        if (config.mutexName.isPresent())
+                            xml.mutexName(config.mutexName.get())
+
+                        if (config.windowTitle.isPresent())
+                            xml.windowTitle(config.windowTitle.get())
+                    }
                 }
             }
         }
-        writer.close()
     }
 
     /**

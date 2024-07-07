@@ -48,7 +48,7 @@ dependencies {
 
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
-version "3.0.5"
+version "3.0.6"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -98,7 +98,7 @@ artifactory {
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '6.9.3'
+    gradleVersion = '6.9.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2024 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,8 @@ interface Launch4jConfiguration {
     Property<FileCollection> getJarFiles()
 
     void setJarTask(Task task)
+
+    void setJarTask(Provider<Task> task)
 
     Path getJarTaskOutputPath()
 

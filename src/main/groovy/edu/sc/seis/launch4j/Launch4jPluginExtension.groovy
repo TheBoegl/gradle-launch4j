@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2024 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -238,6 +238,11 @@ class Launch4jPluginExtension implements Launch4jConfiguration {
     @Override
     void setJarTask(Task task) {
         setJarFiles(task?.outputs?.files)
+    }
+
+    @Override
+    void setJarTask(Provider<Task> task) {
+        setJarFiles(task.map { it -> it.outputs?.files })
     }
 
     @Input
