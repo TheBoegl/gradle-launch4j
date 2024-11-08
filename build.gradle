@@ -35,7 +35,7 @@ dependencies {
         exclude(group: 'commons-logging', module: '*')
         exclude(group: 'com.thoughtworks.xstream')
     }
-    implementation 'com.thoughtworks.xstream:xstream:1.4.20'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.21'
 
     testImplementation gradleTestKit()
     testImplementation ("org.spockframework:spock-core:${spock_version}") {
