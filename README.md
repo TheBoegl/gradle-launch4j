@@ -1,4 +1,4 @@
-[ ![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/edu.sc.seis.launch4j)](https://plugins.gradle.org/plugin/edu.sc.seis.launch4j)
+[ ![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/edu.sc.seis.launch4j)](https://plugins.gradle.org/plugin/edu.sc.seis.launch4j) [<img src="https://api.gitsponsors.com/api/badge/img?id=35840295" height="20">](https://api.gitsponsors.com/api/badge/link?p=vk637EvDpBlzR/fLUH61hGcMd/WUZxhKz3DKC3G+bOvjq0uLoiAkGeZKlf0NjjXy)
 
 **Build status**:
 [ ![Build status master](https://ci.appveyor.com/api/projects/status/xscd7594tneg721r/branch/master?svg=true&passingText=master%20-%20OK&failingText=master%20-%20Fails&pendingText=master%20-%20pending)](https://ci.appveyor.com/project/TheBoegl/gradle-launch4j/branch/master)
