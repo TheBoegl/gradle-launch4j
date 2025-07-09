@@ -1,5 +1,5 @@
 plugins {
-    id "com.gradle.plugin-publish" version "1.3.0"
+    id "com.gradle.plugin-publish" version "1.3.1"
     id 'java-gradle-plugin'
     id 'groovy'
     id 'jacoco'
@@ -7,7 +7,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id "com.jfrog.artifactory" version "4.33.1"
-    id 'org.unbroken-dome.test-sets' version '4.0.0'
+    id 'org.unbroken-dome.test-sets' version '4.1.0'
 }
 
 repositories {
@@ -16,7 +16,7 @@ repositories {
 
 ext {
     ARTIFACT_VERSION = '3.50'
-    spock_version = '1.3-groovy-2.5'
+    spock_version = '2.3-groovy-3.0'
 }
 
 testSets {
@@ -60,15 +60,14 @@ gradlePlugin {
             displayName = 'launch4j gradle plugin'
             description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
             implementationClass = 'edu.sc.seis.launch4j.Launch4jPlugin'
+            tags = ['launch4j', 'executable', 'wrapper']
         }
     }
-}
 
-pluginBundle {
     website = 'https://github.com/TheBoegl/gradle-launch4j'
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
     description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
-    tags = ['launch4j', 'executable', 'wrapper']
+
 }
 
 publishPlugins.dependsOn build
@@ -109,9 +108,9 @@ tasks.withType(Test).configureEach {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
+        xml.required = false
+        csv.required = false
+        html.required = true
     }
 }
 
