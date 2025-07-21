@@ -243,7 +243,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         copyLibraryFileCollection = configurableFileCollection(project)
     }
 
-    private static File getWorkingJar(ConfigurableFileCollection launch4jBinaryFiles) {
+    public static File getWorkingJar(ConfigurableFileCollection launch4jBinaryFiles) {
         def workingDirName = Launch4jPlugin.workdir()
         def jarName = "launch4j-(\\d{1,2}\\.\\d{1,2})-${workingDirName}"
         def workingJar = launch4jBinaryFiles.files.find { File file -> file.name =~ /${jarName}.jar/ }
