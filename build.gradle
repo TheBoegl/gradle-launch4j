@@ -49,10 +49,11 @@ dependencies {
 group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
 version "3.0.7-SNAPSHOT"
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
+    java.targetCompatibility = JavaVersion.VERSION_11
+} else {
+    java.toolchain.languageVersion = JavaLanguageVersion.of(11)
+}
 gradlePlugin {
     plugins {
         launch4j {
