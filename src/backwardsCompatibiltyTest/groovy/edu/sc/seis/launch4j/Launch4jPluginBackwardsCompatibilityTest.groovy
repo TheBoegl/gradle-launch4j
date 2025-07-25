@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -67,6 +67,6 @@ class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
         where:
         // versions prior 2.8 will not allow the classpath injection
         // drop support for pre 4.10 gradle versions i.e. '2.14.1' and '3.5.1'
-        gradleVersion << ['4.10', '4.10.3', '5.0', '5.6.4', '6.9.4', '7.6', GradleVersion.current().getVersion(), '8.1.1'].unique()
+        gradleVersion << ['4.10', '4.10.3', '5.0', '5.6.4', '6.9.4', '7.6', '8.1.1', GradleVersion.current().getVersion()].unique()
     }
 }

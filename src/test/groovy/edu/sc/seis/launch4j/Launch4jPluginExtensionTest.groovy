@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,9 +56,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 into 'testOutput'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        settingsFile << "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -103,9 +103,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        settingsFile << "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -143,9 +143,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        settingsFile << "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -185,7 +185,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -225,7 +225,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -263,7 +263,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -294,7 +294,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -334,7 +334,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -382,7 +382,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -430,7 +430,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -479,7 +479,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -541,7 +541,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -603,7 +603,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -640,7 +640,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             plugins {
-                id 'com.github.johnrengelman.shadow' version '4.0.4'
+                id 'com.gradleup.shadow' version '8.3.8'
             }
 
             repositories {
@@ -670,7 +670,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -707,7 +707,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         given:
         buildFile << """
             plugins {
-                id 'com.github.johnrengelman.shadow' version '4.0.4'
+                id 'com.gradleup.shadow' version '8.3.8'
             }
 
             repositories {
@@ -737,7 +737,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -780,9 +780,9 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        settingsFile << "rootProject.name = 'testProject'"
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 

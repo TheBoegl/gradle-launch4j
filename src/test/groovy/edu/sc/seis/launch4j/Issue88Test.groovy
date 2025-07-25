@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import org.gradle.api.JavaVersion
+import edu.sc.seis.launch4j.util.ProcessHelper
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -146,6 +146,7 @@ class Issue88Test extends FunctionalSpecification {
     def 'verify minimum version works as expected'() {
         given:
         buildFile << """
+            java.sourceCompatibility = JavaVersion.VERSION_1_8
             launch4j {
                 outfile = 'test.exe'
                 jreMinVersion = '1.8.0_281'
@@ -187,7 +188,7 @@ class Issue88Test extends FunctionalSpecification {
         buildFile << """
             launch4j {
                 outfile = 'test.exe'
-                bundledJrePath = 'jre'
+                bundledJrePath = '%JAVA_HOME%'
             }
         """
 
@@ -206,7 +207,7 @@ class Issue88Test extends FunctionalSpecification {
         when:
         def xml = xmlFile.text
         then:
-        xml.contains("<minVersion>${JavaVersion.current()}.0</minVersion>")
+        xml.contains("<minVersion>${getExpectedJavaVersion()}</minVersion>")
 
         when:
         def outfile = new File(projectDir, 'build/launch4j/test.exe')
@@ -214,9 +215,9 @@ class Issue88Test extends FunctionalSpecification {
         outfile.exists()
 
         when:
-        def process = outfile.path.execute()
+        def process = ProcessHelper.executeWithEnvironment(outfile)
         then:
-        process.waitFor() == 0
+        ProcessHelper.waitFor(process) == 0
         process.in.text.trim() == '...'
     }
 

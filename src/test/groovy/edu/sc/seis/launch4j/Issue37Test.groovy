@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,14 +56,14 @@ dependencies {
                 copyConfigurable = project.jar.outputs.files + project(':test3').jar.outputs.files
             }
         """
-        testProjectDir.newFile('settings.gradle') << """
+        newFile('settings.gradle') << """
             rootProject.name = 'testProject'
             include 'test1'
             include 'test2'
             include 'test3'
         """
 
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
+        new File(newFolder('src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
 
             public class Main {
@@ -72,7 +72,7 @@ dependencies {
                 }
             }
         """
-        new File(testProjectDir.newFolder('test1', 'src', 'main', 'java'), 'Main.java') << """
+        new File(newFolder('test1', 'src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
 
             public class Main {
@@ -81,7 +81,7 @@ dependencies {
                 }
             }
         """
-        new File(testProjectDir.newFolder('test2', 'src', 'main', 'java'), 'Main.java') << """
+        new File(newFolder('test2', 'src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
 
             public class Main {
@@ -90,7 +90,7 @@ dependencies {
                 }
             }
         """
-        new File(testProjectDir.newFolder('test3', 'src', 'main', 'java'), 'Main.java') << """
+        new File(newFolder('test3', 'src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
 
             public class Main {

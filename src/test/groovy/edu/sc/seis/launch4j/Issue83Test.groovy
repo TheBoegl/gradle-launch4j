@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import org.gradle.api.JavaVersion
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -34,7 +33,7 @@ class Issue83Test extends FunctionalSpecification {
                 outfile = 'Test.exe'
             }
         """
-        testProjectDir.newFile('settings.gradle').text = "rootProject.name = 'testProject'"
+        settingsFile << "rootProject.name = 'testProject'"
 
         when:
         def result = build('createExe', '-Pl4j-debug') // use debug flag to export xml
@@ -53,7 +52,7 @@ class Issue83Test extends FunctionalSpecification {
         xml.exists()
         def xmlText = xml.text
         xmlText.contains("<path>$jrePath</path>")
-        xmlText.contains("<minVersion>${JavaVersion.current()}.0</minVersion")
+        xmlText.contains("<minVersion>${getExpectedJavaVersion()}</minVersion")
         xmlText.contains('<maxVersion></maxVersion')
 
         def process = outfile.path.execute()

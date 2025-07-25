@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class Issue142Test extends FunctionalSpecification {
 
 
         // the TestKit is not yet implemented with the configuration cache, so we convert the error to a warning and check for its presence below.
-        def gradleRunner = createAndConfigureGradleRunner('--configuration-cache', '--configuration-cache-problems=warn', 'createExe').withGradleVersion('8.1.1')
+        def gradleRunner = createAndConfigureGradleRunner('--configuration-cache', '--configuration-cache-problems=warn', 'createExe').withGradleVersion('8.14.3')
         when:
         gradleRunner.build()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -253,7 +253,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         workingJar
     }
 
-    private static String getLaunch4jVersion(File workingJar) {
+    static String getLaunch4jVersion(File workingJar) {
         Matcher m = workingJar.name =~ /launch4j-(\d{1,2}\.\d{1,2})/
         m ? m[0][1] as String : workingJar.name
     }

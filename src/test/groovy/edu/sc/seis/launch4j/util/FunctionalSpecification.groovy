@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@
 package edu.sc.seis.launch4j.util
 
 import groovy.transform.CompileStatic
+import org.gradle.api.JavaVersion
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+import spock.lang.TempDir
 
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -33,15 +35,16 @@ class FunctionalSpecification extends Specification {
     private static final boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")
     private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor()
 
-    @Rule
-    final TemporaryFolder testProjectDir = new TemporaryFolder()
+    @TempDir
+    protected Path testProjectDir
 
     File projectDir
     File buildFile
+    File settingsFile
 
     def setup() {
-        projectDir = testProjectDir.root
-        buildFile = testProjectDir.newFile('build.gradle')
+        projectDir = testProjectDir.toFile()
+        buildFile = Files.createFile(testProjectDir.resolve( 'build.gradle')).toFile()
 
         buildFile << """
             plugins {
@@ -49,6 +52,7 @@ class FunctionalSpecification extends Specification {
                 id 'edu.sc.seis.launch4j'
             }
         """
+        settingsFile = newFile('settings.gradle')
     }
 
     def cleanup() {
@@ -98,6 +102,9 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
         if (!new File(projectDir, 'src').exists()) {
             addMainAndUpdateManifest()
         }
+        if (!buildFile.text.contains("internalName")) {
+            shortenInternalNameIfTooLong()
+        }
         GradleRunner.create()
             .withProjectDir(projectDir)
             .withDebug(DEBUG)
@@ -105,8 +112,37 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
             .withArguments(arguments)
     }
 
+    protected File newFolder(String... folders) {
+        Path path = testProjectDir
+        for (final def folder in folders) {
+            path = path.resolve(folder)
+        }
+        return Files.createDirectories(path).toFile()
+    }
+
+    protected File newFile(String file) {
+        testProjectDir.resolve(file).toFile()
+    }
+
+    protected String getExpectedJavaVersion() {
+        getExpectedJavaVersion(JavaVersion.current())
+    }
+
+    protected String getExpectedJavaVersion(JavaVersion version) {
+        version.isCompatibleWith(JavaVersion.VERSION_1_9) ?  "${version}.0.0" :  "${version}.0"
+    }
+
+    void shortenInternalNameIfTooLong() {
+        String name = projectDir.getName();
+        int maxLength = 50
+        if (name.length() > maxLength) {
+            buildFile << "launch4j.internalName = '${name.substring(0, maxLength)}'"
+        }
+    }
+
+
     protected addMainAndUpdateManifest() {
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
+        new File(newFolder('src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
 
             public class Main {
