@@ -298,7 +298,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
 
     final Property<Object> copyConfigurable
 
-    @Input
+    @InputFiles
     @Optional
     def getCopyConfigurable() {
         if(GradleVersion.current() < GradleVersion.version("5.0")) {
@@ -307,13 +307,14 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
         } else
             return copyConfigurable
     }
-/**
+
+    /**
      * Try to get the inputs right.
      * @return the input files of the copyConfigurable
      */
     @InputFiles
     @Optional
-    Object getCopyFiles() {
+    Set<File> getCopyFiles() {
         def copyConfigurable = copyConfigurable.getOrNull()
         if (copyConfigurable instanceof CopySpecInternal) {
             def specResolver = (copyConfigurable as CopySpecInternal).buildRootResolver()
@@ -325,7 +326,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
             })
             files
         } else if (copyConfigurable instanceof FileCollection) {
-            copyConfigurable as FileCollection
+            (copyConfigurable as FileCollection).files
         } else {
             null
         }
