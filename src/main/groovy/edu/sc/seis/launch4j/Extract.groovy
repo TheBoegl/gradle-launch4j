@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class Extract {
                         def segments = fcp.relativePath.segments
                         def pathSegments = segments[1..-1] as String[]
                         fcp.relativePath = new RelativePath(!fcp.file.isDirectory(), pathSegments)
-                        fcp.permissions { it.unix(0755) }
+                        // we are unable to set the file permissions but the deprecated methods FileCopyDetails#setMode(int) or CopySpec#setMode(int) would at least not throw an exception
                     } else {
                         fcp.exclude()
                     }
