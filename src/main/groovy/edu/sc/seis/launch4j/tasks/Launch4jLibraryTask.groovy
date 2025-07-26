@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,12 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+
 class Launch4jLibraryTask extends DefaultLaunch4jTask {
+    private static final Lock configLock = new ReentrantLock(true)
+
     @Input
     @Optional
     final Provider<String> debugProvider
@@ -47,12 +52,17 @@ class Launch4jLibraryTask extends DefaultLaunch4jTask {
         createExecutableFolder()
         createXML(copyLibraries())
         File xml = xmlFile.get().asFile
-        ConfigPersister.getInstance().load(xml)
-        Builder b = new Builder(new GradleLogger(logger), binaryDir)
+        configLock.lockInterruptibly()
         try {
-            b.build()
-        } catch (BuilderException e) {
-            throw new IllegalArgumentException(e.getMessage(), e)
+            ConfigPersister.getInstance().load(xml)
+            Builder b = new Builder(new GradleLogger(logger), binaryDir)
+            try {
+                b.build()
+            } catch (BuilderException e) {
+                throw new IllegalArgumentException(e.getMessage(), e)
+            }
+        } finally {
+            configLock.unlock()
         }
         if (debugProvider.isPresent()) {
             def debugXmlFile = new File(temporaryDir, xml.name)
