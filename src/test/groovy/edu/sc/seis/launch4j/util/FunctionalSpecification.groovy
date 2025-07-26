@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit
 class FunctionalSpecification extends Specification {
     private static final boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")
     private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor()
+    private static final int MAX_PROJECT_NAME_LENGTH = 50
 
     @TempDir
     protected Path testProjectDir
@@ -102,8 +103,14 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
         if (!new File(projectDir, 'src').exists()) {
             addMainAndUpdateManifest()
         }
-        if (!buildFile.text.contains("internalName")) {
-            shortenInternalNameIfTooLong()
+        def shortenedProjectName = shortenedProjectNameOrNull()
+        if (shortenedProjectName != null) {
+            if (!buildFile.text.contains("internalName")) {
+                buildFile << "launch4j.internalName = '${shortenedProjectName}'\n"
+            }
+            if (!buildFile.text.contains('outfile')) {
+                buildFile << "launch4j.outfile = '${shortenedProjectName}.exe'\n"
+            }
         }
         GradleRunner.create()
             .withProjectDir(projectDir)
@@ -129,14 +136,16 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
     }
 
     protected String getExpectedJavaVersion(JavaVersion version) {
-        version.isCompatibleWith(JavaVersion.VERSION_1_9) ?  "${version}.0.0" :  "${version}.0"
+        version.isCompatibleWith(JavaVersion.VERSION_1_9) ? "${version}.0.0" : "${version}.0"
     }
 
-    void shortenInternalNameIfTooLong() {
-        String name = projectDir.getName();
-        int maxLength = 50
-        if (name.length() > maxLength) {
-            buildFile << "launch4j.internalName = '${name.substring(0, maxLength)}'"
+    String shortenedProjectNameOrNull() {
+        def name = projectDir.getName()
+        if (name.length() > MAX_PROJECT_NAME_LENGTH) {
+            int index = name.indexOf("_0_testProjectDir")
+            name.substring(0, index > 0 ? index : MAX_PROJECT_NAME_LENGTH)
+        } else {
+            null
         }
     }
 

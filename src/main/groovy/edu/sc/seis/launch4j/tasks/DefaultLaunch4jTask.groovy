@@ -274,7 +274,7 @@ abstract class DefaultLaunch4jTask extends DefaultTask implements Launch4jConfig
     @Input
     final Property<String> outfile
 
-    @OutputFile
+    @Internal
     final Provider<RegularFile> dest
 
     @Input
