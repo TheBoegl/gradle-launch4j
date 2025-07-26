@@ -1,3 +1,9 @@
+## Version [3.0.7](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.7)
+- **FIX** [#176](https://github.com/TheBoegl/gradle-launch4j/issues/176): Respect the settings repository mode and use an existing settings repository.
+- **IMPROVEMENT** [#184](https://github.com/TheBoegl/gradle-launch4j/issues/184): Avoid gradle serialization error.
+- **FIX** [#181](https://github.com/TheBoegl/gradle-launch4j/issues/181): Ensure that Launch4j tasks running in parallel don't interfere with each other.
+- **IMPROVEMENT** [#182](https://github.com/TheBoegl/gradle-launch4j/issues/182): Simplify consuming this plugin by defining the output directory as sole output.
+
 ## Version [3.0.6](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.6)
 - **IMPROVEMENT** [#169](https://github.com/TheBoegl/gradle-launch4j/issues/169): Add jar task setter for task provider.
 - **IMPROVEMENT** [#168](https://github.com/TheBoegl/gradle-launch4j/issues/168): Improve error handling on launch4j exception.
