@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.initialization.resolve.RepositoriesMode
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.GradleVersion
@@ -78,7 +80,7 @@ class Launch4jPlugin implements Plugin<Project> {
         binaryConfig.setCanBeResolved(true)
 
 
-        if (project.repositories.isEmpty()) {
+        if (addRepository(project)) {
             project.logger.debug("Adding the mavenCentral repository to retrieve the $LAUNCH4J_PLUGIN_NAME files.")
             project.repositories.mavenCentral()
         }
@@ -92,6 +94,27 @@ class Launch4jPlugin implements Plugin<Project> {
         }
         def l4jArtifact = "net.sf.launch4j:launch4j:${ARTIFACT_VERSION}"
         binaryConfig.defaultDependencies {it.add(project.dependencies.create("${l4jArtifact}:${workdir()}"))}
+    }
+
+    static boolean addRepository(Project project) {
+        if (project.repositories.isEmpty()) {
+            if (GradleVersion.current() < GradleVersion.version('6.8')) {
+                return true
+            }
+            // work around to get DependencyResolutionManagement
+            def management = ((GradleInternal) project.getGradle()).settings.dependencyResolutionManagement
+            if (management.repositories.isEmpty()) {
+                RepositoriesMode mode = management.repositoriesMode.getOrNull()
+                switch (mode) {
+                    case RepositoriesMode.FAIL_ON_PROJECT_REPOS: // intentionally fall through
+                    case RepositoriesMode.PREFER_SETTINGS: return false
+                    default: return true
+                }
+            } else {
+                return false
+            }
+        }
+        return false
     }
 
     static String workdir() {
