@@ -66,9 +66,10 @@ group "edu.sc.seis.launch4j"
 // use semantic versioning (http://semver.org/)
 version "4.0-SNAPSHOT"
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
-    java.targetCompatibility = JavaVersion.VERSION_11
+    java.targetCompatibility = JavaVersion.VERSION_1_8
 } else {
     java.toolchain.languageVersion = JavaLanguageVersion.of(11)
+    java.targetCompatibility = JavaVersion.VERSION_1_8
 }
 gradlePlugin {
     plugins {
