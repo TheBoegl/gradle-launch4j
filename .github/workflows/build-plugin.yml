@@ -10,12 +10,16 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 11
+          java-version: |
+            8
+            11
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop' }}
-      - name: Run build
-        run: ./gradlew build
+      - name: Assemble project
+        run: ./gradlew assemble
+      - name: Run tests
+        run: ./gradlew test
       - name: Run backwards compatibility tests
         run: ./gradlew backwardsCompatibiltyTest
