@@ -6,7 +6,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.artifactory" version "4.33.1"
+    id "com.jfrog.artifactory" version "6.0.0"
     id 'org.unbroken-dome.test-sets' version '4.1.0'
 }
 
@@ -102,7 +102,6 @@ artifactory {
             repoKey = 'snapshots-gradle-dev-local'
             username = "${artifactory_platform_user}"
             password = "${artifactory_platform_password}"
-            maven = true
         }
 
         defaults {
