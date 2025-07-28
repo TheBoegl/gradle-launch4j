@@ -17,6 +17,7 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
+import spock.lang.Timeout
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 /**
@@ -25,6 +26,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class Issue72Test extends FunctionalSpecification {
 
 
+    @Timeout(60)
     def 'Check that JRE 10 is allowed in maxVersion'() {
         given:
         buildFile << """
@@ -34,7 +36,7 @@ class Issue72Test extends FunctionalSpecification {
                 outfile = 'test.exe'
                 jreMinVersion = "1.8.0"
                 jreMaxVersion = '10.999'
-                bundledJrePath = '%JAVA_HOME%'
+                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8%'
             }
         """
 

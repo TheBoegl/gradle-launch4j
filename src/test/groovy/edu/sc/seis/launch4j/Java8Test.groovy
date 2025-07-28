@@ -18,11 +18,12 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
+import spock.lang.Timeout
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class Java8Test extends FunctionalSpecification {
-
+    @Timeout(60)
     def 'verify runs with java 8'() {
         given:
         buildFile << """
@@ -30,7 +31,7 @@ class Java8Test extends FunctionalSpecification {
                 java.targetCompatibility = JavaVersion.VERSION_1_8
                 launch4j {
                     outfile = 'test.exe'
-                    bundledJrePath = '%JAVA_HOME%'
+                    bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8%'
                     jreMinVersion = '1.8.0'
                     jreMaxVersion = '1.8.0_999'
                 }
