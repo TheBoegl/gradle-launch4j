@@ -1,0 +1,21 @@
+name: Build
+on: push
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 11
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop' }}
+      - name: Run build
+        run: ./gradlew build
+      - name: Run backwards compatibility tests
+        run: ./gradlew backwardsCompatibiltyTest
