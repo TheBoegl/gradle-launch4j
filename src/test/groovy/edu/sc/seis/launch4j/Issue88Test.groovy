@@ -19,7 +19,6 @@ package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
 import edu.sc.seis.launch4j.util.ProcessHelper
-import spock.lang.Timeout
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -144,7 +143,6 @@ class Issue88Test extends FunctionalSpecification {
         outfile.exists()
     }
 
-    @Timeout(60)
     def 'verify minimum version works as expected'() {
         given:
         buildFile << """

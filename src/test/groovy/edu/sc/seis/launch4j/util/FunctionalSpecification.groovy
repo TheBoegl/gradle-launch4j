@@ -23,6 +23,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Specification
 import spock.lang.TempDir
+import spock.lang.Timeout
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,6 +31,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
+@Timeout(60)
 @CompileStatic
 class FunctionalSpecification extends Specification {
     private static final boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")

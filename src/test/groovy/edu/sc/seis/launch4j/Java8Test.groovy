@@ -18,12 +18,10 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import spock.lang.Timeout
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class Java8Test extends FunctionalSpecification {
-    @Timeout(60)
     def 'verify runs with java 8'() {
         given:
         buildFile << """
