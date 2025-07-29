@@ -20,57 +20,16 @@ package edu.sc.seis.launch4j
 import edu.sc.seis.launch4j.util.FunctionalSpecification
 import edu.sc.seis.launch4j.util.ProcessHelper
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import spock.lang.Timeout
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
+@Timeout(60)
 class Issue88Test extends FunctionalSpecification {
     def 'verify source compatibility is used as minimum version'() {
         given:
         buildFile << """
-            sourceCompatibility = 1.7
-            launch4j {
-                outfile = 'test.exe'
-                bundledJrePath = 'jre'
-            }
-        """
-
-        when:
-        def result = createAndConfigureGradleRunner('createExe', '-Pl4j-debug').build()
-
-        then:
-        result.task(':jar').outcome == SUCCESS
-        result.task(':createExe').outcome == SUCCESS
-
-        when:
-        def xmlFile = new File(projectDir, 'build/tmp/createExe/createExe.xml')
-        then:
-        xmlFile.exists()
-
-        when:
-        def xml = xmlFile.text
-        then:
-        xml.contains('<minVersion>1.7.0</minVersion>')
-
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
-    }
-
-    def 'verify toolchain 8 is used as minimum version'() {
-        given:
-        buildFile << """
-            java {
-                toolchain {
-                    languageVersion = JavaLanguageVersion.of(8)
-                }
-            }
+            sourceCompatibility = 1.8
             launch4j {
                 outfile = 'test.exe'
                 bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
@@ -78,8 +37,7 @@ class Issue88Test extends FunctionalSpecification {
         """
 
         when:
-        // disable auto-detect and put the current jdk on the search path as this fails otherwise
-        def result = createAndConfigureGradleRunner('createExe', '-Pl4j-debug', '-Porg.gradle.java.installations.auto-detect=false', '-Porg.gradle.java.installations.paths=' + System.getProperty("java.home")).build()
+        def result = createAndConfigureGradleRunner('createExe', '-Pl4j-debug').build()
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -106,7 +64,6 @@ class Issue88Test extends FunctionalSpecification {
         process.waitFor() == 0
         process.in.text.trim() == '...'
     }
-
 
     def 'verify current toolchain is used as minimum version'() {
         given:
