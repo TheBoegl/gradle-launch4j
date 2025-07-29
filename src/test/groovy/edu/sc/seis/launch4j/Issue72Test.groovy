@@ -34,7 +34,7 @@ class Issue72Test extends FunctionalSpecification {
                 outfile = 'test.exe'
                 jreMinVersion = "1.8.0"
                 jreMaxVersion = '10.999'
-                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8%'
+                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
             }
         """
 

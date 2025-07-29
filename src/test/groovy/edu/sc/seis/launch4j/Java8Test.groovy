@@ -29,7 +29,7 @@ class Java8Test extends FunctionalSpecification {
                 java.targetCompatibility = JavaVersion.VERSION_1_8
                 launch4j {
                     outfile = 'test.exe'
-                    bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8%'
+                    bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
                     jreMinVersion = '1.8.0'
                     jreMaxVersion = '1.8.0_999'
                 }

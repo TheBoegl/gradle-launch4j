@@ -150,7 +150,7 @@ class Issue88Test extends FunctionalSpecification {
             launch4j {
                 outfile = 'test.exe'
                 jreMinVersion = '1.8.0_281'
-                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8%'
+                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
             }
         """
 
