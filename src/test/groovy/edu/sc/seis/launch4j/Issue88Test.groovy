@@ -19,6 +19,7 @@ package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
 import edu.sc.seis.launch4j.util.ProcessHelper
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -62,17 +63,17 @@ class Issue88Test extends FunctionalSpecification {
         process.in.text.trim() == '...'
     }
 
-    def 'verify toolchain is used as minimum version'() {
+    def 'verify toolchain 8 is used as minimum version'() {
         given:
         buildFile << """
             java {
                 toolchain {
-                    languageVersion = JavaLanguageVersion.of(8) // use same version as the one building and provided below
+                    languageVersion = JavaLanguageVersion.of(8)
                 }
             }
             launch4j {
                 outfile = 'test.exe'
-                bundledJrePath = 'jre'
+                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
             }
         """
 
@@ -93,6 +94,52 @@ class Issue88Test extends FunctionalSpecification {
         def xml = xmlFile.text
         then:
         xml.contains('<minVersion>1.8.0</minVersion>')
+
+        when:
+        def outfile = new File(projectDir, 'build/launch4j/test.exe')
+        then:
+        outfile.exists()
+
+        when:
+        def process = outfile.path.execute()
+        then:
+        process.waitFor() == 0
+        process.in.text.trim() == '...'
+    }
+
+
+    def 'verify current toolchain is used as minimum version'() {
+        given:
+        def var = JavaLanguageVersion.current()
+        buildFile << """
+            java {
+                toolchain {
+                    languageVersion = JavaLanguageVersion.current()
+                }
+            }
+            launch4j {
+                outfile = 'test.exe'
+                bundledJrePath = '%JAVA_HOME%'
+            }
+        """
+
+        when:
+        // disable auto-detect and put the current jdk on the search path as this fails otherwise
+        def result = createAndConfigureGradleRunner('createExe', '-Pl4j-debug', '-Porg.gradle.java.installations.auto-detect=false', '-Porg.gradle.java.installations.paths=' + System.getProperty("java.home")).build()
+
+        then:
+        result.task(':jar').outcome == SUCCESS
+        result.task(':createExe').outcome == SUCCESS
+
+        when:
+        def xmlFile = new File(projectDir, 'build/tmp/createExe/createExe.xml')
+        then:
+        xmlFile.exists()
+
+        when:
+        def xml = xmlFile.text
+        then:
+        xml.contains("<minVersion>${getExpectedJavaVersion()}</minVersion>")
 
         when:
         def outfile = new File(projectDir, 'build/launch4j/test.exe')
