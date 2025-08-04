@@ -45,15 +45,6 @@ class Issue72Test extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 }

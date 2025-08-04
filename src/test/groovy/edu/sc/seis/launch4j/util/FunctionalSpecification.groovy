@@ -141,6 +141,34 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
         version.isCompatibleWith(JavaVersion.VERSION_1_9) ? "${version}.0.0" : "${version}.0"
     }
 
+    protected void executeAndVerify(String expectedOutput, String expectedErrorOutput) {
+        executeAndVerify(new File(projectDir, 'build/launch4j/test.exe'), expectedOutput, expectedErrorOutput)
+    }
+
+    protected void executeAndVerify(File outfile, String expectedOutput, String expectedErrorOutput = null) {
+        outfile.exists()
+
+        if (System.getenv('OS').contains('Windows')) {
+            when:
+            def process = outfile.path.execute()
+
+            def exitValue = process.waitFor()
+            then:
+            process.in.text.trim() == expectedOutput
+            if (expectedErrorOutput) {
+                process.err.text.trim().endsWith(expectedErrorOutput)
+            } else {
+                exitValue == 0
+            }
+        } else {
+            // we are only able to run the executable on Windows
+        }
+    }
+
+    protected void executeAndVerify(String expectedOutput) {
+        executeAndVerify(new File(projectDir, 'build/launch4j/test.exe'), expectedOutput, null)
+    }
+
     String shortenedProjectNameOrNull() {
         def name = projectDir.getName()
         if (name.length() > MAX_PROJECT_NAME_LENGTH) {

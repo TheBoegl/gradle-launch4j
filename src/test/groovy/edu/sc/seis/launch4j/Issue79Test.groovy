@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,19 +44,21 @@ class Issue79Test extends FunctionalSpecification {
         then:
         outfile.exists()
 
-        when:
-        def process = [outfile.path, '--l4j-debug-all'].execute()
-        def logfile = new File(projectDir, 'build/launch4j/launch4j.log')
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        if (System.getenv('OS').contains('Windows')) {
+            when:
+            def process = [outfile.path, '--l4j-debug-all'].execute()
+            def logfile = new File(projectDir, 'build/launch4j/launch4j.log')
+            then:
+            process.waitFor() == 0
+            process.in.text.trim() == '...'
 
-        logfile.exists()
+            logfile.exists()
 
-        def chdir = logfile.readLines().find { String line ->
-            line.contains("Working dir:")
+            def chdir = logfile.readLines().find { String line ->
+                line.contains("Working dir:")
+            }
+            chdir == null
         }
-        chdir == null
     }
 
     def 'Check that not setting chdir uses default value'() {
@@ -79,19 +81,21 @@ class Issue79Test extends FunctionalSpecification {
         then:
         outfile.exists()
 
-        when:
-        def process = [outfile.path, '--l4j-debug-all'].execute()
-        def logfile = new File(projectDir, 'build/launch4j/launch4j.log')
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        if (System.getenv('OS').contains('Windows')) {
+            when:
+            def process = [outfile.path, '--l4j-debug-all'].execute()
+            def logfile = new File(projectDir, 'build/launch4j/launch4j.log')
+            then:
+            process.waitFor() == 0
+            process.in.text.trim() == '...'
 
-        logfile.exists()
+            logfile.exists()
 
-        def chdir = logfile.readLines().find { String line ->
-            line.contains("Working dir:")
+            def chdir = logfile.readLines().find { String line ->
+                line.contains("Working dir:")
+            }
+            chdir != null
         }
-        chdir != null
     }
 
 

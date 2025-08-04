@@ -312,12 +312,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello World!'
+        executeAndVerify('Hello World!')
     }
 
     def 'Running the created executable with Java dependencies succeeds'() {
@@ -358,13 +353,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify('Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Running the created executable in a subfolder with Java dependencies succeeds'() {
@@ -407,12 +396,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         def outfile = new File(projectDir, 'build/launch4j/app/bin/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify(outfile, 'Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Running the created executable in a subfolder and default lib folder with Java dependencies succeeds'() {
@@ -455,12 +439,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         def outfile = new File(projectDir, 'build/launch4j/app/bin/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify(outfile, 'Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Running the created executable in a subfolder and changed lib folder with Java dependencies succeeds'() {
@@ -504,12 +483,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         def outfile = new File(projectDir, 'build/launch4j/app/bin/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify(outfile, 'Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Running an unwrapped executable with Java dependencies succeeds'() {
@@ -565,13 +539,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify('Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Running an unwrapped executable jar as executable with Java dependencies succeeds'() {
@@ -627,13 +595,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify('Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Running a fat executable jar as executable with Java dependencies succeeds'() {
@@ -694,13 +656,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':shadowJar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify('Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Running a fat executable shadowJar as executable with Java dependencies succeeds with shadowJar task'() {
@@ -762,13 +718,7 @@ class Launch4jPluginExtensionTest extends FunctionalSpecification {
         result.task(':shadowJar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        outfile.exists()
-
-        def process = outfile.path.execute()
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello STDOUT!'
-        process.err.text.trim().endsWith('Hello LOG!')
+        executeAndVerify('Hello STDOUT!', 'Hello LOG!')
     }
 
     def 'Updating the project version results in only one jar succeeds'() {

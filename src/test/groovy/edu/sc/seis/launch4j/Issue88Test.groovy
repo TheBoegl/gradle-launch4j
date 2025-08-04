@@ -18,7 +18,6 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import edu.sc.seis.launch4j.util.ProcessHelper
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import spock.lang.Timeout
 
@@ -53,16 +52,7 @@ class Issue88Test extends FunctionalSpecification {
         then:
         xml.contains('<minVersion>1.8.0</minVersion>')
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
     def 'verify current toolchain is used as minimum version'() {
@@ -98,16 +88,7 @@ class Issue88Test extends FunctionalSpecification {
         then:
         xml.contains("<minVersion>${getExpectedJavaVersion()}</minVersion>")
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
     def 'verify source compatibility in java plugin is used as minimum version'() {
@@ -175,16 +156,7 @@ class Issue88Test extends FunctionalSpecification {
         then:
         xml.contains("<minVersion>1.8.0_281</minVersion>")
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
     def 'verify minimum version defaults to current java version'() {
@@ -212,17 +184,7 @@ class Issue88Test extends FunctionalSpecification {
         def xml = xmlFile.text
         then:
         xml.contains("<minVersion>${getExpectedJavaVersion()}</minVersion>")
-
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = ProcessHelper.executeWithEnvironment(outfile)
-        then:
-        ProcessHelper.waitFor(process) == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
 }

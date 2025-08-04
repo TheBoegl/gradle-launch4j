@@ -43,21 +43,15 @@ class Issue83Test extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         when:
-        def outfile = new File(projectDir, 'build/launch4j/Test.exe')
         def xml = new File(projectDir, 'build/tmp/createExe/createExe.xml')
 
-
         then:
-        outfile.exists()
         xml.exists()
         def xmlText = xml.text
         xmlText.contains("<path>$jrePath</path>")
         xmlText.contains("<minVersion>${getExpectedJavaVersion()}</minVersion")
         xmlText.contains('<maxVersion></maxVersion')
 
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 }
