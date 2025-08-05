@@ -32,7 +32,7 @@ class Issue142Test extends FunctionalSpecification {
 
 
         // the TestKit is not yet implemented with the configuration cache, so we convert the error to a warning and check for its presence below.
-        def gradleRunner = createAndConfigureGradleRunner('--configuration-cache', '--configuration-cache-problems=warn', 'createExe').withGradleVersion('8.14.3')
+        def gradleRunner = createAndConfigureGradleRunner('--configuration-cache', '--configuration-cache-problems=warn', 'createExe')
         when:
         gradleRunner.build()
 

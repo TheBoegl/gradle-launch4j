@@ -18,11 +18,9 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import spock.lang.Requires
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-@Requires({ os.isWindows() })
 class Issue117Test extends FunctionalSpecification {
     def 'Check EXCLUDE duplication Strategy'() {
         given:
@@ -38,7 +36,7 @@ class Issue117Test extends FunctionalSpecification {
         """
 
         when:
-        def result = createAndConfigureGradleRunner('createExe').withGradleVersion('7.5.1').build()
+        def result = createAndConfigureGradleRunner('createExe').build()
 
         then:
         result.task(':jar').outcome == SUCCESS
@@ -60,7 +58,7 @@ class Issue117Test extends FunctionalSpecification {
         """
 
         when:
-        def result = createAndConfigureGradleRunner('createExe').withGradleVersion('7.5.1').build()
+        def result = createAndConfigureGradleRunner('createExe').build()
 
         then:
         result.task(':jar').outcome == SUCCESS

@@ -19,10 +19,12 @@ package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
 import org.gradle.util.GradleVersion
+import spock.lang.Requires
 import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
+@Requires({ os.isWindows() })
 class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
 
     @Unroll
