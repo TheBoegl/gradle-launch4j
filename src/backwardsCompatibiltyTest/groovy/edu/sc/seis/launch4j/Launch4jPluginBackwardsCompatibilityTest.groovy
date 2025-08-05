@@ -59,6 +59,6 @@ class Launch4jPluginBackwardsCompatibilityTest extends FunctionalSpecification {
         where:
         // versions prior 2.8 will not allow the classpath injection
         // drop support for pre 7.0 gradle versions i.e. all up to and including 6.9.4
-        gradleVersion << ['7.0', '7.6.6', '8.1.1', GradleVersion.current().getVersion()].unique()
+        gradleVersion << ['7.0', '7.6.6', '8.1.1', '8.2.1', GradleVersion.current().getVersion()].unique()
     }
 }

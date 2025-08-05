@@ -22,6 +22,7 @@ import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RelativePath
 import org.gradle.api.internal.file.FileOperations
+import org.gradle.util.GradleVersion
 
 import java.nio.file.Files
 
@@ -43,9 +44,16 @@ class Extract {
                         def segments = fcp.relativePath.segments
                         def pathSegments = segments[1..-1] as String[]
                         fcp.relativePath = new RelativePath(!fcp.file.isDirectory(), pathSegments)
-                        // we are unable to set the file permissions but the deprecated methods FileCopyDetails#setMode(int) or CopySpec#setMode(int) would at least not throw an exception
+                        if (GradleVersion.current() < GradleVersion.version('8.3'))  {
+                            fcp.mode = 755
+                        }
                     } else {
                         fcp.exclude()
+                    }
+                }
+                if (GradleVersion.current() >= GradleVersion.version('8.3')) {
+                    it.filePermissions {
+                        it.user.execute = true
                     }
                 }
             }
