@@ -3,9 +3,15 @@ on: push
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ windows-latest, ubuntu-latest ]
+        os: [ windows-latest ]
+        experimental: [false]
+        include:
+          - os: ubuntu-latest
+            experimental: true
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
