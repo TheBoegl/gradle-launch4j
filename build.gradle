@@ -64,7 +64,7 @@ dependencies {
 group ="edu.sc.seis.launch4j"
 
 // use semantic versioning (http://semver.org/)
-version = "4.0"
+version = "4.0.0"
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
     java.targetCompatibility = JavaVersion.VERSION_1_8
 } else {
