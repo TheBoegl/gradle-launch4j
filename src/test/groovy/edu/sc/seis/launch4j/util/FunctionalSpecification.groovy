@@ -145,10 +145,14 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
         executeAndVerify(new File(projectDir, 'build/launch4j/test.exe'), expectedOutput, expectedErrorOutput)
     }
 
+    protected String getOS() {
+        System.getenv('OS')?:System.getProperty('os.name')
+    }
+
     protected void executeAndVerify(File outfile, String expectedOutput, String expectedErrorOutput = null) {
         outfile.exists()
 
-        if (System.getenv('OS').contains('Windows')) {
+        if (getOS().contains('Windows')) {
             when:
             def process = outfile.path.execute()
 

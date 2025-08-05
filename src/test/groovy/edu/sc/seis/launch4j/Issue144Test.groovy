@@ -26,7 +26,7 @@ class Issue144Test extends FunctionalSpecification {
         given:
         buildFile << """
             dependencies {
-                launch4jBin 'net.sf.launch4j:launch4j:3.50:workdir-win32'
+                launch4jBin "net.sf.launch4j:launch4j:3.50:workdir-${osDependentLibraryAppendix()}"
             }
             launch4j {
                 outfile = 'test.exe'
@@ -64,4 +64,16 @@ class Issue144Test extends FunctionalSpecification {
         result.output.contains('Use the correct classifier for this platform.')
     }
 
+    String osDependentLibraryAppendix() {
+        def os = getOS().toLowerCase(Locale.ROOT)
+        if (os.contains("windows")) {
+            'win32'
+        } else if (os.contains('linux')) {
+            System.getProperty('os.arch').contains('64') ? 'linux64' : 'linux'
+        } else if (os.contains('darwin') || os.contains('mac os')) {
+            'mac'
+        } else {
+            throw new IllegalStateException("unable to get binaries for ${os}")
+        }
+    }
 }

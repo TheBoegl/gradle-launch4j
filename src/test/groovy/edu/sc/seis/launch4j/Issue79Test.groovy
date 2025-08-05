@@ -44,7 +44,7 @@ class Issue79Test extends FunctionalSpecification {
         then:
         outfile.exists()
 
-        if (System.getenv('OS').contains('Windows')) {
+        if (getOS().contains('Windows')) {
             when:
             def process = [outfile.path, '--l4j-debug-all'].execute()
             def logfile = new File(projectDir, 'build/launch4j/launch4j.log')
@@ -81,7 +81,7 @@ class Issue79Test extends FunctionalSpecification {
         then:
         outfile.exists()
 
-        if (System.getenv('OS').contains('Windows')) {
+        if (getOS().contains('Windows')) {
             when:
             def process = [outfile.path, '--l4j-debug-all'].execute()
             def logfile = new File(projectDir, 'build/launch4j/launch4j.log')
