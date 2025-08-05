@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RelativePath
 import org.gradle.api.internal.file.FileOperations
+import org.gradle.util.GradleVersion
 
 import java.nio.file.Files
 
@@ -43,9 +44,16 @@ class Extract {
                         def segments = fcp.relativePath.segments
                         def pathSegments = segments[1..-1] as String[]
                         fcp.relativePath = new RelativePath(!fcp.file.isDirectory(), pathSegments)
-                        fcp.mode = 0755
+                        if (GradleVersion.current() < GradleVersion.version('8.3'))  {
+                            fcp.mode = 755
+                        }
                     } else {
                         fcp.exclude()
+                    }
+                }
+                if (GradleVersion.current() >= GradleVersion.version('8.3')) {
+                    it.filePermissions {
+                        it.user.execute = true
                     }
                 }
             }

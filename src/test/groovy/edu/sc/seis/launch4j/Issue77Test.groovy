@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ class Issue77Test extends FunctionalSpecification {
 
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -69,13 +69,7 @@ class Issue77Test extends FunctionalSpecification {
         jarfile.exists()
         jarfile.delete()
         !jarfile.exists()
-
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello World!'
+        executeAndVerify(outfile, 'Hello World!')
     }
 
     def 'Check that the default createExe is not wrapped'() {
@@ -88,7 +82,7 @@ class Issue77Test extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -112,21 +106,13 @@ class Issue77Test extends FunctionalSpecification {
         then:
         outfile.exists()
         jarfile.exists()
-
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello World!'
+        executeAndVerify(outfile, 'Hello World!')
 
         when:
         jarfile.delete()
         !jarfile.exists()
-        def processFailure = outfile.path.execute()
+        def exitCode = executeAndVerify(outfile, 'Hello World!', 'com.test.app.Main')
         then:
-        processFailure.waitFor() != 0
-        processFailure.in.text.trim() != 'Hello World!'
-        processFailure.err.text.trim().contains 'com.test.app.Main'
+        exitCode != 0
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,20 @@
 package edu.sc.seis.launch4j
 
 import edu.sc.seis.launch4j.util.FunctionalSpecification
-import org.gradle.api.JavaVersion
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import spock.lang.Timeout
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
+@Timeout(60)
 class Issue88Test extends FunctionalSpecification {
     def 'verify source compatibility is used as minimum version'() {
         given:
         buildFile << """
-            sourceCompatibility = 1.7
+            sourceCompatibility = 1.8
             launch4j {
                 outfile = 'test.exe'
-                bundledJrePath = 'jre'
+                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
             }
         """
 
@@ -48,31 +50,23 @@ class Issue88Test extends FunctionalSpecification {
         when:
         def xml = xmlFile.text
         then:
-        xml.contains('<minVersion>1.7.0</minVersion>')
+        xml.contains('<minVersion>1.8.0</minVersion>')
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
-    def 'verify toolchain is used as minimum version'() {
+    def 'verify current toolchain is used as minimum version'() {
         given:
+        def var = JavaLanguageVersion.current()
         buildFile << """
             java {
                 toolchain {
-                    languageVersion = JavaLanguageVersion.of(8) // use same version as the one building and provided below
+                    languageVersion = JavaLanguageVersion.current()
                 }
             }
             launch4j {
                 outfile = 'test.exe'
-                bundledJrePath = 'jre'
+                bundledJrePath = '%JAVA_HOME%'
             }
         """
 
@@ -92,18 +86,9 @@ class Issue88Test extends FunctionalSpecification {
         when:
         def xml = xmlFile.text
         then:
-        xml.contains('<minVersion>1.8.0</minVersion>')
+        xml.contains("<minVersion>${getExpectedJavaVersion()}</minVersion>")
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
     def 'verify source compatibility in java plugin is used as minimum version'() {
@@ -146,10 +131,11 @@ class Issue88Test extends FunctionalSpecification {
     def 'verify minimum version works as expected'() {
         given:
         buildFile << """
+            java.sourceCompatibility = JavaVersion.VERSION_1_8
             launch4j {
                 outfile = 'test.exe'
                 jreMinVersion = '1.8.0_281'
-                bundledJrePath = 'jre'
+                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
             }
         """
 
@@ -170,16 +156,7 @@ class Issue88Test extends FunctionalSpecification {
         then:
         xml.contains("<minVersion>1.8.0_281</minVersion>")
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
     def 'verify minimum version defaults to current java version'() {
@@ -187,7 +164,7 @@ class Issue88Test extends FunctionalSpecification {
         buildFile << """
             launch4j {
                 outfile = 'test.exe'
-                bundledJrePath = 'jre'
+                bundledJrePath = '%JAVA_HOME%'
             }
         """
 
@@ -206,18 +183,8 @@ class Issue88Test extends FunctionalSpecification {
         when:
         def xml = xmlFile.text
         then:
-        xml.contains("<minVersion>${JavaVersion.current()}.0</minVersion>")
-
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        xml.contains("<minVersion>${getExpectedJavaVersion()}</minVersion>")
+        executeAndVerify('...')
     }
 
 }

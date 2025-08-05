@@ -1,3 +1,6 @@
+## Version [4.0.0](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v4.0.0)
+- **FIX** [#188](https://github.com/TheBoegl/gradle-launch4j/issues/188): Correctly set file permissions for Gradle 8.3+ and make it compatible with Gradle 9.
+
 ## Version [3.0.7](https://github.com/TheBoegl/gradle-launch4j/releases/tag/v3.0.7)
 - **FIX** [#176](https://github.com/TheBoegl/gradle-launch4j/issues/176): Respect the settings repository mode and use an existing settings repository.
 - **IMPROVEMENT** [#184](https://github.com/TheBoegl/gradle-launch4j/issues/184): Avoid gradle serialization error.

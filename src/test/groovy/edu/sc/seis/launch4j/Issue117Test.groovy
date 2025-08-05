@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,22 +36,13 @@ class Issue117Test extends FunctionalSpecification {
         """
 
         when:
-        def result = createAndConfigureGradleRunner('createExe').withGradleVersion('7.5.1').build()
+        def result = createAndConfigureGradleRunner('createExe').build()
 
         then:
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
     def 'Check default duplication Strategy'() {
@@ -67,21 +58,12 @@ class Issue117Test extends FunctionalSpecification {
         """
 
         when:
-        def result = createAndConfigureGradleRunner('createExe').withGradleVersion('7.5.1').build()
+        def result = createAndConfigureGradleRunner('createExe').build()
 
         then:
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 }

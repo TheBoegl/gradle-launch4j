@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ launch4j {
 
     def 'Verify that custom tasks can be registered'() {
         given:
-        testProjectDir.newFile("extension.gradle") << """
+        newFile("extension.gradle") << """
 buildscript {
     repositories{
         gradlePluginPortal()

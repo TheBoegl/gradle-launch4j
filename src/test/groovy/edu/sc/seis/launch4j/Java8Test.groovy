@@ -21,37 +21,27 @@ import edu.sc.seis.launch4j.util.FunctionalSpecification
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class Issue83Test extends FunctionalSpecification {
-
-    def 'setting only the path is possible'() {
+class Java8Test extends FunctionalSpecification {
+    def 'verify runs with java 8'() {
         given:
-        def jrePath = System.getProperties().getProperty("java.home").replace("\\", "/")
         buildFile << """
-            launch4j {
-                bundledJrePath = '$jrePath'
-                mainClassName = 'com.test.app.Main'
-                outfile = 'Test.exe'
-            }
-        """
-        settingsFile << "rootProject.name = 'testProject'"
+                java.sourceCompatibility = JavaVersion.VERSION_1_8
+                java.targetCompatibility = JavaVersion.VERSION_1_8
+                launch4j {
+                    outfile = 'test.exe'
+                    bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
+                    jreMinVersion = '1.8.0'
+                    jreMaxVersion = '1.8.0_999'
+                }
+            """
 
         when:
-        def result = build('createExe', '-Pl4j-debug') // use debug flag to export xml
+        def result = createAndConfigureGradleRunner('createExe').build()
 
         then:
-        result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
-
-        when:
-        def xml = new File(projectDir, 'build/tmp/createExe/createExe.xml')
-
-        then:
-        xml.exists()
-        def xmlText = xml.text
-        xmlText.contains("<path>$jrePath</path>")
-        xmlText.contains("<minVersion>${getExpectedJavaVersion()}</minVersion")
-        xmlText.contains('<maxVersion></maxVersion')
 
         executeAndVerify('...')
     }
+
 }

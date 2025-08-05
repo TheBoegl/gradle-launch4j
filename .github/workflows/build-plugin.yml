@@ -1,0 +1,34 @@
+name: Build
+on: push
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest ]
+        experimental: [false]
+        include:
+          - os: ubuntu-latest
+            experimental: true
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: |
+            8
+            11
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop' }}
+      - name: Assemble project
+        run: ./gradlew assemble
+      - name: Run tests
+        run: ./gradlew test
+      - name: Run backwards compatibility tests
+        run: ./gradlew backwardsCompatibiltyTest

@@ -36,7 +36,7 @@ class Issue182Test extends FunctionalSpecification {
         """
 
         when:
-        def result = createAndConfigureGradleRunner('distTar').withGradleVersion('8.14.3').build()
+        def result = createAndConfigureGradleRunner('distTar').build()
 
         then:
         result.task(':createExe').outcome == SUCCESS

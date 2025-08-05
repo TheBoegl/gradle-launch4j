@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2025 Sebastian Boegl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 plugins {
     id "com.gradle.plugin-publish" version "1.3.1"
     id 'java-gradle-plugin'
@@ -6,8 +22,8 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id "com.jfrog.artifactory" version "4.33.1"
-    id 'org.unbroken-dome.test-sets' version '4.0.0'
+    id "com.jfrog.artifactory" version "6.0.0"
+    id 'org.unbroken-dome.test-sets' version '4.1.0'
 }
 
 repositories {
@@ -16,7 +32,7 @@ repositories {
 
 ext {
     ARTIFACT_VERSION = '3.50'
-    spock_version = '1.3-groovy-2.5'
+    spock_version = '2.4-M6-groovy-3.0'
 }
 
 testSets {
@@ -38,38 +54,23 @@ dependencies {
     implementation 'com.thoughtworks.xstream:xstream:1.4.21'
 
     testImplementation gradleTestKit()
-    testImplementation ("org.spockframework:spock-core:${spock_version}") {
-        exclude group: 'org.codehaus.groovy'
-        exclude group: 'junit'
-    }
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.spockframework:spock-core:${spock_version}"
+    testImplementation platform("org.spockframework:spock-bom:${spock_version}")
+    testImplementation 'org.spockframework:spock-core'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     backwardsCompatibiltyTestImplementation sourceSets.test.output
 }
 
-group "edu.sc.seis.launch4j"
-/*
- * Copyright (c) 2025 Sebastian Boegl
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
+group ="edu.sc.seis.launch4j"
 
 // use semantic versioning (http://semver.org/)
-version "3.0.7"
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
+version = "4.0"
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
+    java.targetCompatibility = JavaVersion.VERSION_1_8
+} else {
+    java.toolchain.languageVersion = JavaLanguageVersion.of(11)
+    java.targetCompatibility = JavaVersion.VERSION_1_8
+}
 gradlePlugin {
     plugins {
         launch4j {
@@ -77,15 +78,14 @@ gradlePlugin {
             displayName = 'launch4j gradle plugin'
             description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
             implementationClass = 'edu.sc.seis.launch4j.Launch4jPlugin'
+            tags = ['launch4j', 'executable', 'wrapper']
         }
     }
-}
 
-pluginBundle {
     website = 'https://github.com/TheBoegl/gradle-launch4j'
     vcsUrl = 'https://github.com/TheBoegl/gradle-launch4j'
     description = 'A gradle-plugin to create windows executables with launch4j for Java application.'
-    tags = ['launch4j', 'executable', 'wrapper']
+
 }
 
 publishPlugins.dependsOn build
@@ -102,7 +102,6 @@ artifactory {
             repoKey = 'snapshots-gradle-dev-local'
             username = "${artifactory_platform_user}"
             password = "${artifactory_platform_password}"
-            maven = true
         }
 
         defaults {
@@ -115,20 +114,26 @@ artifactory {
 //createReleaseTag.dependsOn publish
 
 wrapper {
-    gradleVersion = '6.9.4'
+    gradleVersion = '8.14.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 tasks.withType(Test).configureEach {
-    useJUnit()
+    useJUnitPlatform()
     systemProperty 'org.gradle.testkit.debug', System.getProperty('org.gradle.testkit.debug', 'false')
+}
+test {
+    testLogging {
+        events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+    useJUnitPlatform()
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
+        xml.required = false
+        csv.required = false
+        html.required = true
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class Issue47Test extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -54,23 +54,14 @@ class Issue47Test extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello World!'
+        executeAndVerify('Hello World!')
     }
 
     def 'Check that the jar task is not present on a shadowJar build succeeds'() {
         given:
         buildFile << """
             plugins {
-                id 'com.github.johnrengelman.shadow' version '4.0.4'
+                id 'com.gradleup.shadow' version '8.3.8'
             }
 
             repositories {
@@ -95,7 +86,7 @@ class Issue47Test extends FunctionalSpecification {
             }
         """
 
-        File sourceFile = new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java')
+        File sourceFile = new File(newFolder('src', 'main', 'java'), 'Main.java')
         sourceFile << """
             package com.test.app;
 
@@ -114,15 +105,6 @@ class Issue47Test extends FunctionalSpecification {
         result.task(':shadowJar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == 'Hello World!'
+        executeAndVerify('Hello World!')
     }
 }

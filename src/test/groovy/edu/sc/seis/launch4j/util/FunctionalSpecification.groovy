@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,36 @@
 package edu.sc.seis.launch4j.util
 
 import groovy.transform.CompileStatic
+import org.gradle.api.JavaVersion
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+import spock.lang.TempDir
+import spock.lang.Timeout
 
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
+@Timeout(60)
 @CompileStatic
 class FunctionalSpecification extends Specification {
     private static final boolean DEBUG = Boolean.getBoolean("org.gradle.testkit.debug")
     private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor()
+    private static final int MAX_PROJECT_NAME_LENGTH = 50
 
-    @Rule
-    final TemporaryFolder testProjectDir = new TemporaryFolder()
+    @TempDir
+    protected Path testProjectDir
 
     File projectDir
     File buildFile
+    File settingsFile
 
     def setup() {
-        projectDir = testProjectDir.root
-        buildFile = testProjectDir.newFile('build.gradle')
+        projectDir = testProjectDir.toFile()
+        buildFile = Files.createFile(testProjectDir.resolve( 'build.gradle')).toFile()
 
         buildFile << """
             plugins {
@@ -49,6 +55,7 @@ class FunctionalSpecification extends Specification {
                 id 'edu.sc.seis.launch4j'
             }
         """
+        settingsFile = newFile('settings.gradle')
     }
 
     def cleanup() {
@@ -98,6 +105,15 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
         if (!new File(projectDir, 'src').exists()) {
             addMainAndUpdateManifest()
         }
+        def shortenedProjectName = shortenedProjectNameOrNull()
+        if (shortenedProjectName != null) {
+            if (!buildFile.text.contains("internalName")) {
+                buildFile << "launch4j.internalName = '${shortenedProjectName}'\n"
+            }
+            if (!buildFile.text.contains('outfile')) {
+                buildFile << "launch4j.outfile = '${shortenedProjectName}.exe'\n"
+            }
+        }
         GradleRunner.create()
             .withProjectDir(projectDir)
             .withDebug(DEBUG)
@@ -105,8 +121,71 @@ tasks.withType(edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask.class).configureEa
             .withArguments(arguments)
     }
 
+    protected File newFolder(String... folders) {
+        Path path = testProjectDir
+        for (final def folder in folders) {
+            path = path.resolve(folder)
+        }
+        return Files.createDirectories(path).toFile()
+    }
+
+    protected File newFile(String file) {
+        testProjectDir.resolve(file).toFile()
+    }
+
+    protected String getExpectedJavaVersion() {
+        getExpectedJavaVersion(JavaVersion.current())
+    }
+
+    protected String getExpectedJavaVersion(JavaVersion version) {
+        version.isCompatibleWith(JavaVersion.VERSION_1_9) ? "${version}.0.0" : "${version}.0"
+    }
+
+    protected void executeAndVerify(String expectedOutput, String expectedErrorOutput) {
+        executeAndVerify(new File(projectDir, 'build/launch4j/test.exe'), expectedOutput, expectedErrorOutput)
+    }
+
+    protected String getOS() {
+        System.getenv('OS')?:System.getProperty('os.name')
+    }
+
+    protected void executeAndVerify(File outfile, String expectedOutput, String expectedErrorOutput = null) {
+        outfile.exists()
+
+        if (getOS().contains('Windows')) {
+            when:
+            def process = outfile.path.execute()
+
+            def exitValue = process.waitFor()
+            then:
+            process.in.text.trim() == expectedOutput
+            if (expectedErrorOutput) {
+                process.err.text.trim().endsWith(expectedErrorOutput)
+            } else {
+                exitValue == 0
+            }
+        } else {
+            // we are only able to run the executable on Windows
+        }
+    }
+
+    protected void executeAndVerify(String expectedOutput) {
+        executeAndVerify(new File(projectDir, 'build/launch4j/test.exe'), expectedOutput, null)
+    }
+
+    String shortenedProjectNameOrNull() {
+        def name = projectDir.getName()
+        if (name.length() > MAX_PROJECT_NAME_LENGTH) {
+            int index = name.indexOf("_0_testProjectDir")
+            name.substring(0, index > 0 ? index : MAX_PROJECT_NAME_LENGTH)
+        } else {
+            null
+        }
+    }
+
+
     protected addMainAndUpdateManifest() {
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
+        new File(newFolder('src', 'main', 'java'), 'Main.java') << """
             package com.test.app;
 
             public class Main {

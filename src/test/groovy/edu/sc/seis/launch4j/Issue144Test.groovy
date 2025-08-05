@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class Issue144Test extends FunctionalSpecification {
         given:
         buildFile << """
             dependencies {
-                launch4jBin 'net.sf.launch4j:launch4j:3.50:workdir-win32'
+                launch4jBin "net.sf.launch4j:launch4j:3.50:workdir-${osDependentLibraryAppendix()}"
             }
             launch4j {
                 outfile = 'test.exe'
@@ -40,16 +40,7 @@ class Issue144Test extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
     def 'verify another version without classifier fails'() {
@@ -73,4 +64,16 @@ class Issue144Test extends FunctionalSpecification {
         result.output.contains('Use the correct classifier for this platform.')
     }
 
+    String osDependentLibraryAppendix() {
+        def os = getOS().toLowerCase(Locale.ROOT)
+        if (os.contains("windows")) {
+            'win32'
+        } else if (os.contains('linux')) {
+            System.getProperty('os.arch').contains('64') ? 'linux64' : 'linux'
+        } else if (os.contains('darwin') || os.contains('mac os')) {
+            'mac'
+        } else {
+            throw new IllegalStateException("unable to get binaries for ${os}")
+        }
+    }
 }

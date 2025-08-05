@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,17 +43,10 @@ class Issue78Test extends FunctionalSpecification {
         result.task(':createExe').outcome == SUCCESS
 
         when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
         def implementationLibFile = new File(projectDir, 'build/launch4j/lib/moshi-1.8.0.jar')
         then:
-        outfile.exists()
         implementationLibFile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 
 }

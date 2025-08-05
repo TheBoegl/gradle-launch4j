@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Sebastian Boegl
+ * Copyright (c) 2025 Sebastian Boegl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,13 @@ class Issue72Test extends FunctionalSpecification {
     def 'Check that JRE 10 is allowed in maxVersion'() {
         given:
         buildFile << """
+            java.sourceCompatibility = JavaVersion.VERSION_1_8
             launch4j {
                 mainClassName = 'com.test.app.Main'
                 outfile = 'test.exe'
                 jreMinVersion = "1.8.0"
                 jreMaxVersion = '10.999'
+                bundledJrePath = '%JAVA_HOME%;%JAVA_HOME_8_X64%'
             }
         """
 
@@ -43,15 +45,6 @@ class Issue72Test extends FunctionalSpecification {
         result.task(':jar').outcome == SUCCESS
         result.task(':createExe').outcome == SUCCESS
 
-        when:
-        def outfile = new File(projectDir, 'build/launch4j/test.exe')
-        then:
-        outfile.exists()
-
-        when:
-        def process = outfile.path.execute()
-        then:
-        process.waitFor() == 0
-        process.in.text.trim() == '...'
+        executeAndVerify('...')
     }
 }

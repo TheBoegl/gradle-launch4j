@@ -25,7 +25,7 @@ class Issue176Test extends FunctionalSpecification {
     def 'verify we use settings repository'() {
 
         given:
-        testProjectDir.newFile('settings.gradle') << """
+        settingsFile << """
         dependencyResolutionManagement {
             repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
             repositories {
@@ -42,7 +42,7 @@ class Issue176Test extends FunctionalSpecification {
         """
 
         when:
-        def home = testProjectDir.newFolder("gradle_home")
+        def home = testProjectDir.resolve("gradle_home").toFile()
         def result = createAndConfigureGradleRunner('createExe').withTestKitDir(home).build()
 
         then:
@@ -52,7 +52,7 @@ class Issue176Test extends FunctionalSpecification {
     def 'verify we fail if there are no settings repositories and we are forbidden to add one'() {
 
         given:
-        testProjectDir.newFile('settings.gradle') << """
+        settingsFile << """
         dependencyResolutionManagement {
             repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
         }
